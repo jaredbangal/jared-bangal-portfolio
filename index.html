@@ -50,10 +50,13 @@
   <!-- ── Hero ───────────────────────────────────────────────────────── -->
   <section class="hero">
     <img class="hero__media"
-         src="assets/img/portrait.webp"
-         srcset="assets/img/portrait-480.webp 480w, assets/img/portrait.webp 801w"
-         sizes="100vw" width="801" height="1200"
-         alt="Jared Bangal, smiling, seated outside a storefront." fetchpriority="high" decoding="async">
+         src="assets/img/hero-tools-1600.webp"
+         srcset="assets/img/hero-tools-960.webp   960w,
+                 assets/img/hero-tools-1600.webp 1600w,
+                 assets/img/hero-tools-2400.webp 2400w"
+         sizes="100vw" width="2400" height="1600"
+         alt="Hammers, files, and a mallet laid out in rows on dark wood."
+         fetchpriority="high" decoding="async">
     <div class="hero__scrim" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
 
@@ -76,9 +79,12 @@
       <path d="M0 260 Q100 190 200 240 T400 180" stroke="currentColor" stroke-width="1.5"/>
     </svg>
 
-    <!-- Swap this for a workspace / process photo when you have one. -->
-    <img class="about__photo reveal" src="assets/img/portrait.webp" width="801" height="1200"
-         alt="Jared at work." loading="lazy" decoding="async">
+    <img class="about__photo reveal"
+         src="assets/img/portrait.webp"
+         srcset="assets/img/portrait-480.webp 480w, assets/img/portrait.webp 801w"
+         sizes="(max-width: 860px) 100vw, 40vw" width="801" height="1200"
+         alt="Jared Bangal, smiling, seated outside a storefront."
+         loading="lazy" decoding="async">
 
     <div class="about__copy reveal">
       <p class="label">About</p>

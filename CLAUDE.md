@@ -7,7 +7,8 @@ stylesheet, one progressive-enhancement script.
 index.html              Home
 assets/css/styles.css   all styles
 assets/js/main.js       nav state, reveals, scrollspy, form validation
-assets/img/             portrait.webp (801×1200) + portrait-480.webp
+assets/img/             hero-tools-{960,1600,2400}.webp, portrait{,-480}.webp
+assets/img/_source/     full-resolution masters, not served
 reference/              squarespace.com screenshots + scraped tokens
 ```
 
@@ -143,11 +144,28 @@ way to reverse the state and would be stranded mid-scroll. Under
 rule only shortens the transition, which would snap the image to its end
 position instead.
 
+## Hero imagery
+
+The hero is a flatlay of hammers and files on dark wood (3:2, 4460×2973
+master), served at 960/1600/2400w. The portrait now lives in About — one
+photo each, doing different jobs. Don't put the portrait back in the hero;
+a 2:3 crop fights a full-bleed hero at every anchor point.
+
+**The scrim is measured, never eyeballed.** Sample the *bare* photo with
+`.hero__scrim` and `.grain` hidden and the text set to `visibility: hidden`,
+find the brightest pixel inside each text box, then solve for the alpha that
+clears 4.5:1. This flatlay's pale tool handles peak at rgb(239,238,234) — it
+needs a *heavier* scrim than the dark-jacket portrait did, which is the
+opposite of what the image looks like it needs. Current measurements:
+headline 5.3:1, note 4.6:1, nav 7.3:1 desktop; 5.0/9.2/8.7 mobile.
+
+The two gradient layers do different jobs. The linear pass stays light so
+the flatlay reads at the edges (~.26 in the corners); the radial pass sinks
+only the copy footprint (~.71 combined). Swapping the photo means
+re-measuring both — the automated contrast pass skips anything sitting on an
+image, so it will not catch a regression here.
+
 ## Content still to fill
 
-Two testimonial avatars and both quotes, and the about photo (currently
-reusing the hero portrait). Forms post to `action="#"` — point them at a real
-handler and delete the placeholder branch in `main.js`.
-
-The hero portrait is 801px wide and gets upscaled ~1.8× at 1440px viewports.
-A higher-resolution original is the single biggest visual win available.
+Two testimonial avatars and both quotes. Forms post to `action="#"` — point
+them at a real handler and delete the placeholder branch in `main.js`.

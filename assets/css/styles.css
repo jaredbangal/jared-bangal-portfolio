@@ -446,25 +446,26 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Lifts the face into the top third so the centred headline lands on the
-     collar rather than across the mouth. A 2:3 portrait in a full-bleed
-     hero crops hard either way — a wider environmental shot would let this
-     sit closer to 50%. */
-  object-position: 50% 52%;
+  /* 3:2 source against a ~1.6:1 hero — barely any overflow to place, so
+     the frame keeps the flatlay's own composition. */
+  object-position: 50% 50%;
 }
 
 .hero__scrim {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Two layers doing different jobs: the linear pass keeps the top and
-     bottom edges readable, the radial pass sinks the copy band hard so the
-     headline can sit over the subject the way theirs does. */
+  /* Two layers, two jobs. The linear pass stays deliberately light so the
+     flatlay reads at the edges; the radial pass sinks only the copy
+     footprint. Measured, not eyeballed: the pale tool handles peak at
+     rgb(239,238,234), which needs ~.62 combined alpha under the headline
+     to clear 4.5:1 — the two layers multiply to ~.71 there and fall to
+     ~.26 in the corners. */
   background:
-    linear-gradient(180deg, rgba(20, 23, 28, .50)  0%, rgba(20, 23, 28, .22) 26%,
-                            rgba(20, 23, 28, .45) 68%, rgba(20, 23, 28, .92) 100%),
-    radial-gradient(58% 42% at 50% 55%, rgba(15, 18, 22, .82) 0%,
-                                        rgba(15, 18, 22, .55) 55%,
+    linear-gradient(180deg, rgba(20, 23, 28, .52)  0%, rgba(20, 23, 28, .26) 30%,
+                            rgba(20, 23, 28, .34) 70%, rgba(20, 23, 28, .88) 100%),
+    radial-gradient(62% 54% at 50% 50%, rgba(15, 18, 22, .62)  0%,
+                                        rgba(15, 18, 22, .48) 62%,
                                         rgba(15, 18, 22, 0)  100%);
 }
 
