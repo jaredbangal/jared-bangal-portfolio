@@ -40,6 +40,54 @@ Their face, Clarkson, is licensed proprietary and served from their CDN —
 do not embed or hotlink it. **Archivo** is the stand-in: closest freely
 licensed grotesque with a true 300 weight.
 
+## Accent
+
+The one saturated colour on the page: burnt orange `--accent` `#E8703A`,
+`--accent-hover` `#F0803C`. Warm on purpose, to sit with the flatlay's wood
+rather than against it.
+
+It does two jobs and has to clear 4.5:1 for both — a fill under
+`--text-on-accent` (dark ink) and hover ink on the surface ramp. Those are
+the same pair, so one measurement covers both: `#E8703A` reaches
+6.1 / 5.8 / 5.4 / 5.0 on shade-900…600, `#F0803C` reaches 7.0 / 6.7 / 6.2 /
+5.8. Anything more muted than these fails on `--shade-600`, the chip-hover
+surface, first.
+
+Everything accented comes off those two tokens — buttons, the active
+carousel pill, the skip link, input focus borders, nav and panel link
+hover. **Never introduce a second accent value**; if a new component needs
+orange it references the token.
+
+`--focus-ring` deliberately stays `--ink`. An on-theme focus ring is
+weaker than a maximum-contrast one, and the ring is an accessibility
+affordance before it is a brand surface.
+
+## Grain
+
+Two passes of one SVG turbulence tile.
+
+- `.grain` is hero-local, between the scrim and the copy, so it textures
+  the photo and never lands on text. `overlay` at `.14` — there is a real
+  image underneath with luminance to push against.
+- `body::after` is the page-wide film: `position: fixed` (it should not
+  scroll with the content) at `--z-grain` 60, above the nav so no surface
+  is left smooth. `soft-light` at `.26`.
+
+**Blend mode is the whole problem on a dark page.** `overlay` degenerates
+to `multiply` below 50% luminance, so against the `#14171C` ground it has
+no headroom — measured, it moved a flat surface's stdev from 0.76 to 0.83,
+which is invisible. `soft-light` is the one that reads. It lifts the mean
+slightly (23 → 28 on the L channel) because grain on near-black can only
+work by adding light, but the floor stays put, so blacks stay black and
+the specks are what you see. `normal` is worse than either: it washes the
+page (23 → 34 at .14).
+
+Opacity is capped by text, not by looks — the film composites over live
+copy. Measured on rendered pixels at 1st/99th percentile, it costs
+nothing at `.26` (label 4.42 → 4.70, body 7.47 → 7.68; it slightly helps,
+because it lifts the ink end more than the ground). Raising it further
+starts eating the `--text-muted` floor. Re-measure if you change it.
+
 ## Nav panels
 
 Four disclosures — Services, Pricing, Process, About — all built to one
@@ -285,6 +333,13 @@ only the copy footprint (~.71 combined). Swapping the photo means
 re-measuring both — the automated contrast pass skips anything sitting on an
 image, so it will not catch a regression here.
 
+**The linear pass's last stop must be alpha 1**, not .88 as it was. The
+hero has to dissolve into the page rather than stop at an edge, and the
+only way there is no seam is if the bottom band of hero *is* `--bg-page`.
+Anything short of 1 leaves a visible step. Verify by sampling a pixel
+column across the join — adjacent rows should differ by ≤1/255 (they
+currently differ by 1, at every width).
+
 ## Page order
 
 Hero → **What I do** → Services → Selected Work → Process → **About** →
@@ -296,9 +351,12 @@ start saying the same thing, cut the overlap from this one. About sits
 directly above the testimonials so the portrait introduces the person right
 before other people vouch for him.
 
-Services and Selected Work are one thought, so they use
-`.section--tight-bottom` / `.section--tight-top` to close the gap from 256px
-to 144px. Everything else keeps the 128/160 rhythm.
+Two joins are tighter than the 128/128 default. Services and Selected Work
+are one thought and close from both sides with `.section--tight-bottom` /
+`.section--tight-top` (256px → 144px). "What I do" closes only from below
+(256px → 208px) — it introduces Services rather than belonging to it, so it
+keeps more air than that pair does. Everything else keeps the 128/160
+rhythm.
 
 ## Content still to fill
 
