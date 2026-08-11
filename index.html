@@ -32,10 +32,75 @@
 
   <nav class="nav__links" aria-label="Primary">
     <ul>
-      <!-- services.html / pricing.html are separate pages in the design project; only Home is built so far. -->
-      <li><a href="services.html">Services</a></li>
-      <li><a href="pricing.html">Pricing</a></li>
-      <li><a href="#process">Process</a></li>
+      <!-- Triggers are buttons, not links: they disclose a panel rather than
+           navigate. The destination lives inside the panel. -->
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-services" data-spy="#services">
+          Services
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-services">
+          <div class="panel__col">
+            <p class="panel__label">Services</p>
+            <ul class="panel__list">
+              <li><a href="#web-design">Web Design</a></li>
+              <li><a href="#brand-identity">Brand Identity</a></li>
+              <li><a href="#portfolio-sites">Portfolio Sites</a></li>
+              <li><a href="#site-care">Site Care &amp; SEO</a></li>
+            </ul>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">Explore</p>
+            <a class="panel__headline" href="#work">Concept work <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Six self-directed site designs — a floral studio, a barber shop, a roaster, a bakery, an architecture practice, a bike shop.</p>
+            <ul class="panel__pills">
+              <li><a href="concepts/botanica.html">Botanica</a></li>
+              <li><a href="concepts/borough.html">Borough Barber</a></li>
+              <li><a href="concepts/kettle.html">Kettle &amp; Co</a></li>
+              <li><a href="concepts/sunday.html">Sunday Bakehouse</a></li>
+              <li><a href="concepts/meridian.html">Meridian</a></li>
+              <li><a href="concepts/northline.html">Northline Cycles</a></li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/botanica.html">
+            <img src="assets/img/work-botanica.webp" width="800" height="1816"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Botanica — floral studio</span>
+          </a>
+        </div>
+      </li>
+
+      <!-- pricing.html is a separate page in the design project; not built yet. -->
+      <li class="nav__item"><a href="pricing.html">Pricing</a></li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-process" data-spy="#process">
+          Process
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel" id="menu-process">
+          <div class="panel__col">
+            <p class="panel__label">How it works</p>
+            <ul class="panel__list panel__list--numbered">
+              <li><a href="#discover"><em>1</em> Discover</a></li>
+              <li><a href="#design"><em>2</em> Design</a></li>
+              <li><a href="#build"><em>3</em> Build</a></li>
+              <li><a href="#launch"><em>4</em> Launch</a></li>
+            </ul>
+            <a class="panel__headline panel__headline--sm" href="#process">See the full process <span aria-hidden="true">&#8594;</span></a>
+          </div>
+        </div>
+      </li>
     </ul>
   </nav>
 
@@ -103,22 +168,22 @@
     </header>
 
     <ul class="cards">
-      <li class="card reveal">
+      <li class="card reveal" id="web-design">
         <p class="card__num">01</p>
         <h3 class="card__title">Web Design</h3>
         <p class="card__text">Custom, responsive site design built around your content and goals.</p>
       </li>
-      <li class="card reveal">
+      <li class="card reveal" id="brand-identity">
         <p class="card__num">02</p>
         <h3 class="card__title">Brand Identity</h3>
         <p class="card__text">Logo, color, and type systems that carry across your whole site.</p>
       </li>
-      <li class="card reveal">
+      <li class="card reveal" id="portfolio-sites">
         <p class="card__num">03</p>
         <h3 class="card__title">Portfolio Sites</h3>
         <p class="card__text">Clean, focused sites for showing off your own work.</p>
       </li>
-      <li class="card reveal">
+      <li class="card reveal" id="site-care">
         <p class="card__num">04</p>
         <h3 class="card__title">Site Care &amp; SEO</h3>
         <p class="card__text">Ongoing updates, fixes, and search-visibility basics.</p>
@@ -255,22 +320,22 @@
       </header>
 
       <ol class="steps">
-        <li class="step reveal">
+        <li class="step reveal" id="discover">
           <p class="step__num">1</p>
           <h3 class="step__title">Discover</h3>
           <p class="step__text">A short call about your business, your audience, and what the site needs to do.</p>
         </li>
-        <li class="step reveal">
+        <li class="step reveal" id="design">
           <p class="step__num">2</p>
           <h3 class="step__title">Design</h3>
           <p class="step__text">Layout and visual direction, shared for feedback before anything is built.</p>
         </li>
-        <li class="step reveal">
+        <li class="step reveal" id="build">
           <p class="step__num">3</p>
           <h3 class="step__title">Build</h3>
           <p class="step__text">Your site gets built, tested, and refined with you along the way.</p>
         </li>
-        <li class="step reveal">
+        <li class="step reveal" id="launch">
           <p class="step__num">4</p>
           <h3 class="step__title">Launch</h3>
           <p class="step__text">Site goes live, with handoff notes and optional ongoing care.</p>

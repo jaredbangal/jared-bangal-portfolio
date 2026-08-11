@@ -40,16 +40,99 @@
     }, { threshold: 0 }).observe(sentinel);
   }
 
+  /* ── Nav disclosure panels ──────────────────────────────
+     Hover opens them for a mouse, but hover alone is not an interface:
+     the trigger is a real <button aria-expanded>, so click, Enter, Space
+     and Escape all work, and touch — which has no hover — gets the same
+     behaviour through click. */
+  var menuItems = [].slice.call(document.querySelectorAll("[data-menu]"));
+
+  if (menuItems.length && nav) {
+    var canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+    var closeTimer = null;
+
+    function panelOf(item) { return item.querySelector(".nav__panel"); }
+    function triggerOf(item) { return item.querySelector(".nav__trigger"); }
+
+    function close(item) {
+      item.removeAttribute("data-open");
+      triggerOf(item).setAttribute("aria-expanded", "false");
+    }
+
+    function closeAll(except) {
+      menuItems.forEach(function (item) { if (item !== except) close(item); });
+      if (!menuItems.some(function (i) { return i.hasAttribute("data-open"); })) {
+        nav.removeAttribute("data-menu-open");
+      }
+    }
+
+    function open(item) {
+      clearTimeout(closeTimer);
+      closeAll(item);
+      item.setAttribute("data-open", "");
+      triggerOf(item).setAttribute("aria-expanded", "true");
+      nav.setAttribute("data-menu-open", "");
+    }
+
+    function toggle(item) {
+      if (item.hasAttribute("data-open")) { close(item); closeAll(); }
+      else open(item);
+    }
+
+    menuItems.forEach(function (item) {
+      var trigger = triggerOf(item);
+      var panel = panelOf(item);
+
+      trigger.addEventListener("click", function (e) {
+        e.preventDefault();
+        toggle(item);
+      });
+
+      if (canHover.matches) {
+        // A grace period on leave: the pointer has to cross a gap between
+        // the trigger and the panel, and the menu must not vanish mid-trip.
+        item.addEventListener("mouseenter", function () { open(item); });
+        item.addEventListener("mouseleave", function () {
+          clearTimeout(closeTimer);
+          closeTimer = setTimeout(function () { close(item); closeAll(); }, 220);
+        });
+      }
+
+      // Tabbing past the last link in the panel should close it, not leave
+      // an orphaned panel hanging over the page.
+      item.addEventListener("focusout", function (e) {
+        if (!item.contains(e.relatedTarget)) { close(item); closeAll(); }
+      });
+
+      panel.addEventListener("click", function (e) {
+        if (e.target.closest("a")) { close(item); closeAll(); }
+      });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      var openItem = menuItems.filter(function (i) { return i.hasAttribute("data-open"); })[0];
+      if (!openItem) return;
+      triggerOf(openItem).focus();
+      close(openItem);
+      closeAll();
+    });
+
+    document.addEventListener("pointerdown", function (e) {
+      if (!e.target.closest("[data-menu]")) closeAll();
+    });
+  }
+
   /* ── Current-section indicator ──────────────────────────
      Marks the nav link whose section is nearest the top of the
      viewport, so the nav reflects where you actually are. */
-  var navLinks = [].slice.call(
-    document.querySelectorAll('.nav__links a[href^="#"]')
-  );
+  // [data-spy] rather than every hash link in the bar — the panels are full
+  // of them, and a panel link is not a top-level location.
+  var navLinks = [].slice.call(document.querySelectorAll(".nav__links [data-spy]"));
 
   if (navLinks.length && "IntersectionObserver" in window) {
     var sections = navLinks
-      .map(function (link) { return document.querySelector(link.getAttribute("href")); })
+      .map(function (link) { return document.querySelector(link.getAttribute("data-spy")); })
       .filter(Boolean);
     var visible = new Set();
 
@@ -65,7 +148,7 @@
         .map(function (s) { return s.id; })[0];
 
       navLinks.forEach(function (link) {
-        if (current && link.getAttribute("href") === "#" + current) {
+        if (current && link.getAttribute("data-spy") === "#" + current) {
           link.setAttribute("aria-current", "true");
         } else {
           link.removeAttribute("aria-current");

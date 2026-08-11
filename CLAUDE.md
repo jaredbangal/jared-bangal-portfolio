@@ -32,10 +32,39 @@ site — re-scrape rather than guess if you need more. What was adopted:
   `--ease-in` easeInQuart (exits).
 - **Layout** centred section heads with a muted sub-line, generous
   vertical air (128/160px section padding).
+- **Nav disclosure panels** on Services and Process, matching their
+  mega-menu: chevron down at rest, flipped when open, solid panel below a
+  bar that turns solid with it.
 
 Their face, Clarkson, is licensed proprietary and served from their CDN —
 do not embed or hotlink it. **Archivo** is the stand-in: closest freely
 licensed grotesque with a true 300 weight.
+
+## Nav panels
+
+Triggers are `<button aria-expanded>`, not links — they disclose, they do
+not navigate; the destination lives inside the panel. Hover opens them for
+a mouse, but hover is never the only way in: click, Enter, Space and Escape
+all work, Escape returns focus to the trigger, tabbing past the last panel
+link closes it, and touch (which has no hover) gets the same behaviour
+through click. A 220ms grace period on `mouseleave` covers the gap between
+trigger and panel.
+
+Panels are positioned against the **bar**, not the trigger, so the wide one
+can centre without running off the left edge. They use `visibility`, not
+`display`, so they can transition and still leave the tab order when shut.
+
+Two selector traps, both already hit once:
+
+- Bar-level link styling must be `.nav__item > a`, and the flex row
+  `.nav__links > ul`. Descendant selectors leak the uppercase 12px
+  treatment and the 40px gap into the panels.
+- The scrollspy reads `[data-spy]`, not every `a[href^="#"]` in the bar —
+  the panels are full of hash links and a panel link is not a location.
+
+Panel links point at real anchors (`#web-design`, `#discover`, …) that exist
+on this page. Keep it that way; check with the dead-anchor query in the
+menu test rather than assuming.
 
 ## Source of truth
 
