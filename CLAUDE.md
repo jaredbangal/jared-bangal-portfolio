@@ -67,12 +67,18 @@ link closes it, and touch (which has no hover) gets the same behaviour
 through click. A 220ms grace period on `mouseleave` covers the gap between
 trigger and panel.
 
-**The open transition is theirs, scraped not guessed.** The shell settles
-over **750ms on easeOutQuart** from `translateY(6px)` while opacity resolves
-in 300ms — a long slow transform under a quick fade, which is what makes it
-feel like it arrives rather than switches on. The three columns then fade
-and slide in from `translateX(-8px)` at 60/120/180ms. That stagger running
-left-to-right against the settling shell is what reads as diagonal.
+**The open transition is theirs, scraped not guessed, then slowed.** Their
+shape is a long easeOutQuart transform under a quick fade, which is what
+makes a panel feel like it arrives rather than switches on. Theirs runs
+750ms/300ms; this site runs it slower, at `--dur-panel-settle` 1100ms and
+`--dur-panel` 420ms from `translateY(10px)`. The three columns then fade
+and slide in from `translateX(-12px)`, staggered by `--panel-stagger`
+(90ms). That left-to-right stagger against the settling shell is what reads
+as diagonal.
+
+`--dur-panel` drives the fade, the column resolve **and** the visibility
+hand-off. Keep them on the one token: if visibility flips before the fade
+finishes the panel snaps out instead of fading.
 
 Panels are positioned against the **bar**, not the trigger, so the wide one
 can centre without running off the left edge. They use `visibility`, not

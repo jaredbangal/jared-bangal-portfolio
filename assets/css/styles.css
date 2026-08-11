@@ -88,6 +88,13 @@
   --dur-slow: 800ms;   /* scroll entrances */
   --stagger:   80ms;
 
+  /* Nav panels. --dur-panel drives the fade, the column resolve and the
+     visibility hand-off, so they cannot drift apart; --dur-panel-settle is
+     the long easeOutQuart transform underneath. */
+  --dur-panel:        420ms;
+  --dur-panel-settle: 1100ms;
+  --panel-stagger:     90ms;
+
   /* Layering */
   --z-base: 0;  --z-raised: 10;  --z-nav: 40;  --z-skip: 100;
 }
@@ -512,10 +519,10 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
      on easeOutQuart while opacity resolves in 300ms. The long, slow
      transform under a quick fade is what makes it feel like it arrives
      rather than switches on. */
-  transform: translateX(-50%) translateY(6px);
-  transition: opacity var(--dur-base) var(--ease-in-out),
-              transform 750ms var(--ease-out),
-              visibility 0s linear var(--dur-base);
+  transform: translateX(-50%) translateY(10px);
+  transition: opacity var(--dur-panel) var(--ease-in-out),
+              transform var(--dur-panel-settle) var(--ease-out),
+              visibility 0s linear var(--dur-panel);
 }
 .nav__panel--wide {
   grid-template-columns: 240px minmax(0, 1fr) 260px;
@@ -534,17 +541,17 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
    detail column separately on easeInOutCubic at the same 300ms. */
 .nav__panel > * {
   opacity: 0;
-  transform: translateX(-8px);
-  transition: opacity var(--dur-base) var(--ease-in-out),
-              transform var(--dur-base) var(--ease-out);
+  transform: translateX(-12px);
+  transition: opacity var(--dur-panel) var(--ease-in-out),
+              transform var(--dur-panel) var(--ease-out);
 }
 .nav__item[data-open] .nav__panel > * {
   opacity: 1;
   transform: translateX(0);
 }
-.nav__item[data-open] .nav__panel > *:nth-child(1) { transition-delay: 60ms; }
-.nav__item[data-open] .nav__panel > *:nth-child(2) { transition-delay: 120ms; }
-.nav__item[data-open] .nav__panel > *:nth-child(3) { transition-delay: 180ms; }
+.nav__item[data-open] .nav__panel > *:nth-child(1) { transition-delay: calc(var(--panel-stagger) * 1); }
+.nav__item[data-open] .nav__panel > *:nth-child(2) { transition-delay: calc(var(--panel-stagger) * 2); }
+.nav__item[data-open] .nav__panel > *:nth-child(3) { transition-delay: calc(var(--panel-stagger) * 3); }
 
 @media (prefers-reduced-motion: reduce) {
   .nav__panel > *,
