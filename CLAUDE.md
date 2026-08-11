@@ -97,8 +97,20 @@ guidance and this site is vanilla CSS.
 ## Running it
 
 ```bash
-python3 -m http.server 8777      # then open http://localhost:8777
+python3 serve.py            # http://localhost:8777
 ```
+
+Use `serve.py`, not `python3 -m http.server`. The stdlib server sends no
+`Cache-Control` and no `ETag`, so browsers apply heuristic caching and will
+serve a stylesheet from several edits ago. That produces bugs that exist
+only in one browser and cannot be reproduced from the served files — it
+happened once here, showing up as a concept mockup rendering at full height
+over the page from CSS that had already been fixed. `serve.py` sends
+`no-store`, so a plain reload is always current.
+
+When a reported bug does not reproduce, check this first: compare
+`md5 assets/css/styles.css` against `curl -s .../styles.css | md5`. If they
+match, the served build is fine and the browser is holding a stale copy.
 
 ## Conventions
 
