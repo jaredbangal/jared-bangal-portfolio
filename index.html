@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css?v=3aaa3a1c">
+<link rel="stylesheet" href="assets/css/styles.css?v=98941e0b">
 </head>
 <body>
 
@@ -30,7 +30,7 @@
 <header class="nav" data-nav>
   <a class="nav__brand" href="index.html">Jared Bangal</a>
 
-  <nav class="nav__links" aria-label="Primary">
+  <nav class="nav__links" id="nav-links" aria-label="Primary">
     <ul>
       <!-- Triggers are buttons, not links: they disclose a panel rather than
            navigate. The destination lives inside the panel. -->
@@ -76,8 +76,44 @@
         </div>
       </li>
 
-      <!-- pricing.html is a separate page in the design project; not built yet. -->
-      <li class="nav__item"><a href="pricing.html">Pricing</a></li>
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-pricing">
+          Pricing
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-pricing">
+          <div class="panel__col">
+            <p class="panel__label">Packages</p>
+            <div class="panel__facts">
+              <div><b>Landing page</b><u>from $1,200</u><span>One page, built around a single action</span></div>
+              <div><b>Full site</b><u>from $3,200</u><span>Four to six pages, design and build</span></div>
+              <div><b>Site care</b><u>$120 / month</u><span>Updates, fixes, and SEO basics</span></div>
+            </div>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">What's included</p>
+            <a class="panel__headline" href="#contact">Ask about a package <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Every project includes the consult call, design rounds, the build, and handoff notes. No retainers required, no lock-in.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>Fixed quote</li>
+              <li>2 design rounds</li>
+              <li>You own everything</li>
+              <li>50% to start</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/sunday.html">
+            <img src="assets/img/work-sunday.webp" width="800" height="1612"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Sunday Bakehouse — bakery</span>
+          </a>
+        </div>
+      </li>
 
       <li class="nav__item" data-menu>
         <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-process" data-spy="#process">
@@ -88,7 +124,7 @@
           </svg>
         </button>
 
-        <div class="nav__panel" id="menu-process">
+        <div class="nav__panel nav__panel--wide" id="menu-process">
           <div class="panel__col">
             <p class="panel__label">How it works</p>
             <ul class="panel__list panel__list--numbered">
@@ -97,12 +133,77 @@
               <li><a href="#build"><em>3</em> Build</a></li>
               <li><a href="#launch"><em>4</em> Launch</a></li>
             </ul>
-            <a class="panel__headline panel__headline--sm" href="#process">See the full process <span aria-hidden="true">&#8594;</span></a>
           </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">What to expect</p>
+            <a class="panel__headline" href="#process">See the full process <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">A typical site runs two to four weeks. You see the design before anything gets built, and nothing moves forward without your sign-off.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>2–4 weeks</li>
+              <li>Weekly check-ins</li>
+              <li>Approve before build</li>
+              <li>Handoff notes</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/meridian.html">
+            <img src="assets/img/work-meridian.webp" width="800" height="1597"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Meridian — architecture studio</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-about" data-spy="#about">
+          About
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-about">
+          <div class="panel__col">
+            <p class="panel__label">About</p>
+            <ul class="panel__list">
+              <li><a href="#about">Who I am</a></li>
+              <li><a href="#process">How I work</a></li>
+              <li><a href="#work">Selected work</a></li>
+              <li><a href="#contact">Get in touch</a></li>
+            </ul>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">Good to know</p>
+            <a class="panel__headline" href="#contact">Book a free consult <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Freelance, not an agency — you work with me directly from the first call through to launch and after.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>Small businesses</li>
+              <li>Startups</li>
+              <li>Direct contact</li>
+              <li>No agency overhead</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="#about">
+            <img src="assets/img/portrait.webp" width="801" height="1200"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Jared Bangal</span>
+          </a>
         </div>
       </li>
     </ul>
   </nav>
+
+  <!-- Narrow screens only: collapses the four disclosures into an accordion
+       rather than a row that cannot fit. -->
+  <button class="nav__burger" type="button" data-nav-toggle
+          aria-expanded="false" aria-controls="nav-links">
+    <span class="nav__burger-label">Menu</span>
+    <span class="nav__burger-bars" aria-hidden="true"><i></i><i></i></span>
+  </button>
 
   <div class="nav__actions">
     <a class="nav__email" href="mailto:hello@jaredbangal.com">Log In</a>
@@ -454,6 +555,6 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js?v=73b4d3f0" defer></script>
+<script src="assets/js/main.js?v=d6900f7b" defer></script>
 </body>
 </html>

@@ -49,6 +49,8 @@
 
   if (menuItems.length && nav) {
     var canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+    // Must match the drawer breakpoint in styles.css.
+    var barLayout = window.matchMedia("(min-width: 901px)");
     var closeTimer = null;
 
     function panelOf(item) { return item.querySelector(".nav__panel"); }
@@ -88,15 +90,20 @@
         toggle(item);
       });
 
-      if (canHover.matches) {
-        // A grace period on leave: the pointer has to cross a gap between
-        // the trigger and the panel, and the menu must not vanish mid-trip.
-        item.addEventListener("mouseenter", function () { open(item); });
-        item.addEventListener("mouseleave", function () {
-          clearTimeout(closeTimer);
-          closeTimer = setTimeout(function () { close(item); closeAll(); }, 220);
-        });
-      }
+      // Hover drives the bar layout only. In the drawer the panels are an
+      // accordion, where mouseenter would open a section and the click that
+      // follows would immediately close it again. Checked at event time,
+      // not attach time, so resizing the window behaves.
+      item.addEventListener("mouseenter", function () {
+        if (canHover.matches && barLayout.matches) open(item);
+      });
+      // A grace period on leave: the pointer has to cross a gap between the
+      // trigger and the panel, and the menu must not vanish mid-trip.
+      item.addEventListener("mouseleave", function () {
+        if (!canHover.matches || !barLayout.matches) return;
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(function () { close(item); closeAll(); }, 220);
+      });
 
       // Tabbing past the last link in the panel should close it, not leave
       // an orphaned panel hanging over the page.
@@ -118,8 +125,44 @@
       closeAll();
     });
 
+    /* The narrow-screen drawer. Same triggers inside it, behaving as an
+       accordion — nothing about the panels changes, only where they sit. */
+    var burger = document.querySelector("[data-nav-toggle]");
+
+    function closeDrawer() {
+      if (!burger) return;
+      nav.removeAttribute("data-nav-open");
+      burger.setAttribute("aria-expanded", "false");
+    }
+
+    if (burger) {
+      burger.addEventListener("click", function () {
+        var open = nav.hasAttribute("data-nav-open");
+        if (open) { closeDrawer(); closeAll(); }
+        else {
+          nav.setAttribute("data-nav-open", "");
+          burger.setAttribute("aria-expanded", "true");
+        }
+      });
+
+      // A chosen destination should put the menu away.
+      document.querySelectorAll(".nav__links a").forEach(function (link) {
+        link.addEventListener("click", closeDrawer);
+      });
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && nav.hasAttribute("data-nav-open")) {
+        if (burger) burger.focus();
+        closeDrawer();
+        closeAll();
+      }
+    });
+
     document.addEventListener("pointerdown", function (e) {
-      if (!e.target.closest("[data-menu]")) closeAll();
+      if (e.target.closest("[data-menu]")) return;
+      closeAll();
+      if (!e.target.closest(".nav")) closeDrawer();
     });
   }
 

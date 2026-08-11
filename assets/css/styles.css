@@ -374,14 +374,16 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
 /* Solid once past the hero — and while a panel is open, since a
    transparent bar above an opaque panel reads as a mistake. */
 .nav[data-scrolled],
-.nav[data-menu-open] {
+.nav[data-menu-open],
+.nav[data-nav-open] {
   background: rgba(20, 23, 28, .55);
   backdrop-filter: blur(18px) saturate(1.4);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   border-bottom-color: var(--border-subtle);
 }
 .nav[data-scrolled]::before,
-.nav[data-menu-open]::before { opacity: 0; }
+.nav[data-menu-open]::before,
+.nav[data-nav-open]::before { opacity: 0; }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .nav[data-scrolled],
@@ -460,6 +462,32 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
 
 .nav__actions { display: flex; align-items: center; gap: var(--space-6); }
 
+.nav__burger {
+  display: none;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink-85);
+}
+.nav__burger-bars { display: grid; gap: 5px; width: 20px; }
+.nav__burger-bars i {
+  display: block;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.nav__burger[aria-expanded="true"] { color: var(--accent-hover); }
+.nav__burger[aria-expanded="true"] i:first-child { transform: translateY(3.25px) rotate(45deg); }
+.nav__burger[aria-expanded="true"] i:last-child  { transform: translateY(-3.25px) rotate(-45deg); }
+
 /* ── Nav panels ─────────────────────────────────────────────────
    Anchored to the bar, not the trigger, so the wide one can centre
    without running off the left edge. visibility (not display) so the
@@ -486,7 +514,7 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
               visibility 0s linear var(--dur-base);
 }
 .nav__panel--wide {
-  grid-template-columns: 200px minmax(0, 1fr) 260px;
+  grid-template-columns: 240px minmax(0, 1fr) 260px;
   width: min(1040px, calc(100vw - var(--space-10) * 2));
 }
 
@@ -530,6 +558,37 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
   font-style: normal;
   font-size: var(--text-2xs);
   font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+/* Data rows rather than links — a price tier is information, not a
+   destination; the panel's one CTA carries the action. */
+.panel__facts { display: flex; flex-direction: column; gap: var(--space-5); }
+.panel__facts > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.panel__facts > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.panel__facts b {
+  font-size: var(--text-lg);
+  font-weight: 400;
+  letter-spacing: -.01em;
+}
+.panel__facts u {
+  text-decoration: none;
+  font-size: var(--text-md);
+  color: var(--ink-85);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.panel__facts span {
+  grid-column: 1 / -1;
+  margin-top: var(--space-1);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-body);
   color: var(--text-muted);
 }
 
@@ -584,6 +643,18 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
               color var(--dur-base) var(--ease-in-out);
 }
 .panel__pills a::after { content: ""; position: absolute; inset: -6px 0; }
+
+/* Facts, not links — no hover, no hit area. */
+.panel__pills--static li {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--bg-chip);
+  font-size: var(--text-xs);
+  color: var(--ink-85);
+}
 .panel__pills a:hover { background: var(--bg-chip-h); color: var(--accent-hover); }
 
 .panel__promo { display: block; text-decoration: none; }
@@ -605,6 +676,88 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
   margin-top: var(--space-3);
   font-size: var(--text-2xs);
   color: var(--text-muted);
+}
+
+/* Four triggers plus a brand plus actions stop fitting well before the
+   panels do. Below this the row becomes a drawer and each panel becomes an
+   accordion section — same markup, same triggers, same JS. */
+@media (max-width: 900px) {
+  .nav__burger { display: inline-flex; }
+
+  .nav__links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100svh - var(--nav-h));
+    overflow-y: auto;
+    padding: var(--space-4) var(--gutter) var(--space-8);
+    background: var(--bg-band);
+    border-top: 1px solid var(--border-subtle);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity var(--dur-base) var(--ease-out),
+                transform var(--dur-base) var(--ease-out),
+                visibility 0s linear var(--dur-base);
+  }
+  .nav[data-nav-open] .nav__links {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .nav__links > ul { flex-direction: column; align-items: stretch; gap: 0; }
+  .nav__item { flex-direction: column; align-items: stretch; }
+  .nav__item > a,
+  .nav__trigger {
+    justify-content: space-between;
+    min-height: 56px;
+    font-size: var(--text-sm);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .nav__item > a::after,
+  .nav__trigger::after { display: none; }
+
+  /* Accordion: collapse by height, not opacity, so the drawer resizes. */
+  .nav__panel,
+  .nav__panel--wide {
+    display: none;
+    position: static;
+    width: auto;
+    max-width: none;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    padding: var(--space-6) 0 var(--space-8);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .nav__item[data-open] .nav__panel { display: grid; transform: none; }
+  .panel__col--explore { border-left: 0; padding-left: 0; }
+  .panel__label { margin-bottom: var(--space-4); }
+}
+
+/* Below this the three columns stop fitting; drop the promo and stack. */
+@media (max-width: 980px) {
+  .nav__panel--wide {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(420px, calc(100vw - var(--space-6) * 2));
+    gap: var(--space-8);
+  }
+  .panel__col--explore {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: var(--space-8);
+  }
+  .panel__promo { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -42,6 +42,23 @@ licensed grotesque with a true 300 weight.
 
 ## Nav panels
 
+Four disclosures — Services, Pricing, Process, About — all built to one
+three-column shape (index / explore / promo) so they read as a set. Keep
+new ones to that shape; a panel noticeably smaller than its neighbours
+looks like an oversight.
+
+Column one is links where real destinations exist and `.panel__facts` data
+rows where it does not — a price tier is information, not a destination, so
+the panel's single CTA carries the action. Chips are `.panel__pills` links
+or `.panel__pills--static` facts.
+
+**Below 901px the bar becomes a drawer** and the panels become an accordion:
+same markup, same triggers, same JS, only `display` and position change.
+Four triggers plus brand plus actions stop fitting around 700px. The JS
+breakpoint (`barLayout`) must stay in step with the CSS one — hover opens
+panels in the bar layout only, because in the accordion `mouseenter` would
+open a section and the click that follows would immediately close it.
+
 Triggers are `<button aria-expanded>`, not links — they disclose, they do
 not navigate; the destination lives inside the panel. Hover opens them for
 a mouse, but hover is never the only way in: click, Enter, Space and Escape
@@ -226,6 +243,12 @@ re-measuring both — the automated contrast pass skips anything sitting on an
 image, so it will not catch a regression here.
 
 ## Content still to fill
+
+**Pricing is placeholder.** The three tiers in the Pricing panel — $1,200
+landing page, $3,200 full site, $120/month care — are drafts to argue with,
+not quoted rates. They were written to match the range already implied by
+the contact form's "e.g. New site, $1k–3k". Set real numbers before this
+goes anywhere public; published prices are a commitment.
 
 Two testimonial avatars and both quotes. Forms post to `action="#"` — point
 them at a real handler and delete the placeholder branch in `main.js`.
