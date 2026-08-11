@@ -915,144 +915,167 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
 }
 .card__text { font-size: var(--text-xs); line-height: var(--leading-body); color: var(--text-secondary); }
 
-/* ── Selected work ──────────────────────────────────────── */
-.work {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-14) var(--space-6);
+/* ── Selected work: tab-driven carousel ─────────────────────
+   Native scroll-snap does the moving; the tabs are shortcuts that set
+   scrollLeft, so it still works with JS off and with a keyboard on the
+   scroll container itself. */
+.showcase__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-12);
 }
-
-.work__link { display: block; text-decoration: none; }
-
-/* The window. 4:5 matches squarespace's card proportion (theirs run
-   0.74–0.87); the mockup inside it is a full-page render 1.4–1.8 screens
-   tall, so there is something to travel through. */
-.work__frame,
-.work__item .slot--shot {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  margin-bottom: var(--space-5);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  transition: border-color var(--dur-base) var(--ease-in-out);
-}
-.work__link:hover .work__frame,
-.work__link:focus-visible .work__frame { border-color: var(--border-strong); }
-
-.work__shot {
-  width: 100%;
-  height: auto;          /* natural height — taller than the frame */
-  display: block;
-}
-
-/* Sized in container units so the travel is exactly
-   (image height − frame height) at every breakpoint, with no per-tile
-   magic numbers. Only on real pointers: a touch device would be left
-   stranded mid-scroll with no way to reset it. */
-@supports (container-type: size) {
-  @media (hover: hover) and (pointer: fine) {
-    .work__frame { container-type: size; }
-    .work__shot {
-      transform: translateY(0);
-      transition: transform 2400ms var(--ease-in-out);
-      will-change: transform;
-    }
-    .work__link:hover .work__shot,
-    .work__link:focus-visible .work__shot {
-      transform: translateY(calc(100cqh - 100%));
-    }
-  }
-}
-
-/* Tells you the tile does something before you touch it. */
-.work__hint {
-  position: absolute;
-  right: var(--space-3);
-  bottom: var(--space-3);
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px var(--space-3);
-  border-radius: var(--radius-pill);
-  background: rgba(15, 18, 22, .82);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  color: var(--ink);
-  font-size: var(--text-2xs);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  transition: opacity var(--dur-base) var(--ease-in-out);
-}
-.work__link:hover .work__hint,
-.work__link:focus-visible .work__hint { opacity: 0; }
-
-@media (hover: none) {
-  .work__hint { display: none; }
-}
-
-/* The global reduce rule only shortens the transition, which would snap the
-   mockup to its end position on hover. Cancel the travel outright. */
-@media (prefers-reduced-motion: reduce) {
-  .work__hint { display: none; }
-  .work__link:hover .work__shot,
-  .work__link:focus-visible .work__shot { transform: none; }
-}
-
-.work__title {
-  font-size: var(--text-xl);
-  font-weight: 400;
-  letter-spacing: -.02em;
-  margin-bottom: var(--space-2);
-  transition: color var(--dur-fast) var(--ease-in-out);
-}
-.work__link:hover .work__title { color: var(--accent-hover); }
-
-.work__desc {
-  font-size: var(--text-xs);
-  line-height: var(--leading-body);
-  color: var(--text-secondary);
-  margin-bottom: var(--space-4);
-  max-width: 34ch;
-}
-
-.work__tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-
-/* The first chip says plainly that these are self-directed, not client work. */
-.work__tag {
-  padding: 3px var(--space-3);
+.showcase__tab {
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background: var(--bg-chip);
-  font-size: var(--text-2xs);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--ink-85);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: -.01em;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-in-out),
+              color var(--dur-fast) var(--ease-in-out);
 }
-.work__tag--concept { background: transparent; box-shadow: inset 0 0 0 1px var(--border-strong); }
+.showcase__tab:hover { background: var(--bg-chip-h); color: var(--accent-hover); }
+.showcase__tab[aria-current="true"] {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
 
-/* Unfilled image slots — a calm tile, not a dashed box. */
-.slot {
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--ink-08), rgba(232, 228, 220, .02));
-  border: 1px solid var(--border-subtle);
+.showcase__track {
+  display: flex;
+  gap: var(--space-6);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  /* Centres the first and last slide, which is what produces the peek of
+     the neighbouring cards. */
+  padding-inline: max(var(--gutter), calc((100% - 1040px) / 2));
+  padding-block: var(--space-1);
+  scrollbar-width: none;
 }
-.slot__label {
+.showcase__track::-webkit-scrollbar { display: none; }
+.showcase__track:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase__track { scroll-behavior: auto; }
+}
+
+.slide {
+  flex: 0 0 min(1040px, 86vw);
+  scroll-snap-align: center;
+}
+
+.slide__link {
+  position: relative;
+  display: block;
+  height: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 420px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--slide-bg);
+  color: var(--slide-ink);
+  text-decoration: none;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.slide__link:hover { transform: translateY(-4px); }
+
+/* Sized against the card, not in ch — ch resolves at the container's own
+   font-size, which made the display-size title wrap a word per line. */
+.slide__copy {
+  position: relative;
+  z-index: 1;
+  width: min(46%, 460px);
+  padding: var(--space-10);
+}
+.slide__eyebrow {
   font-size: var(--text-2xs);
   font-weight: 500;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
-  color: var(--text-muted);
+  /* Mix percentages are solved, not chosen: at 72%/80% the eyebrow and body
+     dropped to 3.3:1 on the lower-contrast cards. 88%/92% clears 4.5:1 on
+     all six with the darkest card (Kettle) at 7.1:1. Re-solve if a card
+     colour changes. */
+  color: color-mix(in srgb, var(--slide-ink) 88%, var(--slide-bg));
+  margin-bottom: var(--space-5);
 }
-.slot--avatar {
-  width: 44px;
-  height: 44px;
-  flex: none;
-  border-radius: 50%;
+.slide__title {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  margin-bottom: var(--space-4);
+}
+.slide__text {
+  font-size: var(--text-md);
+  line-height: var(--leading-body);
+  color: color-mix(in srgb, var(--slide-ink) 92%, var(--slide-bg));
+  margin-bottom: var(--space-6);
+}
+.slide__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+.slide__cta span { transition: transform var(--dur-fast) var(--ease-out); }
+.slide__link:hover .slide__cta span { transform: translateX(4px); }
+
+/* The mockup sits bottom-right and is clipped by the card, the way their
+   device shots run off the bottom edge. */
+.slide__frame {
+  position: absolute;
+  right: 4%;
+  bottom: -12%;
+  width: 46%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-xs);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+}
+.slide__shot { width: 100%; height: auto; display: block; }
+
+/* Same travel trick as the old tiles: the mockup is a full-page render, so
+   hovering the card scrolls through it. */
+@supports (container-type: size) {
+  @media (hover: hover) and (pointer: fine) {
+    .slide__frame { container-type: size; }
+    .slide__shot {
+      transform: translateY(0);
+      transition: transform 2400ms var(--ease-in-out);
+    }
+    .slide__link:hover .slide__shot,
+    .slide__link:focus-visible .slide__shot { transform: translateY(calc(100cqh - 100%)); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide__link:hover .slide__shot,
+  .slide__link:focus-visible .slide__shot { transform: none; }
+}
+
+@media (max-width: 860px) {
+  .slide { flex: 0 0 min(1040px, 88vw); }
+  .slide__link { aspect-ratio: 4 / 3; min-height: 0; }
+  .slide__copy { width: min(58%, 420px); padding: var(--space-8); }
+  .slide__frame { width: 56%; right: 6%; bottom: -14%; }
+}
+
+@media (max-width: 620px) {
+  .showcase__tabs { gap: var(--space-1); margin-bottom: var(--space-8); }
+  .showcase__tab { min-height: 40px; padding: 0 var(--space-4); font-size: var(--text-xs); }
+  .slide__link { aspect-ratio: 3 / 4; }
+  .slide__copy { width: auto; padding: var(--space-6); }
+  .slide__frame { width: 78%; right: 11%; bottom: -10%; }
 }
 
 /* ── Process ────────────────────────────────────────────── */
@@ -1119,6 +1142,21 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
   text-wrap: pretty;
   margin-bottom: var(--space-6);
 }
+/* Unfilled avatar slot — a calm tile, not a dashed box. Lived with the work
+   grid until that became a carousel; the testimonials still need it. */
+.slot {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--ink-08), rgba(232, 228, 220, .02));
+  border: 1px solid var(--border-subtle);
+}
+.slot--avatar {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 50%;
+}
+
 .quote figcaption { display: flex; align-items: center; gap: var(--space-3); }
 .quote__name { font-size: var(--text-xs); font-weight: 500; }
 .quote__role { font-size: var(--text-2xs); color: var(--text-muted); }

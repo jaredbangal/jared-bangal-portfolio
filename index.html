@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css?v=98941e0b">
+<link rel="stylesheet" href="assets/css/styles.css?v=27bff493">
 </head>
 <body>
 
@@ -296,115 +296,114 @@
     </p>
   </section>
 
-  <!-- ── Selected work ──────────────────────────────────────────────── -->
-  <section class="section shell" id="work">
-    <header class="section__head reveal">
-      <p class="label">Selected Work</p>
-      <h2 class="h2">Concept work.</h2>
-      <p class="section__sub">Self-directed projects — full site designs for the kind of businesses I want to work with.</p>
-    </header>
+  <!-- ── Selected work ─────────────────────────────────────────────── -->
+  <section class="section" id="work" data-showcase>
+    <div class="shell">
+      <header class="section__head reveal">
+        <p class="label">Selected Work</p>
+        <h2 class="h2">Concept work.</h2>
+        <p class="section__sub">Six self-directed site designs. Pick one to take a closer look.</p>
+      </header>
 
-    <!-- Live designs live in /concepts. Swap a tile for client work by
-         replacing the image, title, meta, and the "Concept" tag. -->
-    <ul class="work">
-      <li class="work__item reveal">
-        <a class="work__link" href="concepts/botanica.html">
-          <div class="work__frame">
-            <img class="work__shot" src="assets/img/work-botanica.webp" width="800" height="1816"
-                 alt="Botanica concept: cream site with an italic serif headline reading “Flowers that keep the season”, over a weekly stem list." loading="lazy" decoding="async">
-            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+      <!-- Shortcuts into the track, not tabs: every slide stays present and
+           scrollable, so a tab/tabpanel pattern would misdescribe it. -->
+      <div class="showcase__tabs" role="group" aria-label="Jump to a concept">
+        <button class="showcase__tab" type="button" data-tab="botanica" aria-current="true">Botanica</button>
+        <button class="showcase__tab" type="button" data-tab="borough">Borough Barber</button>
+        <button class="showcase__tab" type="button" data-tab="kettle">Kettle &amp; Co</button>
+        <button class="showcase__tab" type="button" data-tab="sunday">Sunday Bakehouse</button>
+        <button class="showcase__tab" type="button" data-tab="meridian">Meridian</button>
+        <button class="showcase__tab" type="button" data-tab="northline">Northline Cycles</button>
+      </div>
+    </div>
+
+    <ul class="showcase__track" tabindex="0" role="group" aria-label="Concept work, scrollable">
+      <li class="slide" data-slide="botanica" style="--slide-bg: #2F4634; --slide-ink: #F4F0E6;">
+        <a class="slide__link" href="concepts/botanica.html">
+          <div class="slide__copy">
+            <p class="slide__eyebrow">Concept</p>
+            <h3 class="slide__title">Flowers that keep the season</h3>
+            <p class="slide__text">A seasonal-first storefront where the studio's weekly cut leads and ordering follows.</p>
+            <span class="slide__cta">View the concept <span aria-hidden="true">&#8594;</span></span>
           </div>
-          <h3 class="work__title">Botanica</h3>
-          <p class="work__desc">Seasonal-first storefront — the studio's weekly cut leads, ordering follows.</p>
-          <ul class="work__tags">
-          <li class="work__tag work__tag--concept">Concept</li>
-          <li class="work__tag">Identity</li>
-          <li class="work__tag">Site design</li>
-          <li class="work__tag">Copy</li>
-          </ul>
+          <div class="slide__frame">
+            <img class="slide__shot" src="assets/img/work-botanica.webp" width="800" height="1816"
+                 alt="Botanica concept site design." loading="lazy" decoding="async">
+          </div>
         </a>
       </li>
-      <li class="work__item reveal">
-        <a class="work__link" href="concepts/borough.html">
-          <div class="work__frame">
-            <img class="work__shot" src="assets/img/work-borough.webp" width="800" height="1576"
-                 alt="Borough Barber concept: near-black site with condensed uppercase type reading “Precision grooming”, prices and team below." loading="lazy" decoding="async">
-            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+      <li class="slide" data-slide="borough" style="--slide-bg: #D8913A; --slide-ink: #17110A;">
+        <a class="slide__link" href="concepts/borough.html">
+          <div class="slide__copy">
+            <p class="slide__eyebrow">Concept</p>
+            <h3 class="slide__title">Precision grooming</h3>
+            <p class="slide__text">Booking-led shop site with prices and chair availability up front.</p>
+            <span class="slide__cta">View the concept <span aria-hidden="true">&#8594;</span></span>
           </div>
-          <h3 class="work__title">Borough Barber</h3>
-          <p class="work__desc">Booking-led shop site with prices and chair availability up front.</p>
-          <ul class="work__tags">
-          <li class="work__tag work__tag--concept">Concept</li>
-          <li class="work__tag">Site design</li>
-          <li class="work__tag">Booking</li>
-          </ul>
+          <div class="slide__frame">
+            <img class="slide__shot" src="assets/img/work-borough.webp" width="800" height="1576"
+                 alt="Borough Barber concept site design." loading="lazy" decoding="async">
+          </div>
         </a>
       </li>
-      <li class="work__item reveal">
-        <a class="work__link" href="concepts/kettle.html">
-          <div class="work__frame">
-            <img class="work__shot" src="assets/img/work-kettle.webp" width="800" height="1708"
-                 alt="Kettle &amp; Co concept: warm sand site with a serif headline reading “Roasted the morning it ships”, current lots below." loading="lazy" decoding="async">
-            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+      <li class="slide" data-slide="kettle" style="--slide-bg: #6B351D; --slide-ink: #F8F1E8;">
+        <a class="slide__link" href="concepts/kettle.html">
+          <div class="slide__copy">
+            <p class="slide__eyebrow">Concept</p>
+            <h3 class="slide__title">Roasted the morning it ships</h3>
+            <p class="slide__text">Roast-date storytelling, with the subscription flow built around it.</p>
+            <span class="slide__cta">View the concept <span aria-hidden="true">&#8594;</span></span>
           </div>
-          <h3 class="work__title">Kettle & Co</h3>
-          <p class="work__desc">Roast-date storytelling, with the subscription flow built around it.</p>
-          <ul class="work__tags">
-          <li class="work__tag work__tag--concept">Concept</li>
-          <li class="work__tag">Site design</li>
-          <li class="work__tag">Ecommerce</li>
-          </ul>
+          <div class="slide__frame">
+            <img class="slide__shot" src="assets/img/work-kettle.webp" width="800" height="1708"
+                 alt="Kettle &amp; Co concept site design." loading="lazy" decoding="async">
+          </div>
         </a>
       </li>
-      <li class="work__item reveal">
-        <a class="work__link" href="concepts/sunday.html">
-          <div class="work__frame">
-            <img class="work__shot" src="assets/img/work-sunday.webp" width="800" height="1612"
-                 alt="Sunday Bakehouse concept: butter-yellow site with heavy rounded type reading “Bread worth getting up for”, bake schedule and classes below." loading="lazy" decoding="async">
-            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+      <li class="slide" data-slide="sunday" style="--slide-bg: #F2C14E; --slide-ink: #2E1B12;">
+        <a class="slide__link" href="concepts/sunday.html">
+          <div class="slide__copy">
+            <p class="slide__eyebrow">Concept</p>
+            <h3 class="slide__title">Bread worth getting up for</h3>
+            <p class="slide__text">Pre-order and a daily bake schedule for a bakery that sells out by noon.</p>
+            <span class="slide__cta">View the concept <span aria-hidden="true">&#8594;</span></span>
           </div>
-          <h3 class="work__title">Sunday Bakehouse</h3>
-          <p class="work__desc">Pre-order and daily bake schedule for a bakery that sells out by noon.</p>
-          <ul class="work__tags">
-          <li class="work__tag work__tag--concept">Concept</li>
-          <li class="work__tag">Identity</li>
-          <li class="work__tag">Ordering</li>
-          </ul>
+          <div class="slide__frame">
+            <img class="slide__shot" src="assets/img/work-sunday.webp" width="800" height="1612"
+                 alt="Sunday Bakehouse concept site design." loading="lazy" decoding="async">
+          </div>
         </a>
       </li>
-      <li class="work__item reveal">
-        <a class="work__link" href="concepts/meridian.html">
-          <div class="work__frame">
-            <img class="work__shot" src="assets/img/work-meridian.webp" width="800" height="1597"
-                 alt="Meridian concept: near-white site on a visible column grid, headline reading “Buildings that sit quietly in their place”, project index below." loading="lazy" decoding="async">
-            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+      <li class="slide" data-slide="meridian" style="--slide-bg: #E4E2DC; --slide-ink: #16171A;">
+        <a class="slide__link" href="concepts/meridian.html">
+          <div class="slide__copy">
+            <p class="slide__eyebrow">Concept</p>
+            <h3 class="slide__title">Buildings that sit quietly</h3>
+            <p class="slide__text">A quiet project index for a practice that takes four projects a year.</p>
+            <span class="slide__cta">View the concept <span aria-hidden="true">&#8594;</span></span>
           </div>
-          <h3 class="work__title">Meridian</h3>
-          <p class="work__desc">A quiet project index for a practice that takes four jobs a year.</p>
-          <ul class="work__tags">
-          <li class="work__tag work__tag--concept">Concept</li>
-          <li class="work__tag">Site design</li>
-          <li class="work__tag">Editorial</li>
-          </ul>
+          <div class="slide__frame">
+            <img class="slide__shot" src="assets/img/work-meridian.webp" width="800" height="1597"
+                 alt="Meridian concept site design." loading="lazy" decoding="async">
+          </div>
         </a>
       </li>
-      <li class="work__item reveal">
-        <a class="work__link" href="concepts/northline.html">
-          <div class="work__frame">
-            <img class="work__shot" src="assets/img/work-northline.webp" width="800" height="1435"
-                 alt="Northline Cycles concept: slate site with a lime accent, monospaced service pricing and workshop bays." loading="lazy" decoding="async">
-            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+      <li class="slide" data-slide="northline" style="--slide-bg: #171C1F; --slide-ink: #E6EAEC;">
+        <a class="slide__link" href="concepts/northline.html">
+          <div class="slide__copy">
+            <p class="slide__eyebrow">Concept</p>
+            <h3 class="slide__title">Tuned by people who ride it</h3>
+            <p class="slide__text">Workshop pricing as a spec readout, with same-week booking.</p>
+            <span class="slide__cta">View the concept <span aria-hidden="true">&#8594;</span></span>
           </div>
-          <h3 class="work__title">Northline Cycles</h3>
-          <p class="work__desc">Workshop pricing as a spec readout, with same-week booking.</p>
-          <ul class="work__tags">
-          <li class="work__tag work__tag--concept">Concept</li>
-          <li class="work__tag">Site design</li>
-          <li class="work__tag">Booking</li>
-          </ul>
+          <div class="slide__frame">
+            <img class="slide__shot" src="assets/img/work-northline.webp" width="800" height="1435"
+                 alt="Northline Cycles concept site design." loading="lazy" decoding="async">
+          </div>
         </a>
       </li>
-    </ul>
+      </ul>
+    </div>
   </section>
 
   <!-- ── Process ────────────────────────────────────────────────────── -->
@@ -555,6 +554,6 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js?v=d6900f7b" defer></script>
+<script src="assets/js/main.js?v=4ac3668c" defer></script>
 </body>
 </html>

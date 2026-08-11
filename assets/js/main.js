@@ -166,6 +166,72 @@
     });
   }
 
+  /* ── Concept carousel ───────────────────────────────────
+     The track scrolls natively with snap points, so it works with this
+     file removed. The tabs only set scrollLeft, and an observer reads the
+     scroll position back so the pills stay honest when you swipe. */
+  var showcase = document.querySelector("[data-showcase]");
+
+  if (showcase) {
+    var track = showcase.querySelector(".showcase__track");
+    var tabs = [].slice.call(showcase.querySelectorAll("[data-tab]"));
+    var slides = [].slice.call(showcase.querySelectorAll("[data-slide]"));
+    var hoverTimer = null;
+
+    function slideFor(name) {
+      return slides.filter(function (s) { return s.dataset.slide === name; })[0];
+    }
+
+    function show(name) {
+      var slide = slideFor(name);
+      if (!slide) return;
+      // scrollTo on the track, not scrollIntoView — the latter also scrolls
+      // the page vertically to bring the section into view.
+      track.scrollTo({
+        left: slide.offsetLeft - (track.clientWidth - slide.clientWidth) / 2,
+        behavior: reducedMotion.matches ? "auto" : "smooth"
+      });
+    }
+
+    function markCurrent(name) {
+      tabs.forEach(function (tab) {
+        if (tab.dataset.tab === name) tab.setAttribute("aria-current", "true");
+        else tab.removeAttribute("aria-current");
+      });
+    }
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener("click", function () { show(tab.dataset.tab); });
+
+      // Hover previews, as on theirs. Debounced so dragging the pointer
+      // across the row does not fire five scrolls.
+      tab.addEventListener("mouseenter", function () {
+        if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(function () { show(tab.dataset.tab); }, 120);
+      });
+      tab.addEventListener("mouseleave", function () { clearTimeout(hoverTimer); });
+
+      tab.addEventListener("keydown", function (e) {
+        var next = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : null;
+        if (next === null) return;
+        e.preventDefault();
+        var target = tabs[(next + tabs.length) % tabs.length];
+        target.focus();
+        show(target.dataset.tab);
+      });
+    });
+
+    if ("IntersectionObserver" in window) {
+      var spyShow = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) markCurrent(entry.target.dataset.slide);
+        });
+      }, { root: track, threshold: 0.6 });
+      slides.forEach(function (s) { spyShow.observe(s); });
+    }
+  }
+
   /* ── Current-section indicator ──────────────────────────
      Marks the nav link whose section is nearest the top of the
      viewport, so the nav reflects where you actually are. */

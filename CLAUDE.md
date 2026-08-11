@@ -194,10 +194,24 @@ swap the image, title, meta, and drop the tag.
 Each is a different typeface and temperature on purpose — the set exists to
 show range, so keep new ones distinct from all six.
 
-**Render spec.** The tile is a 4:5 window (`.work__frame`) matching
-squarespace.com's cards (measured 310×420 and 427×491, ratio 0.74–0.87).
-The image inside is a **full-page** render — 1.4–1.8 screens tall — so
-hovering can travel through it.
+**The section is a tab-driven carousel**, after their "Grow your business"
+block: a centred pill row where the active tab is filled, above a
+scroll-snap track of wide cards with the neighbours peeking. Hovering or
+clicking a pill scrolls the track; an observer reads the scroll position
+back so the pills stay honest when you swipe. Native scroll-snap does the
+moving, so the track still works with `main.js` removed.
+
+Each card carries its concept's own palette via `--slide-bg` / `--slide-ink`
+set inline. **Softened text uses `color-mix`, and the percentages are solved,
+not chosen** — at 72%/80% the eyebrow and body dropped to 3.3:1 on the
+lower-contrast cards. 88%/92% clears AA on all six. Kettle's rust had to be
+darkened to `#6B351D` because its original `#A2542F` only reached 4.87:1
+against its own ink, so no softening could pass. Re-solve if a card colour
+changes; `color-mix` resolves to `color(srgb …)` in computed styles, which
+the contrast checker now parses.
+
+**Render spec.** The mockup inside a card is a **full-page** render — 1.4–1.8
+screens tall — so hovering the card travels through it.
 
 Shoot at a **900×1125** viewport with `full_page=True`, resize to **800px
 wide** (height follows), save WebP q84. The first 1125px must stand alone as
