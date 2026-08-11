@@ -67,6 +67,13 @@ link closes it, and touch (which has no hover) gets the same behaviour
 through click. A 220ms grace period on `mouseleave` covers the gap between
 trigger and panel.
 
+**The open transition is theirs, scraped not guessed.** The shell settles
+over **750ms on easeOutQuart** from `translateY(6px)` while opacity resolves
+in 300ms — a long slow transform under a quick fade, which is what makes it
+feel like it arrives rather than switches on. The three columns then fade
+and slide in from `translateX(-8px)` at 60/120/180ms. That stagger running
+left-to-right against the settling shell is what reads as diagonal.
+
 Panels are positioned against the **bar**, not the trigger, so the wide one
 can centre without running off the left edge. They use `visibility`, not
 `display`, so they can transition and still leave the tab order when shut.
@@ -271,6 +278,21 @@ the flatlay reads at the edges (~.26 in the corners); the radial pass sinks
 only the copy footprint (~.71 combined). Swapping the photo means
 re-measuring both — the automated contrast pass skips anything sitting on an
 image, so it will not catch a regression here.
+
+## Page order
+
+Hero → **What I do** → Services → Selected Work → Process → **About** →
+Testimonials → Contact → Newsletter.
+
+"What I do" is the plain-language opener: one statement plus how I work.
+Keep it distinct from Services, which lists what you can buy — if the two
+start saying the same thing, cut the overlap from this one. About sits
+directly above the testimonials so the portrait introduces the person right
+before other people vouch for him.
+
+Services and Selected Work are one thought, so they use
+`.section--tight-bottom` / `.section--tight-top` to close the gap from 256px
+to 144px. Everything else keeps the 128/160 rhythm.
 
 ## Content still to fill
 
