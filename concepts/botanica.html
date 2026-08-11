@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Botanica — concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Archivo:wght@400;500&display=swap">
+<style>
+  /* Concept: Botanica — floral studio.
+     Direction: editorial serif on cream, one deep-green accent, generous
+     air. Type-led rather than photo-led. */
+  :root {
+    --cream: #F4F0E6;
+    --ink:   #1C2A20;
+    --moss:  #2F4634;
+    --clay:  #C06B4A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: "Archivo", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 56px;
+    border-bottom: 1px solid rgba(28, 42, 32, .15);
+  }
+  .mark {
+    font-family: "Fraunces", serif;
+    font-size: 22px;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+  }
+  nav { display: flex; gap: 40px; }
+  nav a {
+    font-size: 12px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--moss);
+    text-decoration: none;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 56px;
+  }
+  .kicker {
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 40px;
+  }
+  h1 {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: clamp(56px, 9vw, 128px);
+    line-height: .92;
+    letter-spacing: -.03em;
+    max-width: 14ch;
+  }
+  h1 em { font-style: italic; color: var(--moss); }
+  p.lede {
+    margin-top: 36px;
+    max-width: 44ch;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--moss);
+  }
+  .cta {
+    margin-top: 48px;
+    display: inline-block;
+    padding: 20px 40px;
+    background: var(--moss);
+    color: var(--cream);
+    font-size: 12px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 28px 56px;
+    border-top: 1px solid rgba(28, 42, 32, .15);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--moss);
+  }
+
+  main { min-height: 74vh; }
+  section { padding: 88px 56px; border-top: 1px solid rgba(28, 42, 32, .15); }
+  section h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 52px;
+    letter-spacing: -.03em;
+    margin-bottom: 40px;
+  }
+  .stems div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(28, 42, 32, .15);
+  }
+  .stems b { font-family: "Fraunces", serif; font-weight: 400; font-size: 26px; }
+  .stems span { font-size: 15px; color: var(--moss); opacity: .75; }
+  .stems u { text-decoration: none; font-size: 15px; color: var(--clay); }
+  .closing { background: var(--moss); color: var(--cream); text-align: center; }
+  .closing h2 { color: var(--cream); max-width: 18ch; margin-inline: auto; }
+  .closing p { max-width: 46ch; margin: 0 auto 36px; font-size: 17px; line-height: 1.6; opacity: .85; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="mark">Botanica</div>
+    <nav><a href="#">Arrangements</a><a href="#">Weddings</a><a href="#">Studio</a><a href="#">Visit</a></nav>
+  </header>
+
+  <main>
+    <p class="kicker">Floral studio · Est. 2019</p>
+    <h1>Flowers that <em>keep</em> the season</h1>
+    <p class="lede">Seasonal arrangements and installations, grown and cut within sixty miles of the studio.</p>
+    <a class="cta" href="#">Book a consultation</a>
+  </main>
+
+  <footer>
+    <span>8 Clarkson St, New York</span>
+    <span>Tue–Sat, 10–6</span>
+  </footer>
+
+  <section>
+    <h2>In the studio this week</h2>
+    <div class="stems">
+      <div><b>Garden roses</b><span>Local, three colourways</span><u>from $48</u></div>
+      <div><b>Ranunculus</b><span>Peak season through March</span><u>from $36</u></div>
+      <div><b>Branch &amp; foliage</b><span>Cut to your ceiling height</span><u>from $60</u></div>
+      <div><b>Standing order</b><span>Weekly, for restaurants and offices</span><u>from $120</u></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>Weddings and installations</h2>
+    <p>Larger work is quoted after a walkthrough. We take a limited number of events each season so nothing gets rushed.</p>
+    <a class="cta" href="#">Start a conversation</a>
+  </section>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jared Bangal — Freelance Web Design</title>
+<meta name="description" content="Freelance web designer for small businesses and small startups. I design and build sites that feel deliberate — clear, warm, and easy to trust.">
+<meta name="theme-color" content="#14171C">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Jared Bangal — Freelance Web Design">
+<meta property="og:description" content="Freelance web designer for small businesses and small startups. A website makes it real.">
+<meta property="og:image" content="assets/img/portrait.webp">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2314171C'/><text x='16' y='22' font-family='Helvetica,Arial,sans-serif' font-size='15' font-weight='500' fill='%23E8E4DC' text-anchor='middle'>JB</text></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- Sentinel: when this scrolls out of view the nav takes on its solid state. -->
+<div id="nav-sentinel" aria-hidden="true"></div>
+
+<header class="nav" data-nav>
+  <a class="nav__brand" href="index.html">Jared Bangal</a>
+
+  <nav class="nav__links" aria-label="Primary">
+    <ul>
+      <!-- services.html / pricing.html are separate pages in the design project; only Home is built so far. -->
+      <li><a href="services.html">Services</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="#process">Process</a></li>
+    </ul>
+  </nav>
+
+  <div class="nav__actions">
+    <a class="nav__email" href="mailto:hello@jaredbangal.com">Log In</a>
+    <a class="btn btn--primary btn--sm" href="#contact">Get Started</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ── Hero ───────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <img class="hero__media"
+         src="assets/img/portrait.webp"
+         srcset="assets/img/portrait-480.webp 480w, assets/img/portrait.webp 801w"
+         sizes="100vw" width="801" height="1200"
+         alt="Jared Bangal, smiling, seated outside a storefront." fetchpriority="high" decoding="async">
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <div class="hero__inner shell">
+      <h1 class="hero__title reveal">
+        <span>A website</span>
+        <span>makes it real</span>
+      </h1>
+      <div class="hero__cta reveal">
+        <a class="btn btn--primary btn--lg" href="#contact">Book a Free Consult</a>
+      </div>
+      <p class="hero__note reveal">Free 30-minute call. No obligation.</p>
+    </div>
+  </section>
+
+  <!-- ── About ──────────────────────────────────────────────────────── -->
+  <section class="about shell" id="about">
+    <svg class="about__lines" viewBox="0 0 400 300" fill="none" aria-hidden="true" focusable="false">
+      <path d="M0 220 Q100 150 200 200 T400 140" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M0 260 Q100 190 200 240 T400 180" stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+
+    <!-- Swap this for a workspace / process photo when you have one. -->
+    <img class="about__photo reveal" src="assets/img/portrait.webp" width="801" height="1200"
+         alt="Jared at work." loading="lazy" decoding="async">
+
+    <div class="about__copy reveal">
+      <p class="label">About</p>
+      <h2 class="h2 u-measure-16">A little about how I work.</h2>
+      <p class="body">I'm Jared — a freelance web designer working with small businesses and startups who want a site that looks and feels like them, without the agency overhead.</p>
+      <p class="body">Every project starts with a conversation about what you actually need, not a template. From there I design, build, and hand off a site you can grow with.</p>
+    </div>
+  </section>
+
+  <!-- ── Services ───────────────────────────────────────────────────── -->
+  <section class="section shell" id="services">
+    <header class="section__head reveal">
+      <p class="label">Services</p>
+      <h2 class="h2">What I can build for you.</h2>
+      <p class="section__sub">Everything you need to get online, in one place.</p>
+    </header>
+
+    <ul class="cards">
+      <li class="card reveal">
+        <p class="card__num">01</p>
+        <h3 class="card__title">Web Design</h3>
+        <p class="card__text">Custom, responsive site design built around your content and goals.</p>
+      </li>
+      <li class="card reveal">
+        <p class="card__num">02</p>
+        <h3 class="card__title">Brand Identity</h3>
+        <p class="card__text">Logo, color, and type systems that carry across your whole site.</p>
+      </li>
+      <li class="card reveal">
+        <p class="card__num">03</p>
+        <h3 class="card__title">Portfolio Sites</h3>
+        <p class="card__text">Clean, focused sites for showing off your own work.</p>
+      </li>
+      <li class="card reveal">
+        <p class="card__num">04</p>
+        <h3 class="card__title">Site Care &amp; SEO</h3>
+        <p class="card__text">Ongoing updates, fixes, and search-visibility basics.</p>
+      </li>
+    </ul>
+
+    <p class="section__foot reveal">
+      <a class="link-underline" href="services.html">View All Services <span aria-hidden="true">&#8594;</span></a>
+    </p>
+  </section>
+
+  <!-- ── Selected work ──────────────────────────────────────────────── -->
+  <section class="section shell" id="work">
+    <header class="section__head reveal">
+      <p class="label">Selected Work</p>
+      <h2 class="h2">Concept work.</h2>
+      <p class="section__sub">Self-directed projects — full site designs for the kind of businesses I want to work with.</p>
+    </header>
+
+    <!-- Live designs live in /concepts. Swap a tile for client work by
+         replacing the image, title, meta, and the "Concept" tag. -->
+    <ul class="work">
+      <li class="work__item reveal">
+        <a class="work__link" href="concepts/botanica.html">
+          <div class="work__frame">
+            <img class="work__shot" src="assets/img/work-botanica.webp" width="800" height="1816"
+                 alt="Botanica concept: cream site with an italic serif headline reading “Flowers that keep the season”, over a weekly stem list." loading="lazy" decoding="async">
+            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+          </div>
+          <h3 class="work__title">Botanica</h3>
+          <p class="work__desc">Seasonal-first storefront — the studio's weekly cut leads, ordering follows.</p>
+          <ul class="work__tags">
+          <li class="work__tag work__tag--concept">Concept</li>
+          <li class="work__tag">Identity</li>
+          <li class="work__tag">Site design</li>
+          <li class="work__tag">Copy</li>
+          </ul>
+        </a>
+      </li>
+      <li class="work__item reveal">
+        <a class="work__link" href="concepts/borough.html">
+          <div class="work__frame">
+            <img class="work__shot" src="assets/img/work-borough.webp" width="800" height="1576"
+                 alt="Borough Barber concept: near-black site with condensed uppercase type reading “Precision grooming”, prices and team below." loading="lazy" decoding="async">
+            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+          </div>
+          <h3 class="work__title">Borough Barber</h3>
+          <p class="work__desc">Booking-led shop site with prices and chair availability up front.</p>
+          <ul class="work__tags">
+          <li class="work__tag work__tag--concept">Concept</li>
+          <li class="work__tag">Site design</li>
+          <li class="work__tag">Booking</li>
+          </ul>
+        </a>
+      </li>
+      <li class="work__item reveal">
+        <a class="work__link" href="concepts/kettle.html">
+          <div class="work__frame">
+            <img class="work__shot" src="assets/img/work-kettle.webp" width="800" height="1708"
+                 alt="Kettle &amp; Co concept: warm sand site with a serif headline reading “Roasted the morning it ships”, current lots below." loading="lazy" decoding="async">
+            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+          </div>
+          <h3 class="work__title">Kettle & Co</h3>
+          <p class="work__desc">Roast-date storytelling, with the subscription flow built around it.</p>
+          <ul class="work__tags">
+          <li class="work__tag work__tag--concept">Concept</li>
+          <li class="work__tag">Site design</li>
+          <li class="work__tag">Ecommerce</li>
+          </ul>
+        </a>
+      </li>
+      <li class="work__item reveal">
+        <a class="work__link" href="concepts/sunday.html">
+          <div class="work__frame">
+            <img class="work__shot" src="assets/img/work-sunday.webp" width="800" height="1612"
+                 alt="Sunday Bakehouse concept: butter-yellow site with heavy rounded type reading “Bread worth getting up for”, bake schedule and classes below." loading="lazy" decoding="async">
+            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+          </div>
+          <h3 class="work__title">Sunday Bakehouse</h3>
+          <p class="work__desc">Pre-order and daily bake schedule for a bakery that sells out by noon.</p>
+          <ul class="work__tags">
+          <li class="work__tag work__tag--concept">Concept</li>
+          <li class="work__tag">Identity</li>
+          <li class="work__tag">Ordering</li>
+          </ul>
+        </a>
+      </li>
+      <li class="work__item reveal">
+        <a class="work__link" href="concepts/meridian.html">
+          <div class="work__frame">
+            <img class="work__shot" src="assets/img/work-meridian.webp" width="800" height="1597"
+                 alt="Meridian concept: near-white site on a visible column grid, headline reading “Buildings that sit quietly in their place”, project index below." loading="lazy" decoding="async">
+            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+          </div>
+          <h3 class="work__title">Meridian</h3>
+          <p class="work__desc">A quiet project index for a practice that takes four jobs a year.</p>
+          <ul class="work__tags">
+          <li class="work__tag work__tag--concept">Concept</li>
+          <li class="work__tag">Site design</li>
+          <li class="work__tag">Editorial</li>
+          </ul>
+        </a>
+      </li>
+      <li class="work__item reveal">
+        <a class="work__link" href="concepts/northline.html">
+          <div class="work__frame">
+            <img class="work__shot" src="assets/img/work-northline.webp" width="800" height="1435"
+                 alt="Northline Cycles concept: slate site with a lime accent, monospaced service pricing and workshop bays." loading="lazy" decoding="async">
+            <span class="work__hint" aria-hidden="true">Hover to scroll</span>
+          </div>
+          <h3 class="work__title">Northline Cycles</h3>
+          <p class="work__desc">Workshop pricing as a spec readout, with same-week booking.</p>
+          <ul class="work__tags">
+          <li class="work__tag work__tag--concept">Concept</li>
+          <li class="work__tag">Site design</li>
+          <li class="work__tag">Booking</li>
+          </ul>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ── Process ────────────────────────────────────────────────────── -->
+  <section class="section shell process" id="process">
+    <svg class="process__lines" viewBox="0 0 800 200" fill="none" aria-hidden="true" focusable="false">
+      <path d="M0 150 Q200 60 400 130 T800 90" stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+
+    <div class="process__inner">
+      <header class="section__head reveal">
+        <p class="label">Process</p>
+        <h2 class="h2">How it works.</h2>
+        <p class="section__sub">Four steps, start to launch.</p>
+      </header>
+
+      <ol class="steps">
+        <li class="step reveal">
+          <p class="step__num">1</p>
+          <h3 class="step__title">Discover</h3>
+          <p class="step__text">A short call about your business, your audience, and what the site needs to do.</p>
+        </li>
+        <li class="step reveal">
+          <p class="step__num">2</p>
+          <h3 class="step__title">Design</h3>
+          <p class="step__text">Layout and visual direction, shared for feedback before anything is built.</p>
+        </li>
+        <li class="step reveal">
+          <p class="step__num">3</p>
+          <h3 class="step__title">Build</h3>
+          <p class="step__text">Your site gets built, tested, and refined with you along the way.</p>
+        </li>
+        <li class="step reveal">
+          <p class="step__num">4</p>
+          <h3 class="step__title">Launch</h3>
+          <p class="step__text">Site goes live, with handoff notes and optional ongoing care.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Testimonials ───────────────────────────────────────────────── -->
+  <section class="band">
+    <div class="shell shell--flush">
+      <header class="section__head reveal">
+        <p class="label">Client Feedback</p>
+        <h2 class="h2">What people say.</h2>
+      </header>
+      <div class="quotes">
+        <figure class="quote reveal">
+          <blockquote>“[Add a client quote here once your first project wraps up.]”</blockquote>
+          <figcaption>
+            <div class="slot slot--avatar" aria-hidden="true"></div>
+            <div>
+              <p class="quote__name">Client Name</p>
+              <p class="quote__role">Role, Company</p>
+            </div>
+          </figcaption>
+        </figure>
+        <figure class="quote reveal">
+          <blockquote>“[Add another client quote here.]”</blockquote>
+          <figcaption>
+            <div class="slot slot--avatar" aria-hidden="true"></div>
+            <div>
+              <p class="quote__name">Client Name</p>
+              <p class="quote__role">Role, Company</p>
+            </div>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact ────────────────────────────────────────────────────── -->
+  <section class="contact shell" id="contact">
+    <div class="contact__copy reveal">
+      <p class="label">Contact</p>
+      <h2 class="h2 u-measure-14">Let's talk about your site.</h2>
+      <p class="body">Book a free consult call, or send a note with a bit about your business and what you're looking for.</p>
+      <a class="btn btn--primary" href="mailto:hello@jaredbangal.com?subject=Free%20consult">Book a Free Consult</a>
+    </div>
+
+    <!-- Point action= at your form handler (Formspree, Netlify Forms, Basin, …).
+         main.js validates on blur and submits via fetch; without JS the browser's
+         own validation runs and the form posts normally. -->
+    <form class="form reveal" action="#" method="post" novalidate>
+      <div class="field" data-field>
+        <label class="field__label" for="name">Name <span class="field__req" aria-hidden="true">*</span></label>
+        <input id="name" name="name" type="text" autocomplete="name"
+               placeholder="Your name" required
+               aria-describedby="name-error">
+        <p class="field__error" id="name-error" data-error></p>
+      </div>
+
+      <div class="field" data-field>
+        <label class="field__label" for="email">Email <span class="field__req" aria-hidden="true">*</span></label>
+        <input id="email" name="email" type="email" inputmode="email" autocomplete="email"
+               placeholder="you@example.com" required
+               aria-describedby="email-error">
+        <p class="field__error" id="email-error" data-error></p>
+      </div>
+
+      <div class="field" data-field>
+        <label class="field__label" for="project">Project Type / Budget</label>
+        <input id="project" name="project" type="text"
+               placeholder="e.g. New site, $1k–3k"
+               aria-describedby="project-hint project-error">
+        <p class="field__hint" id="project-hint">Rough range is fine — it helps me scope the first call.</p>
+        <p class="field__error" id="project-error" data-error></p>
+      </div>
+
+      <button class="btn btn--primary form__submit" type="submit">Send Message</button>
+      <p class="form__status" role="status" aria-live="polite" data-status></p>
+    </form>
+  </section>
+
+  <!-- ── Newsletter ─────────────────────────────────────────────────── -->
+  <section class="band band--tight">
+    <div class="shell shell--flush newsletter">
+      <h2 class="newsletter__title">Stay in the loop.</h2>
+      <p class="newsletter__text">Occasional notes on new work and openings. No spam, unsubscribe anytime.</p>
+      <form class="newsletter__form" action="#" method="post" novalidate>
+        <label class="u-visually-hidden" for="subscribe">Email address</label>
+        <input id="subscribe" name="email" type="email" inputmode="email" autocomplete="email"
+               placeholder="you@example.com" required aria-describedby="subscribe-status">
+        <button class="btn btn--primary" type="submit">Subscribe</button>
+        <p class="form__status newsletter__status" id="subscribe-status"
+           role="status" aria-live="polite" data-status></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="shell shell--flush footer__inner">
+    <p class="footer__wordmark">A website makes it real</p>
+    <div class="footer__meta">
+      <nav aria-label="Footer">
+        <ul class="footer__links">
+          <li><a href="index.html" aria-current="page">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="mailto:hello@jaredbangal.com">Email</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© 2026 Jared Bangal</p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>

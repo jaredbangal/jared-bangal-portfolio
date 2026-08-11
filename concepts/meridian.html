@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meridian — concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500&display=swap">
+<style>
+  /* Concept: Meridian — architecture studio.
+     Direction: one typeface, three sizes, almost no colour. Structure comes
+     from hairline rules and a visible column grid. The restrained one — a
+     deliberate counterweight to Sunday Bakehouse. */
+  :root {
+    --paper: #FAFAF8;
+    --ink:   #16171A;
+    --rule:  rgba(22, 23, 26, .16);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Archivo", sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* the grid itself is the ornament */
+  .grid {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    pointer-events: none;
+  }
+  .grid span { border-left: 1px solid rgba(22, 23, 26, .06); }
+
+  header, main, footer { position: relative; }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 36px 44px 0;
+  }
+  .mark {
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+  }
+  nav { display: flex; gap: 34px; }
+  nav a {
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: .55;
+    text-decoration: none;
+  }
+
+  main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 64px 44px; }
+  h1 {
+    font-weight: 300;
+    font-size: clamp(44px, 7.5vw, 104px);
+    line-height: 1.02;
+    letter-spacing: -.045em;
+    max-width: 15ch;
+  }
+  .meta {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--rule);
+  }
+  .meta div { padding: 22px 20px 0 0; }
+  .meta i {
+    display: block;
+    font-style: normal;
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    opacity: .5;
+    margin-bottom: 10px;
+  }
+  .meta b { font-weight: 400; font-size: 15px; line-height: 1.5; }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 44px 40px;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    opacity: .55;
+  }
+  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
+
+  main { min-height: 72vh; }
+  section { padding: 96px 44px; position: relative; }
+  section h2 {
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    opacity: .5;
+    margin-bottom: 44px;
+  }
+  .projects a {
+    display: grid;
+    grid-template-columns: 90px 1fr 200px;
+    gap: 24px;
+    align-items: baseline;
+    padding: 26px 0;
+    border-top: 1px solid var(--rule);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .projects a:last-child { border-bottom: 1px solid var(--rule); }
+  .projects em { font-style: normal; font-size: 13px; opacity: .5; }
+  .projects b { font-weight: 400; font-size: 30px; letter-spacing: -.035em; }
+  .projects span { font-size: 13px; opacity: .55; text-align: right; }
+  .closing { border-top: 1px solid var(--rule); }
+  .closing p {
+    font-weight: 300;
+    font-size: clamp(30px, 4vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -.04em;
+    max-width: 20ch;
+    margin-bottom: 36px;
+  }
+  .closing a {
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 6px;
+  }
+</style>
+</head>
+<body>
+  <div class="grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+  <header>
+    <div class="mark">Meridian</div>
+    <nav><a href="#">Work</a><a href="#">Practice</a><a href="#">Journal</a><a href="#">Contact</a></nav>
+  </header>
+
+  <main>
+    <h1>Buildings that sit quietly in their place</h1>
+    <div class="meta">
+      <div><i>Practice</i><b>Residential and adaptive reuse, Pacific Northwest</b></div>
+      <div><i>Founded</i><b>2014, Portland</b></div>
+      <div><i>Selected</i><b>AIA Northwest Honor, 2023</b></div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Portland, OR</span>
+    <a href="#">Enquire →</a>
+  </footer>
+
+  <section>
+    <h2>Selected</h2>
+    <div class="projects">
+      <a href="#"><em>2024</em><b>Alder House</b><span>Hood River, OR · Residential</span></a>
+      <a href="#"><em>2023</em><b>Foundry No. 4</b><span>Portland, OR · Adaptive reuse</span></a>
+      <a href="#"><em>2022</em><b>Cove Studio</b><span>Manzanita, OR · Studio</span></a>
+      <a href="#"><em>2021</em><b>Bell Street Rowhouses</b><span>Seattle, WA · Multi-family</span></a>
+    </div>
+  </section>
+
+  <section class="closing">
+    <p>We take four projects a year.</p>
+    <a href="#">Enquire →</a>
+  </section>
+</body>
+</html>

@@ -1,0 +1,459 @@
+{
+  "hero": [
+    {
+      "t": "Websites",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 65,
+      "h": 21,
+      "top": 201
+    },
+    {
+      "t": "Website Templates",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 134,
+      "h": 21,
+      "top": 234
+    },
+    {
+      "t": "AI Website Builder",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 129,
+      "h": 21,
+      "top": 267
+    },
+    {
+      "t": "Design Intelligence",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 136,
+      "h": 21,
+      "top": 300
+    },
+    {
+      "t": "Ecommerce",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 87,
+      "h": 21,
+      "top": 333
+    },
+    {
+      "t": "Portfolios",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 66,
+      "h": 21,
+      "top": 366
+    },
+    {
+      "t": "Blogs",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 40,
+      "h": 21,
+      "top": 399
+    },
+    {
+      "t": "Analytics",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 64,
+      "h": 21,
+      "top": 432
+    },
+    {
+      "t": "Services",
+      "cls": "text text--body text--light global-navigation__products-menu",
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "15px",
+        "font-weight": "400",
+        "line-height": "21px",
+        "letter-spacing": "-0.015px",
+        "color": "rgb(255, 255, 255)",
+        "text-transform": "none"
+      },
+      "w": 60,
+      "h": 21,
+      "top": 201
+    }
+  ],
+  "cta": [
+    {
+      "t": "Products",
+      "cls": "cta cta--inline cta--light global-navigation__head",
+      "box": {
+        "background-color": "rgba(0, 0, 0, 0)",
+        "border-radius": "0px",
+        "padding": "0px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "all",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 96,
+      "h": 80
+    },
+    {
+      "t": "Solutions",
+      "cls": "cta cta--inline cta--light global-navigation__head",
+      "box": {
+        "background-color": "rgba(0, 0, 0, 0)",
+        "border-radius": "0px",
+        "padding": "0px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "all",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 100,
+      "h": 80
+    },
+    {
+      "t": "Resources",
+      "cls": "cta cta--inline cta--light global-navigation__head",
+      "box": {
+        "background-color": "rgba(0, 0, 0, 0)",
+        "border-radius": "0px",
+        "padding": "0px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "all",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 104,
+      "h": 80
+    },
+    {
+      "t": "Log In",
+      "cls": "cta cta--inline cta--light global-navigation__acco",
+      "box": {
+        "background-color": "rgba(0, 0, 0, 0)",
+        "border-radius": "0px",
+        "padding": "0px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "all",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 48,
+      "h": 60
+    },
+    {
+      "t": "Get started\u2192",
+      "cls": "cta cta--primary-subtle cta--light cta--has-arrow ",
+      "box": {
+        "background-color": "rgb(255, 255, 255)",
+        "border-radius": "4px",
+        "padding": "23px 28px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1), background-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "Clarkson, Helvetica, sans-serif",
+        "font-size": "14px",
+        "font-weight": "500",
+        "line-height": "14px",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "uppercase"
+      },
+      "w": 166,
+      "h": 60
+    },
+    {
+      "t": "Photographers",
+      "cls": "cta cta--inline cta--light global-navigation__solu",
+      "box": {
+        "background-color": "rgba(255, 255, 255, 0.1)",
+        "border-radius": "30px",
+        "padding": "4px 12px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "background 0.3s",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 108,
+      "h": 25
+    },
+    {
+      "t": "Graphic Designers",
+      "cls": "cta cta--inline cta--light global-navigation__solu",
+      "box": {
+        "background-color": "rgba(255, 255, 255, 0.1)",
+        "border-radius": "30px",
+        "padding": "4px 12px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "background 0.3s",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 129,
+      "h": 25
+    },
+    {
+      "t": "Artists",
+      "cls": "cta cta--inline cta--light global-navigation__solu",
+      "box": {
+        "background-color": "rgba(255, 255, 255, 0.1)",
+        "border-radius": "30px",
+        "padding": "4px 12px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "background 0.3s",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 60,
+      "h": 25
+    },
+    {
+      "t": "Interior Designers",
+      "cls": "cta cta--inline cta--light global-navigation__solu",
+      "box": {
+        "background-color": "rgba(255, 255, 255, 0.1)",
+        "border-radius": "30px",
+        "padding": "4px 12px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "background 0.3s",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 124,
+      "h": 25
+    },
+    {
+      "t": "Architects",
+      "cls": "cta cta--inline cta--light global-navigation__solu",
+      "box": {
+        "background-color": "rgba(255, 255, 255, 0.1)",
+        "border-radius": "30px",
+        "padding": "4px 12px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "background 0.3s",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 81,
+      "h": 25
+    },
+    {
+      "t": "Fashion & Apparel",
+      "cls": "cta cta--inline cta--light global-navigation__solu",
+      "box": {
+        "background-color": "rgba(255, 255, 255, 0.1)",
+        "border-radius": "30px",
+        "padding": "4px 12px",
+        "border": "0px none rgb(0, 0, 0)",
+        "transition": "background 0.3s",
+        "opacity": "1",
+        "box-shadow": "none"
+      },
+      "typo": {
+        "font-family": "sans-serif",
+        "font-size": "16px",
+        "font-weight": "400",
+        "line-height": "normal",
+        "letter-spacing": "normal",
+        "color": "rgb(0, 0, 0)",
+        "text-transform": "none"
+      },
+      "w": 126,
+      "h": 25
+    }
+  ],
+  "navbar": {
+    "h": 80,
+    "box": {
+      "background-color": "rgba(0, 0, 0, 0)",
+      "border-radius": "0px",
+      "padding": "0px 40px",
+      "border": "0px none rgb(0, 0, 0)",
+      "transition": "top 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955)",
+      "opacity": "1",
+      "box-shadow": "none"
+    },
+    "inner": {
+      "background-color": "rgba(0, 0, 0, 0)",
+      "border-radius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(0, 0, 0)",
+      "transition": "all",
+      "opacity": "1",
+      "box-shadow": "none"
+    }
+  },
+  "scrollAnim": [
+    {
+      "cls": "homepage-hero__background homepage-hero__background--revealed",
+      "transition": "all",
+      "transform": "none",
+      "opacity": "1"
+    }
+  ],
+  "easings": [
+    "cubic-bezier(0.455, 0.03, 0.515, 0.955)",
+    "cubic-bezier(0.645, 0.045, 0.355, 1), cubic-bezier(0.645, 0.045, 0.355, 1)",
+    "cubic-bezier(0.645, 0.045, 0.355, 1)",
+    "cubic-bezier(0.165, 0.84, 0.44, 1), cubic-bezier(0.455, 0.03, 0.515, 0.955)",
+    "cubic-bezier(0.165, 0.84, 0.44, 1)",
+    "cubic-bezier(0.895, 0.03, 0.685, 0.22), steps(1, start)",
+    "ease, steps(1)",
+    "cubic-bezier(0.165, 0.84, 0.44, 1), cubic-bezier(0.165, 0.84, 0.44, 1), cubic-bezier(0.165, 0.84, 0.44, 1)",
+    "steps(1)",
+    "cubic-bezier(0.165, 0.84, 0.44, 1), cubic-bezier(0.165, 0.84, 0.44, 1)",
+    "cubic-bezier(0.165, 0.84, 0.44, 1), cubic-bezier(0.165, 0.84, 0.44, 1), steps(1)",
+    "ease, ease, ease",
+    "ease, cubic-bezier(0.165, 0.84, 0.44, 1), steps(1)",
+    "cubic-bezier(0.645, 0.045, 0.355, 1), steps(1)"
+  ]
+}

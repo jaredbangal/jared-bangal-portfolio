@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kettle &amp; Co — concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Archivo:wght@300;400;500&display=swap">
+<style>
+  /* Concept: Kettle & Co — coffee roaster.
+     Direction: warm neutral ground, light grotesque body against an
+     oversized serif accent, a lot of air, information sitting on rules
+     rather than in boxes. */
+  :root {
+    --sand:  #E7E1D6;
+    --ink:   #24211D;
+    --rust:  #A2542F;
+    --rule:  rgba(36, 33, 29, .18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--sand);
+    color: var(--ink);
+    font-family: "Archivo", sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 36px 64px 0;
+  }
+  .mark { font-family: "Instrument Serif", serif; font-size: 26px; letter-spacing: .01em; }
+  nav { display: flex; gap: 38px; }
+  nav a {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: .7;
+    text-decoration: none;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px;
+  }
+  .kicker {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 32px;
+  }
+  h1 {
+    font-family: "Instrument Serif", serif;
+    font-weight: 400;
+    font-size: clamp(60px, 9.5vw, 140px);
+    line-height: .94;
+    letter-spacing: -.02em;
+    max-width: 15ch;
+  }
+  h1 i { color: var(--rust); }
+  .row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 48px;
+    margin-top: 56px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+  }
+  .row p { max-width: 38ch; font-size: 17px; line-height: 1.65; opacity: .8; }
+  .cta {
+    flex: none;
+    padding: 18px 34px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  footer {
+    display: flex;
+    gap: 64px;
+    padding: 0 64px 40px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    opacity: .6;
+  }
+
+  main { min-height: 72vh; }
+  section { padding: 88px 64px; border-top: 1px solid var(--rule); }
+  section h2 {
+    font-family: "Instrument Serif", serif;
+    font-weight: 400;
+    font-size: 56px;
+    letter-spacing: -.02em;
+    margin-bottom: 40px;
+  }
+  .lots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .lots div { border-top: 1px solid var(--ink); padding-top: 20px; }
+  .lots i {
+    display: block;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 12px;
+  }
+  .lots b {
+    display: block;
+    font-family: "Instrument Serif", serif;
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: -.01em;
+    margin-bottom: 8px;
+  }
+  .lots span { font-size: 15px; line-height: 1.6; opacity: .75; }
+  .lots u { display: block; margin-top: 16px; text-decoration: none; font-weight: 500; font-size: 15px; }
+  .closing { background: var(--ink); color: var(--sand); }
+  .closing h2 { color: var(--sand); max-width: 16ch; }
+  .closing p { max-width: 44ch; font-size: 17px; line-height: 1.65; opacity: .8; margin-bottom: 32px; }
+  .closing a {
+    display: inline-block;
+    border: 1px solid var(--sand);
+    border-radius: 999px;
+    padding: 17px 32px;
+    color: var(--sand);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="mark">Kettle &amp; Co</div>
+    <nav><a href="#">Coffee</a><a href="#">Subscribe</a><a href="#">Wholesale</a><a href="#">Café</a></nav>
+  </header>
+
+  <main>
+    <p class="kicker">Roasted to order · Small batch</p>
+    <h1>Roasted the <i>morning</i> it ships</h1>
+    <div class="row">
+      <p>Single-origin lots from four farms, roasted in twelve-kilo batches and out the door the same day.</p>
+      <a class="cta" href="#">Shop coffee</a>
+    </div>
+  </main>
+
+  <footer>
+    <span>Free shipping over $40</span>
+    <span>Ships Mondays &amp; Thursdays</span>
+  </footer>
+
+  <section>
+    <h2>On the roster</h2>
+    <div class="lots">
+      <div><i>Ethiopia</i><b>Guji, Hambela</b><span>Peach, jasmine, black tea. Washed, picked at 2,100m.</span><u>$22 / 250g</u></div>
+      <div><i>Colombia</i><b>Huila, La Esperanza</b><span>Red apple, cocoa, cane sugar. The one for milk.</span><u>$19 / 250g</u></div>
+      <div><i>Kenya</i><b>Nyeri, Gatomboya</b><span>Blackcurrant, grapefruit, syrupy. Limited lot.</span><u>$26 / 250g</u></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>Coffee, every other Monday</h2>
+    <p>Pick a size and a rhythm. We roast the morning it ships, skip a delivery whenever you need to, and cancel in one click.</p>
+    <a href="#">Start a subscription</a>
+  </section>
+</body>
+</html>

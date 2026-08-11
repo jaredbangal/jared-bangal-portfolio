@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sunday Bakehouse — concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Archivo:wght@400;500&display=swap">
+<style>
+  /* Concept: Sunday Bakehouse — neighbourhood bakery.
+     Direction: warm colour-block, chunky rounded display, everything
+     oversized and friendly. The loud one in the set. */
+  :root {
+    --butter: #F2C14E;
+    --crust:  #B4451F;
+    --cocoa:  #2E1B12;
+    --milk:   #FFF8EC;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--butter);
+    color: var(--cocoa);
+    font-family: "Archivo", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 40px;
+  }
+  .mark {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -.02em;
+  }
+  nav { display: flex; gap: 26px; }
+  nav a {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cocoa);
+    text-decoration: none;
+    opacity: .8;
+  }
+
+  main { flex: 1; display: flex; flex-direction: column; padding: 0 40px; }
+
+  h1 {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 800;
+    font-size: clamp(56px, 12vw, 132px);
+    line-height: .88;
+    letter-spacing: -.045em;
+    margin-top: 24px;
+  }
+  h1 span { color: var(--crust); }
+
+  .band {
+    margin-top: 40px;
+    background: var(--crust);
+    color: var(--milk);
+    border-radius: 24px;
+    padding: 32px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .band p { font-size: 17px; line-height: 1.5; max-width: 34ch; }
+  .band a {
+    flex: none;
+    background: var(--milk);
+    color: var(--crust);
+    border-radius: 999px;
+    padding: 16px 30px;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+  }
+
+  .today { margin-top: 44px; }
+  .today h2 {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: .01em;
+    opacity: .65;
+    margin-bottom: 6px;
+  }
+  .today div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 15px 0;
+    border-bottom: 2px dotted rgba(46, 27, 18, .25);
+  }
+  .today b {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -.02em;
+  }
+  .today span { font-size: 14px; opacity: .7; }
+  .today u { text-decoration: none; font-weight: 500; font-size: 14px; color: var(--crust); }
+
+  .menu {
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding-bottom: 40px;
+  }
+  .item {
+    background: var(--milk);
+    border-radius: 20px;
+    padding: 24px;
+  }
+  .item b {
+    display: block;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 600;
+    font-size: 21px;
+    letter-spacing: -.02em;
+    margin-bottom: 6px;
+  }
+  .item span { font-size: 14px; opacity: .7; }
+  .item u {
+    display: block;
+    margin-top: 16px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--crust);
+  }
+
+  main { min-height: 76vh; }
+  section { padding: 80px 40px; }
+  section h2 {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 800;
+    font-size: 62px;
+    line-height: .92;
+    letter-spacing: -.04em;
+    margin-bottom: 36px;
+  }
+  .classes { display: grid; gap: 14px; }
+  .classes div {
+    background: var(--milk);
+    border-radius: 20px;
+    padding: 26px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .classes b {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: -.02em;
+  }
+  .classes span { font-size: 15px; opacity: .7; }
+  .classes u { text-decoration: none; font-weight: 500; color: var(--crust); }
+  .closing { background: var(--cocoa); color: var(--milk); border-radius: 32px 32px 0 0; }
+  .closing h2 { color: var(--milk); }
+  .closing .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .closing i { display: block; font-style: normal; font-size: 13px; opacity: .6; margin-bottom: 8px; }
+  .closing b { font-family: "Bricolage Grotesque", sans-serif; font-weight: 600; font-size: 20px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="mark">Sunday Bakehouse</div>
+    <nav><a href="#">Menu</a><a href="#">Pre-order</a><a href="#">Classes</a><a href="#">Find us</a></nav>
+  </header>
+
+  <main>
+    <h1>Bread worth<br>getting <span>up</span> for</h1>
+
+    <div class="band">
+      <p>Sourdough, pastry, and cardamom buns out of the oven at seven. Sold out by noon, most days.</p>
+      <a href="#">Pre-order for Saturday</a>
+    </div>
+
+    <div class="today">
+      <h2>Out of the oven today</h2>
+      <div><b>Sourdough</b><span>Country &amp; seeded</span><u>7:00</u></div>
+      <div><b>Pastry</b><span>Croissant, kouign-amann</span><u>7:30</u></div>
+      <div><b>Cardamom buns</b><span>Second bake</span><u>11:00</u></div>
+    </div>
+
+    <div class="menu">
+      <div class="item"><b>Country loaf</b><span>48-hour ferment</span><u>$9</u></div>
+      <div class="item"><b>Cardamom bun</b><span>Baked at 7am</span><u>$5</u></div>
+      <div class="item"><b>Seeded rye</b><span>Fridays only</span><u>$11</u></div>
+    </div>
+  </main>
+
+  <section>
+    <h2>Learn to<br>bake it yourself</h2>
+    <div class="classes">
+      <div><b>Sourdough, start to finish</b><span>Saturdays · 4 hours · take a starter home</span><u>$95</u></div>
+      <div><b>Laminated dough</b><span>Sundays · 5 hours · croissant &amp; kouign-amann</span><u>$120</u></div>
+      <div><b>Kids' bake club</b><span>First Sunday monthly · 90 minutes</span><u>$30</u></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>Come find us</h2>
+    <div class="cols">
+      <div><i>Bakery</i><b>112 Wallace St</b></div>
+      <div><i>Hours</i><b>Wed–Sun, 7–2</b></div>
+      <div><i>Pre-orders</i><b>By Thursday 6pm</b></div>
+    </div>
+  </section>
+</body>
+</html>

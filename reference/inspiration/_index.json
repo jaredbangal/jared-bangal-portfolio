@@ -1,0 +1,94 @@
+[
+  {
+    "name": "goodee",
+    "url": "https://www.goodeeworld.com/",
+    "ok": true,
+    "title": "Where Design meets Purpose \u2013 Goodee",
+    "bodyFont": "Helvetica",
+    "bg": "rgb(255, 255, 255)",
+    "h1": null
+  },
+  {
+    "name": "aesop",
+    "url": "https://www.aesop.com/us/",
+    "ok": true,
+    "title": "Just a moment...",
+    "bodyFont": "system-ui",
+    "bg": "rgba(0, 0, 0, 0)",
+    "h1": {
+      "size": "40px",
+      "weight": "600",
+      "ls": "normal",
+      "font": "system-ui"
+    }
+  },
+  {
+    "name": "hem",
+    "url": "https://www.hem.com/",
+    "ok": true,
+    "title": "Imaginative designs of obsessive quality \u2014 Hem",
+    "bodyFont": "Hem Sans",
+    "bg": "rgb(241, 241, 241)",
+    "h1": {
+      "size": "14px",
+      "weight": "500",
+      "ls": "normal",
+      "font": "Hem Sans"
+    }
+  },
+  {
+    "name": "greatjones",
+    "url": "https://greatjonesgoods.com/",
+    "ok": true,
+    "title": "Cast Iron, Ceramic & Stainless Steel Cookware & Bakeware | G",
+    "bodyFont": "HopeSans",
+    "bg": "rgb(250, 237, 223)",
+    "h1": null
+  },
+  {
+    "name": "sightglass",
+    "url": "https://sightglasscoffee.com/",
+    "ok": true,
+    "title": "Sightglass Coffee",
+    "bodyFont": "elza-round-variable",
+    "bg": "rgb(242, 239, 231)",
+    "h1": null
+  },
+  {
+    "name": "kettl",
+    "url": "https://kettl.co/",
+    "ok": true,
+    "title": "Fine Japanese Tea by Kettl \u2013 Kettl",
+    "bodyFont": "Otto",
+    "bg": "rgb(252, 248, 245)",
+    "h1": {
+      "size": "32px",
+      "weight": "300",
+      "ls": "normal",
+      "font": "Otto"
+    }
+  },
+  {
+    "name": "semplice",
+    "url": "https://www.semplice.com/",
+    "ok": true,
+    "title": "Semplice 7 \u2014 Build your portfolio with pride",
+    "bodyFont": "Inter",
+    "bg": "rgba(0, 0, 0, 0)",
+    "h1": null
+  },
+  {
+    "name": "oatly",
+    "url": "https://www.oatly.com/",
+    "ok": true,
+    "title": "the Original Oat Drink Company | Oatly",
+    "bodyFont": "Margo Pro Regular",
+    "bg": "rgb(255, 255, 255)",
+    "h1": {
+      "size": "32px",
+      "weight": "700",
+      "ls": "normal",
+      "font": "Margo Pro Regular"
+    }
+  }
+]

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northline Cycles — concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Archivo:wght@400;500;600&display=swap">
+<style>
+  /* Concept: Northline Cycles — bike shop and workshop.
+     Direction: technical. Mono for anything measurable, one electric accent
+     on cold slate, specs presented as a readout rather than prose. */
+  :root {
+    --slate: #14181B;
+    --panel: #1C2226;
+    --volt:  #C8F03C;
+    --bone:  #E6EAEC;
+    --rule:  rgba(230, 234, 236, .14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--slate);
+    color: var(--bone);
+    font-family: "Archivo", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .mono { font-family: "IBM Plex Mono", monospace; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 40px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .mark { font-weight: 600; font-size: 18px; letter-spacing: -.01em; }
+  .mark b { color: var(--volt); }
+  nav { display: flex; gap: 28px; }
+  nav a {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: var(--bone);
+    opacity: .7;
+    text-decoration: none;
+  }
+
+  main { flex: 1; display: flex; flex-direction: column; padding: 48px 40px; }
+
+  .tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--volt);
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-weight: 600;
+    font-size: clamp(48px, 9vw, 108px);
+    line-height: .94;
+    letter-spacing: -.04em;
+    max-width: 13ch;
+  }
+  p.lede {
+    margin-top: 26px;
+    max-width: 42ch;
+    font-size: 17px;
+    line-height: 1.6;
+    opacity: .72;
+  }
+  .cta {
+    align-self: flex-start;
+    margin-top: 36px;
+    background: var(--volt);
+    color: var(--slate);
+    padding: 17px 30px;
+    border-radius: 3px;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .lineup {
+    margin-top: 52px;
+    border-top: 1px solid var(--rule);
+  }
+  .lineup a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--bone);
+    text-decoration: none;
+  }
+  .lineup b { font-weight: 500; font-size: 19px; letter-spacing: -.01em; }
+  .lineup em {
+    font-family: "IBM Plex Mono", monospace;
+    font-style: normal;
+    font-size: 12px;
+    opacity: .5;
+    letter-spacing: .04em;
+  }
+  .lineup u {
+    font-family: "IBM Plex Mono", monospace;
+    text-decoration: none;
+    font-size: 15px;
+    color: var(--volt);
+  }
+
+  .readout {
+    margin-top: auto;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .readout div {
+    padding: 20px 24px;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .readout div:nth-child(2n) { border-right: 0; }
+  .readout div:nth-last-child(-n+2) { border-bottom: 0; }
+  .readout i {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    opacity: .5;
+    margin-bottom: 8px;
+  }
+  .readout b { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 19px; }
+
+  main { min-height: 74vh; }
+  section { padding: 84px 40px; border-top: 1px solid var(--rule); }
+  section h2 {
+    font-weight: 600;
+    font-size: 46px;
+    line-height: 1;
+    letter-spacing: -.035em;
+    margin-bottom: 36px;
+  }
+  .bays { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .bays div {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 26px;
+  }
+  .bays i {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--volt);
+    margin-bottom: 14px;
+  }
+  .bays b { display: block; font-weight: 600; font-size: 21px; letter-spacing: -.02em; margin-bottom: 10px; }
+  .bays span { font-size: 14px; line-height: 1.6; opacity: .7; }
+  .closing { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 28px; }
+  .closing h2 { margin-bottom: 10px; }
+  .closing p { font-family: "IBM Plex Mono", monospace; font-size: 13px; opacity: .6; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="mark">Northline<b>/</b>Cycles</div>
+    <nav><a href="#">Bikes</a><a href="#">Service</a><a href="#">Fitting</a><a href="#">Book</a></nav>
+  </header>
+
+  <main>
+    <p class="tag mono">Workshop · Est. 2016</p>
+    <h1>Tuned by people who ride it</h1>
+    <p class="lede">Full service, wheel builds, and bike fitting. Same-week turnaround on everything that rolls through the door.</p>
+    <a class="cta" href="#">Book a service</a>
+
+    <div class="lineup">
+      <a href="#"><b>Full service</b><em>Drivetrain · brakes · true</em><u>$140</u></a>
+      <a href="#"><b>Wheel build</b><em>Hand-laced · per wheel</em><u>$180</u></a>
+      <a href="#"><b>Bike fit</b><em>90 min · with follow-up</em><u>$210</u></a>
+    </div>
+
+    <div class="readout">
+      <div><i>Turnaround</i><b>3–5 days</b></div>
+      <div><i>Service from</i><b>$85</b></div>
+      <div><i>Fitting</i><b>90 min</b></div>
+      <div><i>Open</i><b>Tue–Sat</b></div>
+    </div>
+  </main>
+
+  <section>
+    <h2>Three bays, no queue</h2>
+    <div class="bays">
+      <div><i>Bay 01</i><b>Service</b><span>Everything from a safety check to a full strip, clean, and rebuild.</span></div>
+      <div><i>Bay 02</i><b>Wheels</b><span>Hand-built wheels, truing, and spoke replacement while you wait.</span></div>
+      <div><i>Bay 03</i><b>Fitting</b><span>Ninety minutes on the jig, with a follow-up session included.</span></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div>
+      <h2>Drop it off Tuesday.</h2>
+      <p>412 NORTH LINE RD · TUE–SAT 09:00–18:00</p>
+    </div>
+    <a class="cta" href="#">Book a service</a>
+  </section>
+</body>
+</html>
