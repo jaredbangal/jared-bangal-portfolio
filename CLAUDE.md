@@ -42,21 +42,32 @@ licensed grotesque with a true 300 weight.
 
 ## Accent
 
-The one saturated colour on the page: burnt orange `--accent` `#E8703A`,
-`--accent-hover` `#F0803C`. Warm on purpose, to sit with the flatlay's wood
-rather than against it.
+The one saturated colour on the page: `--accent` `#FF6B2C`, `--accent-hover`
+`#FF7F45`.
+
+**Picked on OKLCH chroma, with contrast as the constraint** — that order
+matters. Chroma is what makes a colour read as chosen rather than as a
+tinted grey, and the first orange here (`#E8703A`, C .164) looked dusty
+next to everything else for exactly that reason. The current pair runs
+C .195 / .172 at hue 41°. Hue is deliberate too: a pure signal orange at
+45–50° carries similar chroma but reads as a warning rather than a brand.
 
 It does two jobs and has to clear 4.5:1 for both — a fill under
 `--text-on-accent` (dark ink) and hover ink on the surface ramp. Those are
-the same pair, so one measurement covers both: `#E8703A` reaches
-6.1 / 5.8 / 5.4 / 5.0 on shade-900…600, `#F0803C` reaches 7.0 / 6.7 / 6.2 /
-5.8. Anything more muted than these fails on `--shade-600`, the chip-hover
-surface, first.
+the same pair, so one measurement covers both: `#FF6B2C` reaches
+6.6 / 6.3 / 5.8 / 5.4 on shade-900…600, `#FF7F45` reaches 7.5 / 7.2 / 6.6 /
+6.1. `--shade-600`, the chip-hover surface, is always the binding one — if
+a candidate fails anywhere it fails there first.
 
 Everything accented comes off those two tokens — buttons, the active
 carousel pill, the skip link, input focus borders, nav and panel link
-hover. **Never introduce a second accent value**; if a new component needs
-orange it references the token.
+hover, and the hovered Process step. **Never introduce a second accent
+value**; if a new component needs orange it references the token.
+
+`--accent` is the resting/fill value and `--accent-hover` the brighter ink
+value. Where both appear in one component (a Process step: rule in
+`--accent`, type in `--accent-hover`) that split is what keeps the type
+legible while the rule still reads as the same colour.
 
 `--focus-ring` deliberately stays `--ink`. An on-theme focus ring is
 weaker than a maximum-contrast one, and the ring is an accessibility
@@ -347,9 +358,28 @@ Testimonials → Contact → Newsletter.
 
 "What I do" is the plain-language opener: one statement plus how I work.
 Keep it distinct from Services, which lists what you can buy — if the two
-start saying the same thing, cut the overlap from this one. About sits
-directly above the testimonials so the portrait introduces the person right
-before other people vouch for him.
+start saying the same thing, cut the overlap from this one. It is centred
+throughout, on the same axis as every other section head. That only works
+because nothing in it runs long: the statement is capped at 20ch and the
+three points at 34ch each. Centred text stops being readable past about
+four lines, so if the copy grows, the measures are what hold — not the
+alignment.
+
+About sits directly above the testimonials so the portrait introduces the
+person right before other people vouch for him. **The portrait is shown
+whole, not cropped** — `height: auto`, no `object-fit: cover`, and the
+column narrowed to `.7fr` to pay for the extra height a full 2:3 frame
+needs. `height: auto` has to be explicit: the `width`/`height` attributes
+on the `<img>` are a presentational hint that otherwise wins. On mobile it
+is capped by `max-width`, never by height — cropping is the thing that was
+removed.
+
+**Process steps light up on hover** the way nav links do: numeral and title
+to `--accent-hover`, the rule above them to `--accent`. This is decoration,
+not an affordance — a step is not a destination and nothing is reachable
+only by hovering — which is why there is no pointer cursor and no focus
+equivalent. Don't add one; promising an interaction that does not exist is
+worse than no hover at all.
 
 Two joins are tighter than the 128/128 default. Services and Selected Work
 are one thought and close from both sides with `.section--tight-bottom` /

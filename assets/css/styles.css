@@ -118,14 +118,17 @@
   --border-field:  var(--ink-20);
   --border-strong: var(--ink-20);
 
-  /* Burnt orange, picked warm to sit with the flatlay's wood rather than
-     against it. Used as a fill under --text-on-accent and as hover ink on
-     the surface ramp, so it has to clear 4.5:1 both ways:
-       #E8703A  6.1 / 5.8 / 5.4 / 5.0  on shade-900…600
-       #F0803C  7.0 / 6.7 / 6.2 / 5.8
-     Dark ink on the fill is the same pair, so one measurement covers both. */
-  --accent:       #E8703A;
-  --accent-hover: #F0803C;
+  /* Saturated red-leaning orange. Chroma is what makes it read as a chosen
+     colour rather than a tinted grey, so it is picked on OKLCH chroma with
+     contrast as the constraint, not the other way round:
+       #FF6B2C  okL .70  okC .195  hue 41°   6.6 / 6.3 / 5.8 / 5.4 on shade-900…600
+       #FF7F45  okL .73  okC .172  hue 41°   7.5 / 7.2 / 6.6 / 6.1
+     Hue sits at 41° on purpose — a pure signal orange (45–50°) has similar
+     chroma but reads as a warning, not as a brand. Used as a fill under
+     --text-on-accent and as hover ink on the surface ramp; those are the
+     same pair, so one measurement covers both. */
+  --accent:       #FF6B2C;
+  --accent-hover: #FF7F45;
   --focus-ring:   var(--ink);   /* stays ink — max contrast beats on-theme */
 
   /* Desaturated for dark surfaces rather than inverted; both clear AA on
@@ -935,21 +938,33 @@ body::after {
 
 /* ── What I do ──────────────────────────────────────────────
    The page's plain-language opener: one statement, then how I work — kept
-   deliberately distinct from Services, which lists what you can buy. */
+   deliberately distinct from Services, which lists what you can buy.
+
+   Centred throughout, which puts it on the same axis as every other
+   section head on the page. Centring only works because nothing here runs
+   long: the measures below cap the statement at 20ch and the points at
+   ~34ch, and centred text stops being readable past about four lines. */
 .intro__lead {
   max-width: 62ch;
+  margin-inline: auto;
   margin-bottom: var(--space-20);
+  text-align: center;
 }
 .intro__statement {
   max-width: 20ch;
+  margin-inline: auto;
   margin-bottom: var(--space-6);
 }
-.intro__body { max-width: 56ch; }
+.intro__body {
+  max-width: 56ch;
+  margin-inline: auto;
+}
 
 .intro__points {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-10);
+  text-align: center;
 }
 .intro__point {
   border-top: 1px solid var(--border-strong);
@@ -962,6 +977,8 @@ body::after {
   margin-bottom: var(--space-3);
 }
 .intro__point p {
+  max-width: 34ch;
+  margin-inline: auto;
   font-size: var(--text-xs);
   line-height: var(--leading-body);
   color: var(--text-secondary);
@@ -977,7 +994,7 @@ body::after {
   position: relative;
   padding-block: var(--section-y-lg);
   display: grid;
-  grid-template-columns: .85fr 1.15fr;
+  grid-template-columns: .7fr 1.3fr;
   gap: var(--space-16);
   align-items: center;
   overflow: hidden;
@@ -994,13 +1011,19 @@ body::after {
   pointer-events: none;
 }
 
+/* The whole frame, uncropped. A fixed height plus object-fit: cover was
+   throwing away the top and bottom of a 2:3 portrait to fit a near-square
+   box. height: auto lets the source ratio stand — and it has to be
+   explicit, because the width/height attributes on the <img> are a
+   presentational hint that otherwise wins.
+
+   The column is narrowed to .7fr to pay for it: at .85fr the full-height
+   photo ran ~690px and towered over the copy beside it. */
 .about__photo {
   position: relative;
   z-index: var(--z-raised);
   width: 100%;
-  height: 460px;
-  object-fit: cover;
-  object-position: 50% 32%;
+  height: auto;
   border-radius: var(--radius-sm);
 }
 
@@ -1203,8 +1226,10 @@ body::after {
 }
 
 @media (max-width: 620px) {
-  .showcase__tabs { gap: var(--space-1); margin-bottom: var(--space-8); }
-  .showcase__tab { min-height: 40px; padding: 0 var(--space-4); font-size: var(--text-xs); }
+  /* 44px, not the 40px this used to run at. Six pills wrap to three rows
+     here, so the gap has to carry the 8px between-target spacing too. */
+  .showcase__tabs { gap: var(--space-2); margin-bottom: var(--space-8); }
+  .showcase__tab { min-height: 44px; padding: 0 var(--space-4); font-size: var(--text-xs); }
   .slide__link { aspect-ratio: 3 / 4; }
   .slide__copy { width: auto; padding: var(--space-6); }
   .slide__frame { width: 78%; right: 11%; bottom: -10%; }
@@ -1236,6 +1261,24 @@ body::after {
   border-top: 1px solid var(--border-strong);
   padding-top: var(--space-6);
 }
+
+/* Hover picks out one step the way the nav picks out one link: the numeral
+   and the title go accent together, and the rule above them lights up so
+   the whole column reads as the thing under the cursor.
+
+   This is decoration, not an affordance — a step is not a destination, and
+   nothing here is reachable only by hovering. That is why there is no
+   pointer cursor and no focus equivalent: promising an interaction that
+   does not exist is worse than having no hover at all. */
+.step__num,
+.step__title,
+.step { transition: color var(--dur-fast) var(--ease-in-out),
+                    border-color var(--dur-fast) var(--ease-in-out); }
+
+.step:hover { border-top-color: var(--accent); }
+.step:hover .step__num,
+.step:hover .step__title { color: var(--accent-hover); }
+
 .step__num {
   display: inline-flex;
   align-items: center;
@@ -1471,7 +1514,10 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   .nav__links > ul { gap: var(--space-6); }
 
   .about { grid-template-columns: 1fr; gap: var(--space-10); }
-  .about__photo { height: 360px; }
+  /* Full width in one column would run the uncropped 2:3 portrait to ~585px
+     on a phone. Cap the width instead of the height — cropping is what we
+     just took out. */
+  .about__photo { max-width: 320px; margin-inline: auto; }
   .about__lines { top: auto; bottom: -40px; }
 
   .work { grid-template-columns: repeat(2, 1fr); gap: var(--space-12) var(--space-6); }
