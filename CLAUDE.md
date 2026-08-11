@@ -100,17 +100,36 @@ guidance and this site is vanilla CSS.
 python3 serve.py            # http://localhost:8777
 ```
 
-Use `serve.py`, not `python3 -m http.server`. The stdlib server sends no
-`Cache-Control` and no `ETag`, so browsers apply heuristic caching and will
-serve a stylesheet from several edits ago. That produces bugs that exist
-only in one browser and cannot be reproduced from the served files — it
-happened once here, showing up as a concept mockup rendering at full height
-over the page from CSS that had already been fixed. `serve.py` sends
-`no-store`, so a plain reload is always current.
+Use `serve.py`, not `python3 -m http.server`. It does two things the
+stdlib server does not, both guarding against the same failure: a browser
+running old assets against new markup.
 
-When a reported bug does not reproduce, check this first: compare
-`md5 assets/css/styles.css` against `curl -s .../styles.css | md5`. If they
-match, the served build is fine and the browser is holding a stale copy.
+- **Stamps cache-busting tokens.** The `?v=` on the CSS and JS links is the
+  first 8 hex of that file's md5. Change a file and its URL changes, so no
+  cache can serve the old one. `serve.py` rewrites them on startup and only
+  writes when a token actually differs, so there is no git churn. **Run
+  `python3 serve.py --stamp` before deploying** — the token ships with the
+  HTML, and a stale token on a CDN is the same bug with a longer tail.
+- **Sends `no-store`.** The stdlib server sends neither `Cache-Control` nor
+  `ETag`, so browsers apply heuristic caching and hold subresources across
+  many edits.
+
+This is not hypothetical. It cost a debugging round here: the nav panels
+rendered unstyled and a concept mockup covered the whole page, because the
+browser had CSS from before the panels existed. Nothing was wrong with the
+served files.
+
+**When a reported bug does not reproduce, check this first.** Compare
+`md5 assets/css/styles.css` against `curl -s .../styles.css | md5`, and
+confirm the panel rules actually apply in a fresh browser — a truncating
+CSS parse error looks identical to a stale cache from the outside:
+
+```js
+getComputedStyle(document.querySelector('.nav__panel')).position  // 'absolute'
+```
+
+If they match and that returns `absolute`, the build is fine and the
+browser is stale.
 
 ## Conventions
 
