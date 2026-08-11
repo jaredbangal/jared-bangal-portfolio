@@ -167,30 +167,75 @@
   }
 
   /* ── Concept carousel ───────────────────────────────────
-     The track scrolls natively with snap points, so it works with this
-     file removed. The tabs only set scrollLeft, and an observer reads the
-     scroll position back so the pills stay honest when you swipe. */
+     Endless in both directions: the last two slides are cloned before the
+     first and the first two after the last, so there is always a
+     neighbour peeking on each side. When the scroll settles on a clone the
+     position is corrected by exactly one set — instantly and without
+     smoothing, so it is invisible.
+
+     Native scroll-snap does the moving, so with this file removed the
+     track still scrolls and snaps; it just does not wrap. */
   var showcase = document.querySelector("[data-showcase]");
 
   if (showcase) {
     var track = showcase.querySelector(".showcase__track");
     var tabs = [].slice.call(showcase.querySelectorAll("[data-tab]"));
-    var slides = [].slice.call(showcase.querySelectorAll("[data-slide]"));
-    var hoverTimer = null;
+    var real = [].slice.call(showcase.querySelectorAll("[data-slide]"));
+    var N = real.length;
+    var CLONES = Math.min(2, N);
+    var hoverTimer = null, settleTimer = null, correcting = false;
 
-    function slideFor(name) {
-      return slides.filter(function (s) { return s.dataset.slide === name; })[0];
+    function makeClone(node) {
+      var copy = node.cloneNode(true);
+      copy.setAttribute("aria-hidden", "true");
+      copy.dataset.clone = "true";
+      // Duplicates must not be reachable by keyboard or announced twice.
+      copy.querySelectorAll("a, button, [tabindex]").forEach(function (el) {
+        el.setAttribute("tabindex", "-1");
+      });
+      return copy;
     }
 
-    function show(name) {
-      var slide = slideFor(name);
-      if (!slide) return;
-      // scrollTo on the track, not scrollIntoView — the latter also scrolls
-      // the page vertically to bring the section into view.
-      track.scrollTo({
-        left: slide.offsetLeft - (track.clientWidth - slide.clientWidth) / 2,
-        behavior: reducedMotion.matches ? "auto" : "smooth"
+    if (N > 1) {
+      var head = document.createDocumentFragment();
+      for (var i = N - CLONES; i < N; i++) head.appendChild(makeClone(real[i]));
+      track.insertBefore(head, track.firstChild);
+
+      var tail = document.createDocumentFragment();
+      for (var j = 0; j < CLONES; j++) tail.appendChild(makeClone(real[j]));
+      track.appendChild(tail);
+    }
+
+    var all = [].slice.call(track.children);
+
+    function offsetFor(index) {
+      var el = all[index];
+      return el.offsetLeft - (track.clientWidth - el.clientWidth) / 2;
+    }
+
+    function goTo(index, smooth) {
+      var left = offsetFor(index);
+      if (smooth && !reducedMotion.matches) {
+        track.scrollTo({ left: left, behavior: "smooth" });
+        return;
+      }
+      // Not `behavior: "auto"` — that defers to the CSS scroll-behavior,
+      // which is smooth here, and would animate the clone correction across
+      // the whole set in full view instead of hiding it.
+      var previous = track.style.scrollBehavior;
+      track.style.scrollBehavior = "auto";
+      track.scrollLeft = left;
+      track.style.scrollBehavior = previous;
+    }
+
+    function centredIndex() {
+      var mid = track.scrollLeft + track.clientWidth / 2;
+      var best = 0, bestDistance = Infinity;
+      all.forEach(function (el, i) {
+        var d = Math.abs(el.offsetLeft + el.clientWidth / 2 - mid);
+        if (d < bestDistance) { bestDistance = d; best = i; }
       });
+      return best;
     }
 
     function markCurrent(name) {
@@ -199,6 +244,41 @@
         else tab.removeAttribute("aria-current");
       });
     }
+
+    // Land on the clone that is nearest the current position, so stepping
+    // from the last concept to the first travels forward rather than
+    // rewinding through the whole set.
+    function show(name, smooth) {
+      var home = -1;
+      real.forEach(function (el, i) { if (el.dataset.slide === name) home = i + CLONES; });
+      if (home < 0) return;
+
+      var here = track.scrollLeft;
+      var best = home, bestDistance = Infinity;
+      [home - N, home, home + N].forEach(function (candidate) {
+        if (candidate < 0 || candidate >= all.length) return;
+        var d = Math.abs(offsetFor(candidate) - here);
+        if (d < bestDistance) { bestDistance = d; best = candidate; }
+      });
+      goTo(best, smooth !== false);
+    }
+
+    function settle() {
+      var index = centredIndex();
+      markCurrent(all[index].dataset.slide);
+      if (index >= CLONES && index < CLONES + N) return;
+      // On a clone — jump one full set to its real twin.
+      correcting = true;
+      goTo(index < CLONES ? index + N : index - N, false);
+      requestAnimationFrame(function () { correcting = false; });
+    }
+
+    track.addEventListener("scroll", function () {
+      if (correcting) return;
+      markCurrent(all[centredIndex()].dataset.slide);
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(settle, 120);
+    }, { passive: true });
 
     tabs.forEach(function (tab, i) {
       tab.addEventListener("click", function () { show(tab.dataset.tab); });
@@ -213,23 +293,21 @@
       tab.addEventListener("mouseleave", function () { clearTimeout(hoverTimer); });
 
       tab.addEventListener("keydown", function (e) {
-        var next = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : null;
-        if (next === null) return;
+        var step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!step) return;
         e.preventDefault();
-        var target = tabs[(next + tabs.length) % tabs.length];
-        target.focus();
-        show(target.dataset.tab);
+        var next = tabs[(i + step + tabs.length) % tabs.length];
+        next.focus();
+        show(next.dataset.tab);
       });
     });
 
-    if ("IntersectionObserver" in window) {
-      var spyShow = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) markCurrent(entry.target.dataset.slide);
-        });
-      }, { root: track, threshold: 0.6 });
-      slides.forEach(function (s) { spyShow.observe(s); });
-    }
+    // Start on the first real slide, with its neighbours already flanking it.
+    requestAnimationFrame(function () { goTo(CLONES, false); });
+    window.addEventListener("resize", function () {
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(function () { goTo(centredIndex(), false); }, 150);
+    });
   }
 
   /* ── Current-section indicator ──────────────────────────

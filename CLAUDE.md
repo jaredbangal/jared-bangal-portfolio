@@ -201,6 +201,22 @@ clicking a pill scrolls the track; an observer reads the scroll position
 back so the pills stay honest when you swipe. Native scroll-snap does the
 moving, so the track still works with `main.js` removed.
 
+**The track loops.** JS clones the last two slides before the first and the
+first two after the last, so a neighbour always peeks on both sides —
+Northline sits to the left of Botanica, Botanica to the right of Northline.
+When the scroll settles on a clone the position is corrected by exactly one
+set. Jumping between concepts picks whichever copy is nearer, so last → first
+travels forward rather than rewinding.
+
+Clones are `aria-hidden` with `tabindex="-1"` descendants; they must never be
+reachable or announced twice. Without JS there are no clones and the track
+simply does not wrap — everything else still scrolls and snaps.
+
+**The correction must not use `behavior: "auto"`.** That defers to the CSS
+`scroll-behavior: smooth` and animates the jump across the whole set in full
+view, which is exactly the artefact the clones exist to hide. Set
+`scrollLeft` directly with `scroll-behavior: auto` applied inline.
+
 Each card carries its concept's own palette via `--slide-bg` / `--slide-ink`
 set inline. **Softened text uses `color-mix`, and the percentages are solved,
 not chosen** — at 72%/80% the eyebrow and body dropped to 3.3:1 on the

@@ -49,7 +49,7 @@
   --text-2xl: clamp(1.25rem, 1.1rem + .75vw, 1.5rem);      /* 20 → 24 pull quotes */
   --text-3xl: clamp(1.75rem, 1.5rem + 1.2vw, 2.25rem);     /* 28 → 36 */
   --text-4xl: clamp(2.125rem, 1.6rem + 2.4vw, 3.25rem);    /* 34 → 52 section heads */
-  --text-5xl: clamp(2.75rem, 1.6rem + 5vw, 5.25rem);       /* 44 → 84 hero */
+  --text-5xl: clamp(2.25rem, 1.5rem + 3.4vw, 4.25rem);     /* 36 → 68 hero */
 
   /* Display type is light and very tightly tracked — the single most
      recognisable thing about their system. */
