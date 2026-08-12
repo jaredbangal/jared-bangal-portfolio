@@ -19,21 +19,22 @@
   --shade-700: #1B1F26;
   --shade-600: #20252E;
 
-  /* Cream. Lifted from the Meridian concept — --paper #FAFAF8 was too close
-     to white to read as a colour, so the surface is that concept's card
-     value instead, with a lighter partner above it. Elevation runs the same
+  /* Cream ramp — the page's ground since the palette flip. Lifted from the
+     Meridian concept; --cream-200 is that concept's own card value and the
+     colour the testimonial band introduced. Elevation runs the same
      direction as the dark ramp: raised is lighter than ground. */
+  --cream-300: #DAD7CF;   /* bands   — the one step down from the page */
   --cream-200: #E4E2DC;   /* ground  — Meridian's own */
-  --cream-100: #F4F2EC;   /* raised  — cards on cream */
+  --cream-100: #F4F2EC;   /* raised  — cards */
 
-  /* Dark ink, for the cream scope. Mirrors the light ramp, and the alphas
-     are measured against the *darker* of the two cream surfaces, which is
-     the binding one. Note the muted floor is .66, not .60 as it is on dark:
-     .60 only reaches 4.30:1 here. */
-  --ink-dk:     #16171A;                 /* 13.8:1 on cream-200 */
-  --ink-dk-78:  rgba(22, 23, 26, .78);   /*  7.5:1 */
-  --ink-dk-72:  rgba(22, 23, 26, .72);   /*  6.2:1 */
-  --ink-dk-66:  rgba(22, 23, 26, .66);   /*  5.2:1 — AA floor for body copy */
+  /* Dark ink. Mirrors the light ramp, and every alpha is measured against
+     --cream-300, the darkest cream and therefore the binding surface.
+     Note the muted floor is .66, not the .60 the light ink uses: .60 only
+     reaches 4.12:1 here. */
+  --ink-dk:     #16171A;                 /* 12.5:1 on cream-300 */
+  --ink-dk-78:  rgba(22, 23, 26, .78);   /*  7.1:1 */
+  --ink-dk-72:  rgba(22, 23, 26, .72);   /*  5.9:1 */
+  --ink-dk-66:  rgba(22, 23, 26, .66);   /*  4.9:1 — AA floor for body copy */
   --ink-dk-16:  rgba(22, 23, 26, .16);   /*  non-text: rules, borders */
   --ink-dk-10:  rgba(22, 23, 26, .10);
   --ink-dk-06:  rgba(22, 23, 26, .06);
@@ -118,8 +119,91 @@
   --z-base: 0;  --z-raised: 10;  --z-nav: 40;  --z-grain: 60;  --z-skip: 100;
 }
 
-/* ── 2. Semantic ────────────────────────────────────────── */
-:root {
+/* ── 2. Semantic ──────────────────────────────────────────
+   The page is cream. Everything below names a role, never a value, and
+   components reference only this layer — which is what makes the polarity
+   itself swappable: .on-dark below redefines the same names and every
+   component inside flips with no rule of its own knowing why. */
+:root,
+.nav[data-scrolled],
+.nav[data-menu-open],
+.nav[data-nav-open] {
+  color: var(--text-primary);
+  --bg-page:     var(--cream-200);
+  --bg-band:     var(--cream-300);
+  --bg-raised:   var(--cream-100);
+  --bg-raised-h: #FFFFFF;
+  --bg-chip:     var(--ink-dk-06);
+  --bg-chip-h:   var(--ink-dk-10);
+
+  --text-primary:   var(--ink-dk);
+  --text-body:      var(--ink-dk-78);
+  --text-secondary: var(--ink-dk-72);
+  --text-muted:     var(--ink-dk-66);   /* AA floor */
+  --text-strong:    var(--ink-dk-78);   /* a step above body, still not primary */
+  --text-on-accent: var(--shade-900);
+
+  --border-subtle: var(--ink-dk-10);
+  --border-field:  var(--ink-dk-16);
+  --border-strong: var(--ink-dk-16);
+
+  /* Accent, in two halves — and the split is not optional.
+
+     #F25939 is a fine *fill*: --text-on-accent on it measures 5.6:1, and a
+     button does not care what is behind it. As *ink on cream* the same
+     value is 2.6:1 — below even the 3:1 non-text bar. One token could
+     serve both only while the page was dark.
+
+     So: --accent / --accent-hover fill, --accent-ink / --accent-ink-hover
+     draw. Reach for the fill pair only when the colour is a background.
+
+  --accent:          #F25939;   /* 5.6:1 under --text-on-accent */
+  --accent-hover:    #E04A2B;   /* 4.6:1 under --text-on-accent */
+     --accent-ink is a notch darker than the contrast tables alone would
+     require. #A8320F clears 4.5:1 on paper but only by 4%, and the grain
+     film costs about 10% at the worst pixel — measured, it landed at
+     4.10:1 on --cream-300. Margin, not the bare minimum, is the rule for
+     any value that has a texture composited over it.
+  */
+  --accent-ink:      #97290A;   /* 5.4 / 6.0 / 6.9 on cream-300/200/100 */
+  --accent-ink-hover:#7F2007;   /* 6.6 / 7.4 / 8.5 */
+
+  --focus-ring:   var(--ink-dk);   /* stays ink — max contrast beats on-theme */
+
+  /* Darkened for light surfaces rather than inverted; both clear AA on
+     every cream in the ramp (danger 4.6–5.6:1, success 4.6–5.7:1). */
+  --danger:  #A4262C;
+  --success: #155E33;
+
+  /* Layout — nav height and gutter match theirs (80px / 40px). */
+  --shell:  80rem;
+  --gutter: var(--space-10);
+  --nav-h:  80px;
+  --section-y:    var(--space-32);
+  --section-y-lg: var(--space-40);
+}
+
+/* ── 2b. The dark scope ─────────────────────────────────────
+   The palette the whole page used to run on, now scoped to the two places
+   that still need it: the hero, whose photo is dark and carries light
+   type, and the nav for as long as it floats over that hero.
+
+   .nav is in the selector list rather than carrying the class, because it
+   has to leave the scope again. The light values are re-declared on
+   .nav[data-scrolled] (and the two open states) at one notch more
+   specificity, so the bar flips back to page ink the moment it stops
+   floating. Grouping those selectors onto the :root block is what keeps
+   both palettes written once.
+
+   `color` has to be re-resolved here, not just the token. It inherits as
+   the *computed* value, so anything that merely inherits (every .h2) would
+   otherwise keep the value body resolved against the cream ramp. Elements
+   that set their own colour were never affected, which is exactly what
+   makes this bug look random when you hit it. */
+.on-dark,
+.nav {
+  color: var(--text-primary);
+
   --bg-page:     var(--shade-800);
   --bg-band:     var(--shade-900);
   --bg-raised:   var(--shade-700);
@@ -130,87 +214,24 @@
   --text-primary:   var(--ink);
   --text-body:      var(--ink-70);
   --text-secondary: var(--ink-65);
-  --text-muted:     var(--ink-60);   /* AA floor */
+  --text-muted:     var(--ink-60);
+  --text-strong:    var(--ink-85);
   --text-on-accent: var(--shade-800);
 
   --border-subtle: var(--ink-10);
   --border-field:  var(--ink-20);
   --border-strong: var(--ink-20);
 
-  /* Saturated red-leaning orange, Jared's pick. Used as a fill under
-     --text-on-accent and as hover ink on the surface ramp; those are the
-     same pair, so one measurement covers both:
-       #F25939  okL .66  okC .194  hue 34°   5.6 / 5.4 / 4.9 / 4.6 on shade-900…600
-       #F57052  okL .70  okC .170  hue 34°   6.6 / 6.3 / 5.8 / 5.4
-     Note how little headroom the base has: 4.59:1 on --shade-600, the
-     chip-hover surface. Darkening or desaturating it any further breaks AA
-     there first, so if this value moves, re-measure against shade-600
-     before anything else. */
-  --accent:       #F25939;
-  --accent-hover: #F57052;
-  --focus-ring:   var(--ink);   /* stays ink — max contrast beats on-theme */
+  /* On dark the ink half goes lighter, not darker: #F57052 reaches
+     6.6 / 6.3 / 5.8 / 5.4 on shade-900…600. */
+  --accent-hover:    #F57052;
+  --accent-ink:      #F25939;
+  --accent-ink-hover:#F57052;
 
-  /* Desaturated for dark surfaces rather than inverted; both clear AA on
-     every surface in the ramp (danger 8.0–9.1:1, success 9.7–11.0:1). */
+  --focus-ring: var(--ink);
+
   --danger:  #F2A08C;
   --success: #9BD3A8;
-
-  /* Layout — nav height and gutter match theirs (80px / 40px). */
-  --shell:  80rem;
-  --gutter: var(--space-10);
-  --nav-h:  80px;
-  --section-y:    var(--space-32);
-  --section-y-lg: var(--space-40);
-}
-
-/* ── 2b. The cream scope ────────────────────────────────────
-   One light section in an otherwise dark page. Because components only
-   ever reference semantic tokens, flipping the page's polarity is a matter
-   of redefining that layer on a container — no component rule knows this
-   exists, and none should have to.
-
-   `.on-cream` is portable by design: it is on the testimonial band today,
-   but the placeholder quotes there may not survive to launch. If that
-   section goes, move the class to the newsletter band rather than losing
-   the page's one light moment.
-
-   Two things to know before putting it somewhere new:
-
-   - **The accent flips too.** #F25939 on cream measures 2.6:1 — unusable
-     as ink or even as a border. The deep pair below is the same hue an
-     octave down (5.2:1 / 5.7:1 on the ground). It follows that a section
-     in this scope must not contain an accent *fill* under dark ink, which
-     is the one combination these values cannot serve.
-   - **The muted floor moves.** Body copy sits at --ink-dk-66 here, not the
-     .60 the dark ramp uses; .60 only reaches 4.30:1 on cream-200. */
-.on-cream {
-  /* Redefining --text-primary is not enough on its own. `color` inherits as
-     the *resolved* value, and body already resolved it against the dark
-     ramp, so anything that merely inherits (every .h2) would keep the light
-     ink and vanish here. Re-resolving it on the scope fixes the whole
-     subtree in one line. */
-  color: var(--text-primary);
-
-  --bg-band:     var(--cream-200);
-  --bg-page:     var(--cream-200);
-  --bg-raised:   var(--cream-100);
-  --bg-raised-h: #FFFFFF;
-  --bg-chip:     var(--ink-dk-06);
-  --bg-chip-h:   var(--ink-dk-10);
-
-  --text-primary:   var(--ink-dk);
-  --text-body:      var(--ink-dk-78);
-  --text-secondary: var(--ink-dk-72);
-  --text-muted:     var(--ink-dk-66);
-  --text-on-accent: var(--cream-100);
-
-  --border-subtle: var(--ink-dk-10);
-  --border-field:  var(--ink-dk-16);
-  --border-strong: var(--ink-dk-16);
-
-  --accent:       #A8320F;   /* 5.2:1 on cream-200, 6.0:1 on cream-100 */
-  --accent-hover: #9E2E0C;   /* 5.7:1 / 6.6:1 */
-  --focus-ring:   var(--ink-dk);
 }
 
 /* ── Reset ──────────────────────────────────────────────── */
@@ -303,7 +324,8 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
    does not scroll with the content, and above the nav so no surface is
    left smooth.
 
-   Blend mode is the whole problem on a dark page. `overlay` degenerates to
+   Blend mode is the whole problem, and which mode wins depends entirely on
+   which end of the range the page sits at. `overlay` degenerates to
    `multiply` below 50% luminance, so against a #14171C ground it has no
    headroom: measured, it moved a flat surface's stdev from 0.76 to 0.83 —
    invisible. `soft-light` is the one that reads. It does lift the average
@@ -332,13 +354,24 @@ body::after {
 
 /* Page-wide film: fixed, so it does not scroll with the content, and above
    the nav so no surface is left smooth. */
+/* `multiply`, because the page is cream. This is the mirror of the problem
+   the dark page had: `soft-light` at .26 moved a flat cream surface's stdev
+   from 0.00 to 0.50 — invisible — because it compresses near the top of the
+   range just as `overlay` compressed near the bottom. Even at full opacity
+   it only reached 1.68. `multiply` has all its headroom on a light ground:
+   at .14 it reads as paper tooth rather than as noise, and it darkens the
+   ground very slightly (226 → 218 on the L channel), which is the correct
+   direction for texture on paper.
+
+   If the page ever goes dark again, this has to go back to soft-light. The
+   two are not interchangeable. */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: var(--z-grain);
-  opacity: .26;
-  mix-blend-mode: soft-light;
+  opacity: .14;
+  mix-blend-mode: multiply;
 }
 
 /* ── Type primitives ────────────────────────────────────── */
@@ -398,7 +431,7 @@ body::after {
               color var(--dur-fast) var(--ease-in-out);
 }
 .link-underline span { transition: transform var(--dur-fast) var(--ease-out); }
-.link-underline:hover { color: var(--accent-hover); border-color: var(--accent-hover); }
+.link-underline:hover { color: var(--accent-ink-hover); border-color: var(--accent-ink-hover); }
 .link-underline:hover span { transform: translateX(4px); }
 
 /* ── Buttons ────────────────────────────────────────────────
@@ -434,7 +467,7 @@ body::after {
   color: var(--text-primary);
   border-color: var(--border-strong);
 }
-.btn--ghost:hover { background: var(--bg-chip); border-color: var(--accent); }
+.btn--ghost:hover { background: var(--bg-chip); border-color: var(--accent-ink); }
 
 .btn--sm { min-height: 44px; padding: var(--space-3) var(--space-6); }
 .btn--lg { min-height: 60px; padding: var(--space-5) var(--space-8); }
@@ -493,11 +526,18 @@ body::after {
 }
 
 /* Solid once past the hero — and while a panel is open, since a
-   transparent bar above an opaque panel reads as a mistake. */
+   transparent bar above an opaque panel reads as a mistake.
+
+   This is also where the bar leaves the dark scope. Over the hero it is
+   light type on a photo; past it, it is a cream bar and has to carry the
+   page's ink. The `all: unset`-style reset is not available for custom
+   properties, so the scope is simply not applied to the bar — .nav carries
+   .on-dark only through its ::before scrim, and the token values below
+   come from :root. */
 .nav[data-scrolled],
 .nav[data-menu-open],
 .nav[data-nav-open] {
-  background: rgba(20, 23, 28, .55);
+  background: rgba(244, 242, 236, .72);
   backdrop-filter: blur(18px) saturate(1.4);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   border-bottom-color: var(--border-subtle);
@@ -508,7 +548,7 @@ body::after {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .nav[data-scrolled],
-  .nav[data-menu-open] { background: rgba(20, 23, 28, .94); }
+  .nav[data-menu-open] { background: rgba(244, 242, 236, .97); }
 }
 
 .nav__brand {
@@ -537,7 +577,7 @@ body::after {
   font-weight: 500;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
-  color: var(--ink-85);
+  color: var(--text-strong);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-in-out);
 }
@@ -551,7 +591,7 @@ body::after {
 .nav__item > a:hover,
 .nav__trigger:hover,
 .nav__email:hover,
-.nav__trigger[aria-expanded="true"] { color: var(--accent-hover); }
+.nav__trigger[aria-expanded="true"] { color: var(--accent-ink-hover); }
 
 .nav__item > a::after,
 .nav__trigger::after {
@@ -596,7 +636,7 @@ body::after {
   font-weight: 500;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
-  color: var(--ink-85);
+  color: var(--text-strong);
 }
 .nav__burger-bars { display: grid; gap: 5px; width: 20px; }
 .nav__burger-bars i {
@@ -605,7 +645,7 @@ body::after {
   background: currentColor;
   transition: transform var(--dur-base) var(--ease-out);
 }
-.nav__burger[aria-expanded="true"] { color: var(--accent-hover); }
+.nav__burger[aria-expanded="true"] { color: var(--accent-ink-hover); }
 .nav__burger[aria-expanded="true"] i:first-child { transform: translateY(3.25px) rotate(45deg); }
 .nav__burger[aria-expanded="true"] i:last-child  { transform: translateY(-3.25px) rotate(-45deg); }
 
@@ -626,7 +666,7 @@ body::after {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   background: var(--bg-band);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, .5);
+  box-shadow: 0 24px 60px rgba(22, 23, 26, .18);
   opacity: 0;
   visibility: hidden;
   /* Their timing, scraped from the live site: the shell settles over 750ms
@@ -700,11 +740,11 @@ body::after {
   font-size: var(--text-lg);
   font-weight: 400;
   letter-spacing: -.01em;
-  color: var(--ink-85);
+  color: var(--text-strong);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-in-out);
 }
-.panel__list a:hover { color: var(--accent-hover); }
+.panel__list a:hover { color: var(--accent-ink-hover); }
 .panel__list--numbered em {
   font-style: normal;
   font-size: var(--text-2xs);
@@ -731,7 +771,7 @@ body::after {
 .panel__facts u {
   text-decoration: none;
   font-size: var(--text-md);
-  color: var(--ink-85);
+  color: var(--text-strong);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -755,7 +795,7 @@ body::after {
   margin-bottom: var(--space-3);
 }
 .panel__headline span { transition: transform var(--dur-fast) var(--ease-out); }
-.panel__headline:hover { color: var(--accent-hover); }
+.panel__headline:hover { color: var(--accent-ink-hover); }
 .panel__headline:hover span { transform: translateX(4px); }
 .panel__headline--sm {
   margin-top: var(--space-5);
@@ -788,7 +828,7 @@ body::after {
   border-radius: var(--radius-pill);
   background: var(--bg-chip);
   font-size: var(--text-xs);
-  color: var(--ink-85);
+  color: var(--text-strong);
   text-decoration: none;
   transition: background-color var(--dur-base) var(--ease-in-out),
               color var(--dur-base) var(--ease-in-out);
@@ -804,9 +844,9 @@ body::after {
   border-radius: var(--radius-pill);
   background: var(--bg-chip);
   font-size: var(--text-xs);
-  color: var(--ink-85);
+  color: var(--text-strong);
 }
-.panel__pills a:hover { background: var(--bg-chip-h); color: var(--accent-hover); }
+.panel__pills a:hover { background: var(--bg-chip-h); color: var(--accent-ink-hover); }
 
 .panel__promo { display: block; text-decoration: none; }
 .panel__promo img {
@@ -845,7 +885,7 @@ body::after {
     padding: var(--space-4) var(--gutter) var(--space-8);
     background: var(--bg-band);
     border-top: 1px solid var(--border-subtle);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, .5);
+    box-shadow: 0 24px 60px rgba(22, 23, 26, .18);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
@@ -949,14 +989,21 @@ body::after {
      ~.26 in the corners.
 
      The bottom ramp is a third job: the photo has to dissolve into the
-     page rather than stop at an edge. It reaches full --bg-page opacity
-     at 100%, so the last band of hero *is* the next section's colour and
-     there is no seam to see. Anything short of 1 leaves a visible step —
-     .88 did. */
+     page rather than stop at an edge, and since the flip that page is
+     cream. So the ramp runs dark-over-photo for most of its length and
+     then crosses to opaque --cream-200 at 100%, which is why it is a
+     separate layer — one gradient cannot darken and then lighten without
+     going muddy through the middle. The last band of hero *is* the next
+     section's colour, so there is no seam. Anything short of full opacity
+     leaves a visible step. */
   background:
+    linear-gradient(180deg, rgba(228, 226, 220, 0) 62%,
+                            rgba(228, 226, 220, .35) 82%,
+                            rgba(228, 226, 220, .88) 94%,
+                            rgba(228, 226, 220,  1) 100%),
     linear-gradient(180deg, rgba(20, 23, 28, .52)  0%, rgba(20, 23, 28, .26) 30%,
-                            rgba(20, 23, 28, .34) 62%, rgba(20, 23, 28, .74) 86%,
-                            rgba(20, 23, 28,  1) 100%),
+                            rgba(20, 23, 28, .34) 62%, rgba(20, 23, 28, .50) 88%,
+                            rgba(20, 23, 28, .55) 100%),
     radial-gradient(62% 54% at 50% 50%, rgba(15, 18, 22, .62)  0%,
                                         rgba(15, 18, 22, .48) 62%,
                                         rgba(15, 18, 22, 0)  100%);
@@ -989,7 +1036,7 @@ body::after {
 .hero__note {
   margin-top: var(--space-6);
   font-size: var(--text-md);
-  color: var(--ink-85);
+  color: var(--text-strong);
 }
 
 /* ── Section frames ─────────────────────────────────────── */
@@ -1014,21 +1061,28 @@ body::after {
    Their "Join millions of entrepreneurs" band, on Jared's argument. Sits
    on --bg-page rather than --bg-band on purpose: the hero dissolves into
    the page colour, and a band here would put a hard edge immediately
-   under that fade and undo it. */
-.stats { text-align: center; }
+   under that fade and undo it.
+
+   Deliberately half the height it first ran at. It is a preamble, not a
+   destination — its job is to land the problem and get out of the way of
+   "What I do", which is the section people actually came for. Every
+   measure below is halved from the original: the figure clamp, the lead's
+   margin, the block padding. */
+.stats { padding-block: var(--space-16); }
+.stats__grid + * { margin-top: 0; }
 
 .stats__lead {
-  max-width: 46ch;
-  margin: 0 auto var(--space-20);
+  max-width: 52ch;
+  margin: 0 auto var(--space-10);
   font-size: var(--text-md);
-  line-height: var(--leading-loose);
+  line-height: var(--leading-body);
   color: var(--text-muted);
 }
 
 .stats__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-12);
+  gap: var(--space-8);
   list-style: none;
 }
 
@@ -1036,11 +1090,11 @@ body::after {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  font-size: clamp(3.25rem, 2rem + 5.5vw, 6rem);
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
   font-weight: var(--weight-display);
   line-height: 1;
   letter-spacing: var(--track-display);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-3);
 }
 
 /* Tabular figures are not decoration here. The number counts up from 0,
@@ -1048,38 +1102,51 @@ body::after {
    shuffling the row for the whole animation. */
 .stat__num { font-variant-numeric: tabular-nums; }
 
-.stat__unit { color: var(--accent); }
-
 .stat__label {
-  max-width: 22ch;
-  margin: 0 auto var(--space-3);
-  font-size: var(--text-lg);
+  max-width: 24ch;
+  margin: 0 auto var(--space-2);
+  font-size: var(--text-md);
   font-weight: 400;
   line-height: var(--leading-snug);
-  letter-spacing: -.02em;
+  letter-spacing: -.01em;
 }
 
 .stat__source {
-  max-width: 26ch;
+  max-width: 28ch;
   margin-inline: auto;
   font-size: var(--text-2xs);
   line-height: var(--leading-body);
   color: var(--text-muted);
 }
 
-/* The figure and the unit resolve after the card has arrived, so the
-   count-up is the thing you notice rather than one motion among three. */
+/* Hover, in the same language as the Process steps and service cards: the
+   words take the accent. The figure only lifts — the numeral stays page
+   ink, because on cream the orange is a 2.6:1 colour and a percentage is
+   the one thing on the page you actually have to read. The unit can go
+   accent with the label; it is a glyph, not information. */
+.stat__figure,
+.stat__unit,
+.stat__label { transition: color var(--dur-fast) var(--ease-in-out),
+                           transform var(--dur-base) var(--ease-out); }
+
+.stat:hover .stat__figure { transform: translateY(-4px); }
+.stat:hover .stat__label,
+.stat:hover .stat__unit { color: var(--accent-ink-hover); }
+
+/* The unit resolves after the card has arrived, so the count-up is the
+   thing you notice rather than one motion among three. */
 .js .stat .stat__unit {
   opacity: 0;
   transform: translateY(.12em);
   transition: opacity var(--dur-base) var(--ease-out) var(--dur-base),
-              transform var(--dur-base) var(--ease-out) var(--dur-base);
+              transform var(--dur-base) var(--ease-out) var(--dur-base),
+              color var(--dur-fast) var(--ease-in-out);
 }
 .js .stat.is-in .stat__unit { opacity: 1; transform: none; }
 
 @media (max-width: 860px) {
-  .stats__grid { grid-template-columns: 1fr; gap: var(--space-14); }
-  .stats__lead { margin-bottom: var(--space-12); }
+  .stats__grid { grid-template-columns: 1fr; gap: var(--space-10); }
+  .stats__lead { margin-bottom: var(--space-8); }
 }
 
 /* ── What I do ──────────────────────────────────────────────
@@ -1120,8 +1187,8 @@ body::after {
 /* Third of the set — Process steps, service cards, these. No numeral to
    pick out here, so the rule and the heading carry it alone. */
 .intro__point h3 { transition: color var(--dur-fast) var(--ease-in-out); }
-.intro__point:hover { border-top-color: var(--accent); }
-.intro__point:hover h3 { color: var(--accent-hover); }
+.intro__point:hover { border-top-color: var(--accent-ink); }
+.intro__point:hover h3 { color: var(--accent-ink-hover); }
 
 .intro__point h3 {
   font-size: var(--text-lg);
@@ -1205,13 +1272,13 @@ body::after {
    one behaviour rather than three. */
 .card:hover {
   background: var(--bg-raised-h);
-  border-color: var(--accent);
+  border-color: var(--accent-ink);
   transform: translateY(-4px);
 }
 .card__num,
 .card__title { transition: color var(--dur-fast) var(--ease-in-out); }
 .card:hover .card__num,
-.card:hover .card__title { color: var(--accent-hover); }
+.card:hover .card__title { color: var(--accent-ink-hover); }
 
 .card__num {
   /* 22px at weight 500 does not qualify for the large-text 3:1 exemption
@@ -1249,7 +1316,7 @@ body::after {
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background: var(--bg-chip);
-  color: var(--ink-85);
+  color: var(--text-strong);
   font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: -.01em;
@@ -1257,7 +1324,7 @@ body::after {
   transition: background-color var(--dur-fast) var(--ease-in-out),
               color var(--dur-fast) var(--ease-in-out);
 }
-.showcase__tab:hover { background: var(--bg-chip-h); color: var(--accent-hover); }
+.showcase__tab:hover { background: var(--bg-chip-h); color: var(--accent-ink-hover); }
 .showcase__tab[aria-current="true"] {
   background: var(--accent);
   color: var(--text-on-accent);
@@ -1358,7 +1425,7 @@ body::after {
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-xs);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+  box-shadow: 0 24px 60px rgba(22, 23, 26, .14);
 }
 .slide__shot { width: 100%; height: auto; display: block; }
 
@@ -1437,9 +1504,9 @@ body::after {
 .step { transition: color var(--dur-fast) var(--ease-in-out),
                     border-color var(--dur-fast) var(--ease-in-out); }
 
-.step:hover { border-top-color: var(--accent); }
+.step:hover { border-top-color: var(--accent-ink); }
 .step:hover .step__num,
-.step:hover .step__title { color: var(--accent-hover); }
+.step:hover .step__title { color: var(--accent-ink-hover); }
 
 .step__num {
   display: inline-flex;
@@ -1550,7 +1617,7 @@ body::after {
   transition: color var(--dur-fast) var(--ease-in-out),
               border-color var(--dur-fast) var(--ease-in-out);
 }
-.marquee__toggle:hover { color: var(--text-primary); border-color: var(--accent); }
+.marquee__toggle:hover { color: var(--text-primary); border-color: var(--accent-ink); }
 
 .quote {
   flex: none;
@@ -1574,8 +1641,8 @@ body::after {
 }
 /* Unfilled avatar slot — a calm tile, not a dashed box. Lived with the work
    grid until that became a carousel; the testimonials still need it.
-   Tokens, not the rgba it used to carry: this sits inside .on-cream now and
-   a hard-coded light ink disappeared against it. */
+   Tokens, not the rgba it used to carry: the page went cream and a
+   hard-coded light ink disappeared against it. */
 .slot {
   display: grid;
   place-items: center;
@@ -1642,10 +1709,10 @@ input[type="email"] {
               background-color var(--dur-fast) var(--ease-in-out);
 }
 input::placeholder { color: var(--text-muted); }
-input:hover { border-color: var(--ink-40); }
+input:hover { border-color: var(--border-strong); }
 input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--accent-ink);
   background: var(--bg-chip);
 }
 input:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }

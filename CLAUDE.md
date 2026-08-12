@@ -43,39 +43,29 @@ licensed grotesque with a true 300 weight.
 
 ## Accent
 
-The one saturated colour on the page: `--accent` `#F25939`, `--accent-hover`
-`#F57052`.
+`--accent` `#F25939` and `--accent-hover` `#E04A2B` are **fills**.
+`--accent-ink` `#97290A` and `--accent-ink-hover` `#7F2007` are **draws**.
 
-Jared's pick, arrived at after two rounds — `#E8703A` (OKLCH chroma .164)
-read dusty, `#FF6B2C` (.195) was the correction, and this is where he
-landed. Chroma is what makes a colour read as chosen rather than as a
-tinted grey, so that is the axis to reason on if it ever moves again.
+**The split is not tidiness, it is arithmetic.** `#F25939` is a fine fill —
+`--text-on-accent` on it measures 5.6:1, and a button does not care what is
+behind it. As ink on cream the same value is 2.6:1, below even the 3:1
+non-text bar. One token could serve both only while the page was dark. Ask
+which half you want by asking whether the colour is a background.
 
-It does two jobs and has to clear 4.5:1 for both — a fill under
-`--text-on-accent` (dark ink) and hover ink on the surface ramp. Those are
-the same pair, so one measurement covers both: `#F25939` reaches
-5.6 / 5.4 / 4.9 / **4.6** on shade-900…600, `#F57052` reaches 6.6 / 6.3 /
-5.8 / 5.4.
+`--accent-ink` is a notch darker than the contrast tables alone require.
+`#A8320F` clears 4.5:1 on paper but only by 4%, and the grain film costs
+about 10% at the worst pixel — measured, it landed at 4.10:1 on
+`--cream-300`. **Margin, not the bare minimum, is the rule for any value
+with a texture composited over it.** Current worst-pixel figures under the
+film: 4.79 / 5.29 / 6.12 on cream-300/200/100.
 
-**Watch that 4.6.** `--shade-600` (the chip-hover surface) is always the
-binding one, and this value has almost no headroom left there. Darkening or
-desaturating it any further breaks AA on shade-600 before anywhere else, so
-measure against that surface first, not the page ground.
+Everything accented comes off those four tokens — buttons and the active
+carousel pill from the fill pair, every hover and focus border from the ink
+pair. **Never introduce a fifth value.**
 
-Everything accented comes off those two tokens — buttons, the active
-carousel pill, the skip link, input focus borders, nav and panel link
-hover, and the three hover states under "The accent hover" below.
-**Never introduce a second accent value**; if a new component needs orange
-it references the token.
-
-`--accent` is the resting/fill value and `--accent-hover` the brighter ink
-value. Where both appear in one component (a Process step: rule in
-`--accent`, type in `--accent-hover`) that split is what keeps the type
-legible while the rule still reads as the same colour.
-
-`--focus-ring` deliberately stays `--ink`. An on-theme focus ring is
-weaker than a maximum-contrast one, and the ring is an accessibility
-affordance before it is a brand surface.
+`--focus-ring` deliberately stays ink. An on-theme focus ring is weaker
+than a maximum-contrast one, and the ring is an accessibility affordance
+before it is a brand surface.
 
 ## Grain
 
@@ -86,62 +76,76 @@ Two passes of one SVG turbulence tile.
   image underneath with luminance to push against.
 - `body::after` is the page-wide film: `position: fixed` (it should not
   scroll with the content) at `--z-grain` 60, above the nav so no surface
-  is left smooth. `soft-light` at `.26`.
+  is left smooth. **`multiply` at `.14`.**
 
-**Blend mode is the whole problem on a dark page.** `overlay` degenerates
-to `multiply` below 50% luminance, so against the `#14171C` ground it has
-no headroom — measured, it moved a flat surface's stdev from 0.76 to 0.83,
-which is invisible. `soft-light` is the one that reads. It lifts the mean
-slightly (23 → 28 on the L channel) because grain on near-black can only
-work by adding light, but the floor stays put, so blacks stay black and
-the specks are what you see. `normal` is worse than either: it washes the
-page (23 → 34 at .14).
+**Blend mode is the whole problem, and which mode wins depends entirely on
+which end of the range the page sits at.** Both failures have now been
+measured on this repo:
 
-Opacity is capped by text, not by looks — the film composites over live
-copy. Measured on rendered pixels at 1st/99th percentile, it costs
-nothing at `.26` (label 4.42 → 4.70, body 7.47 → 7.68; it slightly helps,
-because it lifts the ink end more than the ground). Raising it further
-starts eating the `--text-muted` floor. Re-measure if you change it.
+| Page | Mode | Flat-surface stdev | Verdict |
+|---|---|---|---|
+| dark `#14171C` | `overlay` .04 | 0.76 → 0.83 | invisible |
+| dark `#14171C` | `soft-light` .26 | 0.76 → 2.06 | reads |
+| cream `#E4E2DC` | `soft-light` .26 | 0.00 → 0.50 | invisible |
+| cream `#E4E2DC` | `soft-light` 1.0 | 0.00 → 1.68 | still weak |
+| cream `#E4E2DC` | `multiply` .14 | 0.00 → ~2.0 | reads |
 
-## The cream scope
+`overlay` degenerates to `multiply` below 50% luminance and had no headroom
+on the dark ground; `soft-light` compresses near the *top* of the range and
+had none on cream. `multiply` has all its headroom on a light ground, and
+darkening slightly (226 → 218 on the L channel) is the right direction for
+texture on paper.
 
-One light section in an otherwise dark page, lifted from the Meridian
-concept: `--cream-200` `#E4E2DC` is that concept's own card value,
-`--cream-100` `#F4F2EC` sits above it, and `--ink-dk` `#16171A` is its ink.
-Meridian's `--paper` `#FAFAF8` was too close to white to read as a colour
-at all, which is why the ground is the darker of the two.
+**If the page ever goes dark again, this must go back to `soft-light`.**
+The two are not interchangeable, and the failure mode in both directions is
+silent — the film simply stops being visible.
 
-`.on-cream` works by redefining the **semantic** layer on a container. No
-component rule knows the scope exists, and none should have to — that
-one-directional token architecture is exactly what makes a polarity flip a
-twenty-line change instead of a rewrite.
+The film composites over live text, which is what caps its opacity and what
+forced `--accent-ink` a step darker. Re-measure on rendered pixels, not
+computed styles: a blend layer is invisible to a contrast checker that
+reads the CSSOM.
 
-Three things bite, all already hit:
+## Polarity
 
-- **`color` must be re-resolved on the scope.** It inherits as the
-  *computed* value, and `body` already resolved `--text-primary` against
-  the dark ramp, so every `.h2` — which only inherits — stayed light ink
-  and vanished. `.on-cream { color: var(--text-primary) }` fixes the whole
-  subtree. Elements that set their own `color` (labels, `.section__sub`)
-  were never affected, which is what makes the bug look random.
-- **The accent flips too.** `#F25939` on cream measures 2.6:1 — unusable as
-  ink and below even the 3:1 non-text bar. The scope swaps in `#A8320F` /
-  `#9E2E0C` (5.2:1 / 5.7:1 on the ground). It follows that **a section in
-  this scope must not contain an accent fill under dark ink**, which is the
-  one combination these values cannot serve. Today it contains no buttons.
-- **The muted floor moves.** Body copy sits at `--ink-dk-66` here, not the
-  `.60` the dark ramp uses; `.60` only reaches 4.30:1 on `--cream-200`.
+**The page is cream.** `--cream-200` `#E4E2DC` is the ground, `--cream-300`
+`#DAD7CF` bands, `--cream-100` `#F4F2EC` raised cards, `--ink-dk` `#16171A`
+the ink. All four come from the Meridian concept, which is where the colour
+entered this project.
 
-The grain film composites over this too. Measured on solid swatches, it
-costs about 4% at the median and 10% at the worst pixel — accent ink on the
-cream ground, the tightest pair, goes 5.18 → 4.87 median / 4.51 worst. That
-still clears, but it is the value with the least room, so re-measure it
-rather than the heading if anything here changes.
+The dark palette is not gone — it is `.on-dark`, scoped to the two places
+that still need it: the **hero**, whose photo is dark and carries light
+type, and the **nav** for as long as it floats over that hero. `.nav` is in
+that selector list rather than carrying the class, because it has to leave
+the scope again; the light values are re-declared on `.nav[data-scrolled]`
+and the two open states at one notch more specificity, so the bar flips
+back to page ink the moment it stops floating. Grouping those selectors
+onto the `:root` block is what keeps both palettes written once.
 
-`.on-cream` is portable by design. It is on the testimonial band today, and
-those quotes are placeholders that may not survive to launch — if the
-section goes, move the class to the newsletter band rather than losing the
-page's one light moment.
+Because components reference only semantic tokens, none of them know any of
+this happened. That one-directional architecture is the whole reason a
+polarity flip was a token change plus five fixes rather than a rewrite.
+
+Those five, all found the hard way:
+
+- **`color` must be re-resolved wherever the scope changes.** It inherits
+  as the *computed* value, so `body` had already resolved `--text-primary`
+  against one ramp and everything that merely inherits (every `.h2`) kept
+  it and vanished. Elements that set their own colour were fine, which is
+  what makes the bug look random.
+- **Primitives leaking into components break instantly.** `.hero__note`,
+  `.panel__facts u` and `.showcase__tab` all reached for raw `--ink-85`,
+  which is invisible on cream. They now use `--text-strong`. This is the
+  concrete cost of the "components reference semantic tokens only" rule
+  being broken — it was harmless until the day it wasn't.
+- **The grain film's blend mode had to invert.** See below.
+- **The hero scrim needs a second gradient**, crossing to opaque
+  `--cream-200` over the last 38%. One gradient cannot darken and then
+  lighten without going muddy through the middle.
+- **Shadows.** `rgba(0,0,0,.5)` under a panel is a dark-page value; on
+  paper it reads as dirt. Now `rgba(22,23,26,.18)`.
+
+The muted floor moves with the polarity: `--ink-dk-66` on cream (`.60` only
+reaches 4.12:1 on `--cream-300`), `--ink-60` on dark.
 
 ## The case (stats)
 
@@ -164,6 +168,17 @@ If a figure cannot be traced to a named study with a date, it does not go
 here. Note in particular that the widely-repeated **"75% judge credibility
 on design" is a misattribution** — Stanford's actual finding is 46.1%.
 It is quoted correctly here; don't let anyone "improve" it.
+
+**The section is deliberately half the height it first ran at** — figure
+clamp, lead margin and block padding all halved. It is a preamble, not a
+destination: its job is to land the problem and get out of the way of
+"What I do", which is the section people actually came for. If it grows
+back, that is a regression.
+
+**Hover** follows the same language as the Process steps and service cards:
+the label and the `%` take `--accent-ink-hover`, and the figure only lifts.
+The numeral itself stays page ink — on cream the orange is a 2.6:1 colour
+and a percentage is the one thing here you actually have to read.
 
 **The count-up.** Fires once, the first time each figure crosses into view,
 and never again — a number that re-runs every time you pass it stops being
@@ -410,6 +425,9 @@ master), served at 960/1600/2400w. The portrait now lives in About — one
 photo each, doing different jobs. Don't put the portrait back in the hero;
 a 2:3 crop fights a full-bleed hero at every anchor point.
 
+The hero is the one part of the page still on the dark palette — it carries
+`.on-dark`, since the flatlay is dark and the type over it is light.
+
 **The scrim is measured, never eyeballed.** Sample the *bare* photo with
 `.hero__scrim` and `.grain` hidden and the text set to `visibility: hidden`,
 find the brightest pixel inside each text box, then solve for the alpha that
@@ -424,12 +442,18 @@ only the copy footprint (~.71 combined). Swapping the photo means
 re-measuring both — the automated contrast pass skips anything sitting on an
 image, so it will not catch a regression here.
 
-**The linear pass's last stop must be alpha 1**, not .88 as it was. The
-hero has to dissolve into the page rather than stop at an edge, and the
-only way there is no seam is if the bottom band of hero *is* `--bg-page`.
-Anything short of 1 leaves a visible step. Verify by sampling a pixel
-column across the join — adjacent rows should differ by ≤1/255 (they
-currently differ by 1, at every width).
+**The bottom must dissolve into `--bg-page`, and since the flip that page
+is cream.** That takes a *second* gradient layer crossing to opaque
+`--cream-200` over the last 38% — one gradient cannot darken and then
+lighten without going muddy through the middle. The last band of hero is
+exactly the next section's colour, so there is no seam; anything short of
+full opacity leaves a visible step.
+
+Current measurements on the cream scrim, sampled from the rendered plate
+with the type hidden: headline 4.4:1 at 1440 and 6.4:1 at 390 (large text,
+3:1 required), note 6.4 / 7.8, nav 11.0 / 7.6. The headline sits lowest
+because the cream ramp begins lightening the plate below it — that is the
+number to re-check first if the gradient stops move.
 
 ## Testimonial marquee
 
