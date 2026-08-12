@@ -344,7 +344,7 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
    it. It was calibrated by measuring: slope .70 about centre .775 lands
    the ground at +1.5 levels of untextured, which is nothing. If you change
    --cream-200, re-measure rather than recompute. */
-:root { --tex: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='t' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.35' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncR type='linear' slope='0.700' intercept='0.425'/><feFuncG type='linear' slope='0.700' intercept='0.425'/><feFuncB type='linear' slope='0.700' intercept='0.425'/><feFuncA type='linear' slope='0' intercept='1'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23t)'/></svg>"); }
+:root { --tex: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='t' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncR type='linear' slope='0.380' intercept='0.572'/><feFuncG type='linear' slope='0.380' intercept='0.572'/><feFuncB type='linear' slope='0.380' intercept='0.572'/><feFuncA type='linear' slope='0' intercept='1'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23t)'/></svg>"); }
 
 body,
 .band,
