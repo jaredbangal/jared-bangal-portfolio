@@ -43,29 +43,26 @@ licensed grotesque with a true 300 weight.
 
 ## Accent
 
-`--accent` `#F25939` and `--accent-hover` `#E04A2B` are **fills**.
-`--accent-ink` `#97290A` and `--accent-ink-hover` `#7F2007` are **draws**.
+Maroon: `--accent` / `--accent-ink` `#7F2007`, `--accent-hover` /
+`--accent-ink-hover` `#5E1704`. `--text-on-accent` is **white** — the fill
+is dark now.
 
-**The split is not tidiness, it is arithmetic.** `#F25939` is a fine fill —
-`--text-on-accent` on it measures 5.6:1, and a button does not care what is
-behind it. As ink on cream the same value is 2.6:1, below even the 3:1
-non-text bar. One token could serve both only while the page was dark. Ask
-which half you want by asking whether the colour is a background.
+Deep enough that one value does both jobs, which the orange before it could
+not: as a fill it carries white at 9.9:1, as ink on cream it measures
+6.9 / 7.7 / 8.9 on cream-300/200/100. The fill/draw token split is kept
+because the *rules* still distinguish a background from a draw, but on this
+palette both halves resolve to the same pair. **Restore two distinct pairs
+if the accent ever goes light again** — a light accent cannot be ink on
+paper, and that is the trap the previous orange fell into (`#F25939` was
+5.6:1 as a fill and 2.6:1 as ink).
 
-`--accent-ink` is a notch darker than the contrast tables alone require.
-`#A8320F` clears 4.5:1 on paper but only by 4%, and the grain film costs
-about 10% at the worst pixel — measured, it landed at 4.10:1 on
-`--cream-300`. **Margin, not the bare minimum, is the rule for any value
-with a texture composited over it.** Current worst-pixel figures under the
-film: 4.79 / 5.29 / 6.12 on cream-300/200/100.
+All that headroom also means the grain film, which costs about 10% at the
+worst pixel, is no longer a binding constraint here. It was, at orange.
 
-Everything accented comes off those four tokens — buttons and the active
-carousel pill from the fill pair, every hover and focus border from the ink
-pair. **Never introduce a fifth value.**
-
-`--focus-ring` deliberately stays ink. An on-theme focus ring is weaker
-than a maximum-contrast one, and the ring is an accessibility affordance
-before it is a brand surface.
+Everything accented comes off those tokens. **Never introduce a fifth
+value.** `--focus-ring` deliberately stays ink: an on-theme focus ring is
+weaker than a maximum-contrast one, and the ring is an accessibility
+affordance before it is a brand surface.
 
 ## Grain
 
@@ -170,7 +167,10 @@ on design" is a misattribution** — Stanford's actual finding is 46.1%.
 It is quoted correctly here; don't let anyone "improve" it.
 
 **The section is deliberately half the height it first ran at** — figure
-clamp, lead margin and block padding all halved. It is a preamble, not a
+clamp, lead margin and block padding all halved — and the grid is capped at
+56rem rather than running the full shell. At shell width the three figures
+sat a third of a screen apart and read as three separate facts; the
+argument only lands when they can be taken in together. It is a preamble, not a
 destination: its job is to land the problem and get out of the way of
 "What I do", which is the section people actually came for. If it grows
 back, that is a regression.
@@ -368,6 +368,11 @@ clicking a pill scrolls the track; an observer reads the scroll position
 back so the pills stay honest when you swipe. Native scroll-snap does the
 moving, so the track still works with `main.js` removed.
 
+**The cards carry a shadow, and it is load-bearing.** On the dark page they
+separated by luminance alone. On cream they do not — Meridian's `#E4E2DC`
+card *is* the page colour, so without an edge it dissolves into it. Two
+layers: a tight one for the contact edge, a wide soft one for the lift.
+
 **The track loops.** JS clones the last two slides before the first and the
 first two after the last, so a neighbour always peeks on both sides —
 Northline sits to the left of Botanica, Botanica to the right of Northline.
@@ -420,40 +425,41 @@ position instead.
 
 ## Hero imagery
 
-The hero is a flatlay of hammers and files on dark wood (3:2, 4460×2973
-master), served at 960/1600/2400w. The portrait now lives in About — one
-photo each, doing different jobs. Don't put the portrait back in the hero;
-a 2:3 crop fights a full-bleed hero at every anchor point.
+A knolled flatlay of sewing and craft tools on white cloth (3:2,
+4460×2973 master), served at 960/1600/2400w. The portrait lives in About —
+one photo each, doing different jobs. Don't put the portrait back in the
+hero; a 2:3 crop fights a full-bleed hero at every anchor point.
 
-The hero is the one part of the page still on the dark palette — it carries
-`.on-dark`, since the flatlay is dark and the type over it is light.
+**The hero is light, and so is the type problem.** This replaced a dark
+flatlay, and every polarity in the section inverted with it: the copy is
+page ink, the scrim *lifts* the plate instead of sinking it, the nav's
+scrim went from dark-protecting-light to light-protecting-dark, and the
+hero-local grain went `overlay` → `multiply`. If the photo ever changes
+again, ask which end of the range it sits at before touching an alpha.
 
-**The scrim is measured, never eyeballed.** Sample the *bare* photo with
-`.hero__scrim` and `.grain` hidden and the text set to `visibility: hidden`,
-find the brightest pixel inside each text box, then solve for the alpha that
-clears 4.5:1. This flatlay's pale tool handles peak at rgb(239,238,234) — it
-needs a *heavier* scrim than the dark-jacket portrait did, which is the
-opposite of what the image looks like it needs. Current measurements:
-headline 5.3:1, note 4.6:1, nav 7.3:1 desktop; 5.0/9.2/8.7 mobile.
+**The scrim is solved, never eyeballed.** The method, which is repeatable:
 
-The two gradient layers do different jobs. The linear pass stays light so
-the flatlay reads at the edges (~.26 in the corners); the radial pass sinks
-only the copy footprint (~.71 combined). Swapping the photo means
-re-measuring both — the automated contrast pass skips anything sitting on an
-image, so it will not catch a regression here.
+1. Hide `.hero__scrim`, `.grain`, `body::after` and `.nav::before`, and set
+   the type to `visibility: hidden`.
+2. Screenshot, and take the **darkest** pixel inside each text box — the
+   worst case for dark ink. (On the old dark hero it was the brightest.)
+3. Solve for the cream alpha that brings that pixel far enough for the
+   text's own colour to clear its ratio.
 
-**The bottom must dissolve into `--bg-page`, and since the flip that page
-is cream.** That takes a *second* gradient layer crossing to opaque
-`--cream-200` over the last 38% — one gradient cannot darken and then
-lighten without going muddy through the middle. The last band of hero is
-exactly the next section's colour, so there is no seam; anything short of
-full opacity leaves a visible step.
+That gave: headline 0.29, note 0.41, nav 0.00 at 1440; headline 0.27, note
+0.40, nav trigger 0.40 at 390. The scrim carries margin over those, since
+the grain film composites on top. Composited result: headline 6.3:1 against
+a 3:1 bar, note 6.2–6.8:1, nav 11–12:1.
 
-Current measurements on the cream scrim, sampled from the rendered plate
-with the type hidden: headline 4.4:1 at 1440 and 6.4:1 at 390 (large text,
-3:1 required), note 6.4 / 7.8, nav 11.0 / 7.6. The headline sits lowest
-because the cream ramp begins lightening the plate below it — that is the
-number to re-check first if the gradient stops move.
+**Three gradient layers, three jobs, and they must stay separate:** the
+bottom dissolve into `--cream-200` so the photo ends in the page colour
+rather than at an edge; a radial plate over the copy footprint only; and a
+light top pass so the nav reads. Eyeballing one combined gradient is how
+the first attempt washed the flatlay out until the tools were barely
+visible — the numbers above are what pulled it back.
+
+The automated contrast pass skips anything sitting on an image, so it will
+not catch a regression here. Re-run the solver by hand.
 
 ## Testimonial marquee
 

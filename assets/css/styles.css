@@ -124,10 +124,7 @@
    components reference only this layer — which is what makes the polarity
    itself swappable: .on-dark below redefines the same names and every
    component inside flips with no rule of its own knowing why. */
-:root,
-.nav[data-scrolled],
-.nav[data-menu-open],
-.nav[data-nav-open] {
+:root {
   color: var(--text-primary);
   --bg-page:     var(--cream-200);
   --bg-band:     var(--cream-300);
@@ -141,32 +138,25 @@
   --text-secondary: var(--ink-dk-72);
   --text-muted:     var(--ink-dk-66);   /* AA floor */
   --text-strong:    var(--ink-dk-78);   /* a step above body, still not primary */
-  --text-on-accent: var(--shade-900);
 
   --border-subtle: var(--ink-dk-10);
   --border-field:  var(--ink-dk-16);
   --border-strong: var(--ink-dk-16);
 
-  /* Accent, in two halves — and the split is not optional.
+  /* Maroon. Deep enough that it does both jobs from one value, which the
+     orange it replaced could not: as a fill it carries white at 9.9:1, as
+     ink on cream it measures 6.9 / 7.7 / 8.9 on cream-300/200/100. The
+     --accent / --accent-ink split below is kept because the *rules* still
+     distinguish fill from draw, but on this palette both halves resolve to
+     the same pair. Restore two distinct pairs if the accent ever goes light
+     again — a light accent cannot be ink on paper. */
+  --accent:          #7F2007;
+  --accent-hover:    #5E1704;
+  --accent-ink:      #7F2007;
+  --accent-ink-hover:#5E1704;
 
-     #F25939 is a fine *fill*: --text-on-accent on it measures 5.6:1, and a
-     button does not care what is behind it. As *ink on cream* the same
-     value is 2.6:1 — below even the 3:1 non-text bar. One token could
-     serve both only while the page was dark.
-
-     So: --accent / --accent-hover fill, --accent-ink / --accent-ink-hover
-     draw. Reach for the fill pair only when the colour is a background.
-
-  --accent:          #F25939;   /* 5.6:1 under --text-on-accent */
-  --accent-hover:    #E04A2B;   /* 4.6:1 under --text-on-accent */
-     --accent-ink is a notch darker than the contrast tables alone would
-     require. #A8320F clears 4.5:1 on paper but only by 4%, and the grain
-     film costs about 10% at the worst pixel — measured, it landed at
-     4.10:1 on --cream-300. Margin, not the bare minimum, is the rule for
-     any value that has a texture composited over it.
-  */
-  --accent-ink:      #97290A;   /* 5.4 / 6.0 / 6.9 on cream-300/200/100 */
-  --accent-ink-hover:#7F2007;   /* 6.6 / 7.4 / 8.5 */
+  /* White, not dark ink: the fill is dark now. */
+  --text-on-accent: #FFFFFF;
 
   --focus-ring:   var(--ink-dk);   /* stays ink — max contrast beats on-theme */
 
@@ -200,8 +190,7 @@
    otherwise keep the value body resolved against the cream ramp. Elements
    that set their own colour were never affected, which is exactly what
    makes this bug look random when you hit it. */
-.on-dark,
-.nav {
+.on-dark {
   color: var(--text-primary);
 
   --bg-page:     var(--shade-800);
@@ -345,11 +334,13 @@ body::after {
 /* Hero-local pass: sits between the scrim and the copy, so it textures the
    photo and never lands on text. Overlay works here — there is a real
    image underneath with luminance to push against. */
+/* multiply, like the page film — the photo is light now, and overlay has
+   no headroom above 50% luminance. */
 .grain {
   position: absolute;
   inset: 0;
-  opacity: .14;
-  mix-blend-mode: overlay;
+  opacity: .10;
+  mix-blend-mode: multiply;
 }
 
 /* Page-wide film: fixed, so it does not scroll with the content, and above
@@ -513,14 +504,15 @@ body::after {
   inset: 0 0 -48px 0;   /* overhangs the bar so the fade finishes off it */
   z-index: -1;
   pointer-events: none;
-  /* Measured, not eyeballed: over the brightest part of the hero photo the
-     nav sits on ~.54 here, which puts --ink-85 label text at 4.8:1. Going
-     lighter drops it under AA. */
+  /* Measured, not eyeballed: over the *darkest* part of the hero photo the
+     nav now sits on ~.62 of cream, which is what holds --ink-dk-78 label
+     text above 4.5:1. The polarity of this changed with the photo — it used
+     to be a dark scrim protecting light text. */
   background: linear-gradient(
     180deg,
-    rgba(15, 18, 22, .62)  0%,
-    rgba(15, 18, 22, .50) 45%,
-    rgba(15, 18, 22, 0)  100%
+    rgba(250, 249, 246, .62)  0%,
+    rgba(250, 249, 246, .50) 45%,
+    rgba(250, 249, 246, 0)  100%
   );
   transition: opacity var(--dur-base) var(--ease-in-out-q);
 }
@@ -981,32 +973,29 @@ body::after {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Two layers, two jobs. The linear pass stays deliberately light so the
-     flatlay reads at the edges; the radial pass sinks only the copy
-     footprint. Measured, not eyeballed: the pale tool handles peak at
-     rgb(239,238,234), which needs ~.62 combined alpha under the headline
-     to clear 4.5:1 — the two layers multiply to ~.71 there and fall to
-     ~.26 in the corners.
+  /* Inverted with the photo. The flatlay is white cloth and the type on it
+     is page ink, so the scrim's job is now to *lift* the plate under the
+     copy rather than sink it — the tools are the dark pixels here, and a
+     headline crossing a pair of shears is the failure case.
 
-     The bottom ramp is a third job: the photo has to dissolve into the
-     page rather than stop at an edge, and since the flip that page is
-     cream. So the ramp runs dark-over-photo for most of its length and
-     then crosses to opaque --cream-200 at 100%, which is why it is a
-     separate layer — one gradient cannot darken and then lighten without
-     going muddy through the middle. The last band of hero *is* the next
-     section's colour, so there is no seam. Anything short of full opacity
-     leaves a visible step. */
+     Three layers, three jobs, and they must stay separate:
+       1. the bottom dissolve into --cream-200, so the photo ends in the
+          page colour instead of at an edge;
+       2. a radial plate over the copy footprint only;
+       3. a light top pass so the nav reads over whatever is up there.
+     Measured, not eyeballed — see the note in CLAUDE.md for the method. */
   background:
-    linear-gradient(180deg, rgba(228, 226, 220, 0) 62%,
-                            rgba(228, 226, 220, .35) 82%,
-                            rgba(228, 226, 220, .88) 94%,
+    linear-gradient(180deg, rgba(228, 226, 220, 0)   62%,
+                            rgba(228, 226, 220, .38) 82%,
+                            rgba(228, 226, 220, .9)  94%,
                             rgba(228, 226, 220,  1) 100%),
-    linear-gradient(180deg, rgba(20, 23, 28, .52)  0%, rgba(20, 23, 28, .26) 30%,
-                            rgba(20, 23, 28, .34) 62%, rgba(20, 23, 28, .50) 88%,
-                            rgba(20, 23, 28, .55) 100%),
-    radial-gradient(62% 54% at 50% 50%, rgba(15, 18, 22, .62)  0%,
-                                        rgba(15, 18, 22, .48) 62%,
-                                        rgba(15, 18, 22, 0)  100%);
+    radial-gradient(64% 56% at 50% 50%, rgba(250, 249, 246, .58)  0%,
+                                        rgba(250, 249, 246, .50) 62%,
+                                        rgba(250, 249, 246, 0)  100%),
+    linear-gradient(180deg, rgba(250, 249, 246, .30)  0%,
+                            rgba(250, 249, 246, .14) 24%,
+                            rgba(250, 249, 246, .08) 62%,
+                            rgba(250, 249, 246, .16) 100%);
 }
 
 .hero__inner {
@@ -1079,10 +1068,15 @@ body::after {
   color: var(--text-muted);
 }
 
+/* Narrowed, not just gapped. At the full shell width the three figures sat
+   a third of a screen apart and read as three separate facts; the argument
+   only lands when they are close enough to take in together. */
 .stats__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-8);
+  gap: var(--space-6);
+  max-width: 56rem;
+  margin-inline: auto;
   list-style: none;
 }
 
@@ -1355,6 +1349,10 @@ body::after {
   scroll-snap-align: center;
 }
 
+/* On the dark page the cards separated by luminance alone. On cream they
+   do not — Meridian's #E4E2DC card *is* the page colour, so without an
+   edge it dissolves into it. The shadow is two layers on purpose: a tight
+   one for the contact edge, a wide soft one for the lift. */
 .slide__link {
   position: relative;
   display: block;
@@ -1366,9 +1364,16 @@ body::after {
   background: var(--slide-bg);
   color: var(--slide-ink);
   text-decoration: none;
-  transition: transform var(--dur-base) var(--ease-out);
+  box-shadow: 0 1px 2px rgba(22, 23, 26, .08),
+              0 10px 30px rgba(22, 23, 26, .12);
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
 }
-.slide__link:hover { transform: translateY(-4px); }
+.slide__link:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 2px 4px rgba(22, 23, 26, .10),
+              0 18px 44px rgba(22, 23, 26, .18);
+}
 
 /* Sized against the card, not in ch — ch resolves at the container's own
    font-size, which made the display-size title wrap a word per line. */
@@ -1449,7 +1454,11 @@ body::after {
 
 @media (max-width: 860px) {
   .slide { flex: 0 0 min(1040px, 88vw); }
-  .slide__link { aspect-ratio: 4 / 3; min-height: 0; }
+  /* On the dark page the cards separated by luminance alone. On cream they
+   do not — Meridian's #E4E2DC card *is* the page colour, so without an
+   edge it dissolves into it. The shadow is two layers on purpose: a tight
+   one for the contact edge, a wide soft one for the lift. */
+.slide__link { aspect-ratio: 4 / 3; min-height: 0; }
   .slide__copy { width: min(58%, 420px); padding: var(--space-8); }
   .slide__frame { width: 56%; right: 6%; bottom: -14%; }
 }
@@ -1459,7 +1468,11 @@ body::after {
      here, so the gap has to carry the 8px between-target spacing too. */
   .showcase__tabs { gap: var(--space-2); margin-bottom: var(--space-8); }
   .showcase__tab { min-height: 44px; padding: 0 var(--space-4); font-size: var(--text-xs); }
-  .slide__link { aspect-ratio: 3 / 4; }
+  /* On the dark page the cards separated by luminance alone. On cream they
+   do not — Meridian's #E4E2DC card *is* the page colour, so without an
+   edge it dissolves into it. The shadow is two layers on purpose: a tight
+   one for the contact edge, a wide soft one for the lift. */
+.slide__link { aspect-ratio: 3 / 4; }
   .slide__copy { width: auto; padding: var(--space-6); }
   .slide__frame { width: 78%; right: 11%; bottom: -10%; }
 }
