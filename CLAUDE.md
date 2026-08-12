@@ -493,27 +493,6 @@ visible — the numbers above are what pulled it back.
 The automated contrast pass skips anything sitting on an image, so it will
 not catch a regression here. Re-run the solver by hand.
 
-## Announcement bar
-
-A thin maroon strip above the nav, drifting left. `main.js` duplicates the
-run so the wrap lands on itself; the copy is `aria-hidden`, because the
-sentence is already in the DOM once and should be announced once. Without
-the script there is no duplicate and no animation, and the strip is a
-single static line — which still reads.
-
-**Its travel is a plain `-50%`, not the testimonial marquee's
-`calc(-50% - gap/2)`,** and the difference is worth understanding rather
-than copying. The marquee puts flex `gap` between its cards, so N cards
-have N−1 gaps and half the track falls a half-gap short of one full set.
-This strip instead carries `padding-inline: gap/2` on each run, so each
-run's box already contains its share of the spacing and the two halves are
-exactly equal. Measured: track 2039px, one run to the next 1019px, −50% =
-1019.5. Adding the correction here would overshoot by 16px every cycle.
-
-`.nav` is `position: sticky`, so the strip scrolls away while the bar
-stays. The sentinel that drives the nav's solid state sits above both, so
-it now trips about 36px earlier — harmless, but that is why.
-
 ## Testimonial marquee
 
 A marquee, not the concept carousel's snap track. Reviews are short and

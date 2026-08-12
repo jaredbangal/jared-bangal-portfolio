@@ -479,63 +479,6 @@ body::after {
    Transparent over the hero the way theirs is, then a blurred
    translucent bar once the hero is behind you.                */
 
-/* ── Announcement bar ───────────────────────────────────────
-   A thin strip above the nav, drifting left. The run is duplicated so the
-   wrap lands on itself, exactly as the testimonial marquee does — but the
-   travel here is a plain -50%, **not** the marquee's calc(-50% - gap/2).
-
-   The difference is the construction, and it is worth understanding rather
-   than copying: the marquee puts flex `gap` between its cards, so N cards
-   have N-1 gaps and half the track falls a half-gap short of one full set.
-   This strip instead carries `padding-inline: gap/2` on each run, so each
-   run's own box already contains its share of the spacing and the two
-   halves are exactly equal. Measured: track 2039px, one run to the next
-   1019px, -50% = 1019.5. Adding the correction here would overshoot by
-   16px every cycle.
-
-   `position: sticky` on .nav means this strip scrolls away while the bar
-   stays; the sentinel that drives the nav's solid state sits below both,
-   so nothing about that changes. */
-.promo {
-  --promo-dur: 34s;
-  --promo-gap: var(--space-8);
-  position: relative;
-  z-index: calc(var(--z-nav) + 1);
-  overflow: hidden;
-  background: var(--accent);
-  color: var(--text-on-accent);
-}
-
-.promo__track { display: flex; width: max-content; }
-
-.promo__run {
-  display: flex;
-  align-items: center;
-  gap: var(--promo-gap);
-  padding-inline: calc(var(--promo-gap) / 2);
-  height: 36px;
-  font-size: var(--text-2xs);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.js .promo[data-promo-ready] .promo__track {
-  animation: promo-drift var(--promo-dur) linear infinite;
-}
-.promo:hover .promo__track,
-.promo:focus-within .promo__track { animation-play-state: paused; }
-
-@keyframes promo-drift {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .promo__track { animation: none !important; }
-}
-
 .nav {
   position: sticky;
   top: 0;
