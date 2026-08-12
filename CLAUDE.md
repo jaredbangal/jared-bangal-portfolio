@@ -581,6 +581,49 @@ on the `<img>` are a presentational hint that otherwise wins. On mobile it
 is capped by `max-width`, never by height — cropping is the thing that was
 removed.
 
+## Service cards: glass and tilt
+
+Frosted, and they lean toward the pointer. Both parts have a catch.
+
+**Glassmorphism needs something behind it.** `backdrop-filter` over a flat
+colour is just a translucent panel — the blur has nothing to work on. That
+is what `.services::before` is for: two very soft radial blooms (9% accent,
+11% cool grey, blurred 28px) sitting behind the card row. It is the
+difference between the cards reading as glass and reading as slightly
+see-through paper. Keep it far below anything that registers as a coloured
+blob.
+
+**That wash must not use a negative inset.** `.services` sits inside
+`.shell`, so bleeding it 8% past each side made the document wider than the
+viewport at *every* breakpoint — a horizontal scrollbar traded for a
+gradient edge nobody can see. `inset: 12% 0 4%`; the radials are soft
+enough to reach the corners from inside the box.
+
+**The tilt lives in the reveal's transform.** `--rx` / `--ry` join `--lift`
+in `.js .reveal.is-in`, for the same specificity reason documented there:
+a hover transform on the card itself is (0,2,0) and loses. Set variables,
+never `transform`, on anything that also carries `.reveal`.
+
+`data-tracking` drops the transform transition while the pointer is being
+followed — a transition there turns the lean into elastic drag — and is
+removed on leave so the *return* to flat still eases.
+
+The tilt is gated on `(hover: hover) and (pointer: fine)`: a touch device
+has no hover to reverse out of and would be left holding a card at an
+angle. Under reduced motion the glare is `display: none` and the lean is
+pinned to 0. Without JS the cards are still frosted, still lift, still take
+the accent — only the lean is missing.
+
+**Measuring text on glass: sample the glyph, not a percentile.** A
+translucent plate plus a moving glare means computed styles cannot tell you
+anything, so it has to be rendered pixels — but a 2nd/98th percentile over
+a mostly-empty numeral box reads *antialiasing*, not the glyph, and it lied
+by more than a point. It reported 4.37:1 where the true value was 6.9:1,
+and sent me lightening the glass to fix a problem that did not exist. Take
+the darkest rendered pixel against the brightest: for dark text on a light
+plate those are the two ends WCAG is actually about. Current worst across
+all four cards, at rest and hovered: **5.56:1**.
+
 ## The accent hover
 
 Two sections share one hover behaviour — **What I do** points and

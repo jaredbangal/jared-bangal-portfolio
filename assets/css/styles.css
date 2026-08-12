@@ -1306,22 +1306,100 @@ body::after {
 
 
 /* ── Service cards ──────────────────────────────────────── */
+/* A soft wash behind the cards. It exists so the frosted glass has
+   something to refract: backdrop-filter over a flat colour is just a
+   translucent panel, and this is the difference between the cards reading
+   as glass and reading as slightly see-through paper. Kept far below the
+   contrast floor — the strongest stop is 9% accent — so it never registers
+   as a coloured blob, only as depth. */
+.services { position: relative; }
+.services::before {
+  content: "";
+  position: absolute;
+  /* No negative inset. .services sits inside .shell, so bleeding the wash
+     8% past each side pushed the document wider than the viewport at every
+     breakpoint — a horizontal scrollbar in exchange for a gradient nobody
+     can see the edge of. The radials are soft enough to reach the corners
+     from inside the box. */
+  inset: 12% 0 4%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(46% 60% at 22% 40%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%),
+    radial-gradient(40% 55% at 78% 52%, color-mix(in srgb, #4A6572 11%, transparent), transparent 70%);
+  filter: blur(28px);
+}
+.services > * { position: relative; z-index: 1; }
+
 .cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-4);
+  /* The tilt is real 3D, so the depth has to be declared on the parent.
+     Long, because a short perspective on a 300px card looks like a fisheye
+     rather than a considered lean. */
+  perspective: 1100px;
 }
 
 .card {
-  background: var(--bg-raised);
-  border: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   border-radius: var(--radius-sm);
   padding: var(--space-8) var(--space-6) var(--space-10);
+
+  /* Glass. The fill is translucent so the wash above shows through it, and
+     saturate() on the backdrop is what stops frosted cream going grey. */
+  background: color-mix(in srgb, var(--cream-100) 62%, transparent);
+  border: 1px solid color-mix(in srgb, #FFFFFF 55%, var(--border-subtle));
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+          backdrop-filter: blur(16px) saturate(1.5);
+  box-shadow: 0 1px 1px rgba(255, 255, 255, .5) inset,
+              0 1px 3px rgba(22, 23, 26, .05);
+
+  transform: translateY(var(--lift, 0px))
+             rotateX(var(--rx, 0deg))
+             rotateY(var(--ry, 0deg));
   transition: background-color var(--dur-base) var(--ease-in-out),
               border-color var(--dur-base) var(--ease-in-out),
               box-shadow var(--dur-base) var(--ease-out),
               transform var(--dur-base) var(--ease-out);
 }
+
+/* No backdrop-filter, no glass — fall back to the opaque card rather than a
+   washed-out translucent one, which is what @supports not is for. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card { background: var(--bg-raised); }
+}
+
+/* While the pointer is being tracked the transform must not lag behind it —
+   a transition here turns the tilt into elastic drag. JS sets this flag on
+   enter and drops it on leave, so the *return* to flat still eases. */
+.card[data-tracking] { transition: background-color var(--dur-base) var(--ease-in-out),
+                                   border-color var(--dur-base) var(--ease-in-out),
+                                   box-shadow var(--dur-base) var(--ease-out); }
+
+/* The glare. Moved by transform rather than by repainting a gradient's
+   centre — same rule as everywhere else on this page. It sits under the
+   copy, so it lights the card's surface instead of washing the type. */
+.card__glare {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 78%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+              rgba(255, 255, 255, .85) 0%,
+              rgba(255, 255, 255, .35) 38%,
+              rgba(255, 255, 255, 0) 68%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(calc(var(--gx, 50%) - 50%), calc(var(--gy, 50%) - 50%), 0);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.card:hover .card__glare { opacity: 1; }
 /* Four things move, and they are staggered rather than simultaneous — that
    is the whole difference between this reading as a considered response and
    as a colour swap. The card lifts and gains a shadow at --dur-base, the
@@ -1331,19 +1409,15 @@ body::after {
    Still no pointer cursor: a service card is not a link. See "The accent
    hover" in CLAUDE.md for why that stays true no matter how rich this
    gets. */
-.card {
-  position: relative;
-  overflow: hidden;
-  transform: translateY(var(--lift, 0px));   /* the no-JS path; with JS the
-                                                reveal's settled rule wins,
-                                                and reads the same variable */
-}
 .card:hover {
-  background: var(--bg-raised-h);
-  border-color: var(--accent-ink);
+  /* Denser glass on hover, not a solid fill — going opaque here would drop
+     the effect at the exact moment the pointer is asking to see it. */
+  background: color-mix(in srgb, var(--cream-050) 76%, transparent);
+  border-color: color-mix(in srgb, var(--accent-ink) 45%, #FFFFFF);
   --lift: -6px;
-  box-shadow: 0 2px 4px rgba(22, 23, 26, .07),
-              0 16px 40px rgba(22, 23, 26, .13);
+  box-shadow: 0 1px 1px rgba(255, 255, 255, .7) inset,
+              0 2px 4px rgba(22, 23, 26, .07),
+              0 18px 44px rgba(22, 23, 26, .15);
 }
 
 /* The wipe. transform-origin flips on the way out so it retracts to the
@@ -1374,7 +1448,8 @@ body::after {
 .card:hover .card__title { transform: translateY(-1px); }
 
 @media (prefers-reduced-motion: reduce) {
-  .card:hover { --lift: 0px; }
+  .card:hover { --lift: 0px; --rx: 0deg; --ry: 0deg; }
+  .card__glare { display: none; }
   .card:hover .card__num,
   .card:hover .card__title { transform: none; }
   .card::after { transition-duration: 1ms; }
@@ -1382,7 +1457,11 @@ body::after {
 
 .card__num {
   /* 22px at weight 500 does not qualify for the large-text 3:1 exemption
-     (that needs 700), so this sits at the 4.5:1 token, not --ink-40. */
+     (that needs 700), so this needs the full 4.5:1.
+
+     Measured on the glass at 6.9:1 — the translucent plate costs less than
+     the token table implies, because the glare and the inset highlight both
+     lift it. */
   font-size: 1.375rem;
   font-weight: 500;
   line-height: 1;
@@ -1858,7 +1937,12 @@ input[aria-invalid="true"] { border-color: var(--danger); }
    service cards were setting translateY(-6px) that never rendered. Routing
    the settled transform through a variable lets a component set --lift
    without having to out-specify the reveal system. */
-.js .reveal.is-in { opacity: 1; transform: translateY(var(--lift, 0px)); }
+.js .reveal.is-in {
+  opacity: 1;
+  transform: translateY(var(--lift, 0px))
+             rotateX(var(--rx, 0deg))
+             rotateY(var(--ry, 0deg));
+}
 
 .js .reveal:nth-child(2) { transition-delay: calc(var(--stagger) * 1); }
 .js .reveal:nth-child(3) { transition-delay: calc(var(--stagger) * 2); }
