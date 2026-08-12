@@ -25,6 +25,24 @@
     });
   }
 
+  /* ── Announcement bar ───────────────────────────────────
+     Duplicates the run so the loop wraps onto itself. The copy is
+     aria-hidden — the sentence is already in the DOM once and should be
+     announced once. Without this file there is no duplicate, no animation,
+     and the strip is a single static line, which still reads. */
+  var promo = document.querySelector("[data-promo]");
+
+  if (promo && !reducedMotion.matches) {
+    var promoTrack = promo.querySelector(".promo__track");
+    var run = promoTrack && promoTrack.firstElementChild;
+    if (run) {
+      var copy = run.cloneNode(true);
+      copy.setAttribute("aria-hidden", "true");
+      promoTrack.appendChild(copy);
+      promo.setAttribute("data-promo-ready", "");
+    }
+  }
+
   /* ── Nav state ──────────────────────────────────────────
      Transparent over the hero, blurred bar once past it. A
      sentinel element beats a scroll listener — no per-frame work. */

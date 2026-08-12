@@ -23,6 +23,7 @@
      Meridian concept; --cream-200 is that concept's own card value and the
      colour the testimonial band introduced. Elevation runs the same
      direction as the dark ramp: raised is lighter than ground. */
+  --cream-050: #FBF9F3;   /* raised, hovered — cream, deliberately not #FFF */
   --cream-300: #DAD7CF;   /* bands   — the one step down from the page */
   --cream-200: #E4E2DC;   /* ground  — Meridian's own */
   --cream-100: #F4F2EC;   /* raised  — cards */
@@ -129,7 +130,7 @@
   --bg-page:     var(--cream-200);
   --bg-band:     var(--cream-300);
   --bg-raised:   var(--cream-100);
-  --bg-raised-h: #FFFFFF;
+  --bg-raised-h: var(--cream-050);
   --bg-chip:     var(--ink-dk-06);
   --bg-chip-h:   var(--ink-dk-10);
 
@@ -287,7 +288,6 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
   clip-path: inset(50%);
   white-space: nowrap;
 }
-
 .skip-link {
   position: fixed;
   top: var(--space-3); left: var(--space-3);
@@ -478,6 +478,64 @@ body::after {
 /* ── Nav ────────────────────────────────────────────────────
    Transparent over the hero the way theirs is, then a blurred
    translucent bar once the hero is behind you.                */
+
+/* ── Announcement bar ───────────────────────────────────────
+   A thin strip above the nav, drifting left. The run is duplicated so the
+   wrap lands on itself, exactly as the testimonial marquee does — but the
+   travel here is a plain -50%, **not** the marquee's calc(-50% - gap/2).
+
+   The difference is the construction, and it is worth understanding rather
+   than copying: the marquee puts flex `gap` between its cards, so N cards
+   have N-1 gaps and half the track falls a half-gap short of one full set.
+   This strip instead carries `padding-inline: gap/2` on each run, so each
+   run's own box already contains its share of the spacing and the two
+   halves are exactly equal. Measured: track 2039px, one run to the next
+   1019px, -50% = 1019.5. Adding the correction here would overshoot by
+   16px every cycle.
+
+   `position: sticky` on .nav means this strip scrolls away while the bar
+   stays; the sentinel that drives the nav's solid state sits below both,
+   so nothing about that changes. */
+.promo {
+  --promo-dur: 34s;
+  --promo-gap: var(--space-8);
+  position: relative;
+  z-index: calc(var(--z-nav) + 1);
+  overflow: hidden;
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.promo__track { display: flex; width: max-content; }
+
+.promo__run {
+  display: flex;
+  align-items: center;
+  gap: var(--promo-gap);
+  padding-inline: calc(var(--promo-gap) / 2);
+  height: 36px;
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.js .promo[data-promo-ready] .promo__track {
+  animation: promo-drift var(--promo-dur) linear infinite;
+}
+.promo:hover .promo__track,
+.promo:focus-within .promo__track { animation-play-state: paused; }
+
+@keyframes promo-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo__track { animation: none !important; }
+}
+
 .nav {
   position: sticky;
   top: 0;
@@ -543,9 +601,13 @@ body::after {
   .nav[data-menu-open] { background: rgba(244, 242, 236, .97); }
 }
 
+/* The favicon's mark, at nav scale. It is the only place the accent
+   appears as a fill in the bar besides the CTA, so it reads as the mark
+   rather than as a second button. */
 .nav__brand {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-3);
   min-height: 44px;
   font-size: var(--text-sm);
   font-weight: 500;
@@ -554,6 +616,20 @@ body::after {
   text-decoration: none;
   white-space: nowrap;
 }
+.nav__mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-xs);
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
 
 .nav__links > ul { display: flex; align-items: center; gap: var(--space-10); }
 .nav__item { display: flex; }
@@ -680,21 +756,31 @@ body::after {
 
    A rotated square rather than a border triangle, so it can carry the
    panel's own background and border and read as part of the same surface.
-   clip-path drops the two lower edges, which would otherwise draw a line
-   across the panel's top. --caret-x is set by main.js from the trigger's
-   centre. */
+
+   The clip keeps the triangle around the square's **top-left** corner. Under
+   rotate(45deg) that corner lands at the top, so its two edges become the
+   two upper faces of an upward point. Keeping the top-*right* triangle
+   instead — which is what this did first — rotates into a right-pointing
+   arrow, because TR lands at the right. Work it out from where the corner
+   ends up, not from how the polygon looks unrotated.
+
+   --caret-x is set by main.js from the trigger's centre. */
 .nav__panel::before {
   content: "";
   position: absolute;
-  top: -7px;
+  top: -8px;
   left: var(--caret-x, 50%);
-  width: 13px;
-  height: 13px;
-  margin-left: -6.5px;
-  border: 1px solid var(--border-subtle);
+  width: 15px;
+  height: 15px;
+  margin-left: -7.5px;
+  /* --border-strong, not --border-subtle like the panel's own edge. The
+     panel sits only 1.15:1 from the page, so the caret's fill has almost
+     nothing to separate it — the two visible border faces are what draw
+     the arrow, and at 10% ink they were invisible. */
+  border: 1px solid var(--border-strong);
   background: var(--bg-band);
   transform: rotate(45deg);
-  clip-path: polygon(-40% -40%, 140% -40%, 140% 140%);
+  clip-path: polygon(-40% -40%, 140% -40%, -40% 140%);
   pointer-events: none;
 }
 

@@ -196,11 +196,16 @@ everything else enters on.
 
 ## Nav panels
 
-Three disclosures — Services, Pricing, About — all built to one
+Four disclosures — Services, Pricing, Process, About — all built to one
 three-column shape (index / explore / promo) so they read as a set. Keep
 new ones to that shape; a panel noticeably smaller than its neighbours
-looks like an oversight. (Process was the fourth; it went with its page
-section.)
+looks like an oversight.
+
+**Process is a panel without a page section**, and that is deliberate: the
+"How it works" section was cut but the four steps are still worth saying.
+Its column one is therefore `.panel__facts` data rows rather than links —
+the documented pattern for information that has no destination. Don't add
+links there unless the section comes back.
 
 **Each panel points at its own trigger.** An 8px gap under the bar and a
 caret at `--caret-x`, which `main.js` sets from the trigger's centre — the
@@ -210,10 +215,23 @@ the same thing, and the gap is what lets the caret read at all.
 
 The caret is `.nav__panel::before`, **not a child element**, and that is
 load-bearing: `.nav__panel > *` carries the column stagger, so a real
-element would be treated as a fourth column and shift every `nth-child`
-delay after it. It is a rotated square rather than a border triangle so it
-can carry the panel's own background and border; `clip-path` drops the two
-lower edges, which would otherwise draw a line across the panel's top.
+element would be treated as a fifth column and shift every `nth-child`
+delay after it.
+
+It is a rotated square rather than a border triangle so it can carry the
+panel's own surface. Two things about it were wrong on the first pass and
+are easy to get wrong again:
+
+- **The clip keeps the square's top-*left* triangle.** Under
+  `rotate(45deg)` that corner lands at the top, so its two edges become the
+  two upper faces of an upward point. Keeping the top-*right* triangle
+  gives a right-pointing arrow, because TR lands at the right. Reason from
+  where the corner ends up, not from how the polygon looks unrotated.
+- **Its border is `--border-strong`, not the panel's own
+  `--border-subtle`.** The panel sits only 1.15:1 from the page, so the
+  caret's fill has almost nothing to separate it — the two visible border
+  faces are what actually draw the arrow, and at 10% ink they were
+  invisible.
 
 Column one is links where real destinations exist and `.panel__facts` data
 rows where it does not — a price tier is information, not a destination, so
@@ -474,6 +492,27 @@ visible — the numbers above are what pulled it back.
 
 The automated contrast pass skips anything sitting on an image, so it will
 not catch a regression here. Re-run the solver by hand.
+
+## Announcement bar
+
+A thin maroon strip above the nav, drifting left. `main.js` duplicates the
+run so the wrap lands on itself; the copy is `aria-hidden`, because the
+sentence is already in the DOM once and should be announced once. Without
+the script there is no duplicate and no animation, and the strip is a
+single static line — which still reads.
+
+**Its travel is a plain `-50%`, not the testimonial marquee's
+`calc(-50% - gap/2)`,** and the difference is worth understanding rather
+than copying. The marquee puts flex `gap` between its cards, so N cards
+have N−1 gaps and half the track falls a half-gap short of one full set.
+This strip instead carries `padding-inline: gap/2` on each run, so each
+run's box already contains its share of the spacing and the two halves are
+exactly equal. Measured: track 2039px, one run to the next 1019px, −50% =
+1019.5. Adding the correction here would overshoot by 16px every cycle.
+
+`.nav` is `position: sticky`, so the strip scrolls away while the bar
+stays. The sentinel that drives the nav's solid state sits above both, so
+it now trips about 36px earlier — harmless, but that is why.
 
 ## Testimonial marquee
 
