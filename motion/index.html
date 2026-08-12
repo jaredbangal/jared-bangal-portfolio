@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jared Bangal — Four Formations</title>
+<meta name="description" content="A scroll-driven particle study in maroon and cream. Three thousand points morphing through four formations.">
+<meta name="theme-color" content="#E4E2DC">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%237F2007'/><text x='16' y='22' font-family='Helvetica,Arial,sans-serif' font-size='15' font-weight='500' fill='%23FFFFFF' text-anchor='middle'>JB</text></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700;900&display=swap">
+
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     Tokens. The palette is the portfolio's, so this page reads as
+     the same studio: cream ground, maroon-orange pigment, warm ink.
+
+     Two values differ from the brief, and both were measured rather
+     than assumed:
+
+     --accent-ink #9E3110, not #c2451c. As small uppercase text the
+     brief's accent measures 3.44:1 on the gradient's darkest stop —
+     under the 4.5:1 that normal-size text needs. #9E3110 is the same
+     hue at 4.94:1. #c2451c is kept for the button fill and the
+     particles, where it is a background and a decoration rather than
+     text it has to be read.
+
+     --ink-dim at .70 alpha, not .55. At .55 the dim copy measures
+     3.58:1 against that same stop. .70 gives 5.52:1.
+     ───────────────────────────────────────────────────────────── */
+  :root {
+    --cream-hi:  #ECEAE4;
+    --cream:     #E4E2DC;
+    --cream-lo:  #D8D5CD;
+
+    --ink:       #1C1512;
+    --ink-dim:   rgba(28, 21, 18, .70);
+    --ink-faint: rgba(28, 21, 18, .55);   /* non-text only: rules, hairlines */
+
+    --accent:     #C2451C;   /* fills and particles */
+    --accent-ink: #9E3110;   /* the same hue, at a legible weight for text */
+    --accent-hot: #A8360F;
+
+    --ease-out: cubic-bezier(.165, .84, .44, 1);
+    --dur:      420ms;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: radial-gradient(ellipse at 20% 30%,
+                var(--cream-hi) 0%, var(--cream) 45%, var(--cream-lo) 100%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: "DM Sans", system-ui, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Hidden, not removed — the page still scrolls, it just does it
+     without a visible bar. */
+  body { scrollbar-width: none; }
+  body::-webkit-scrollbar { display: none; }
+
+  a { color: inherit; }
+  img { display: block; max-width: 100%; }
+
+  /* ── Layers ───────────────────────────────────────────────────
+     -1  hero photo      (fades out past section one)
+      0  particle canvas (transparent, so the photo shows through)
+     10  the text        (transparent, so the particles show through)  */
+
+  #hero-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url("../assets/img/hero-sewing-1600.webp") center / cover no-repeat;
+    will-change: opacity;
+  }
+  /* Settles the photo into the cream and keeps the headline legible.
+     Measured on the rendered plate, not eyeballed — see the note in
+     the repo's CLAUDE.md for the method. */
+  #hero-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(228, 226, 220, .62);
+  }
+
+  #scene {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    pointer-events: none;   /* the page scrolls through it */
+  }
+
+  /* ── Sections ─────────────────────────────────────────────── */
+  main { position: relative; z-index: 10; }
+
+  section {
+    position: relative;
+    min-height: 100svh;
+    background: transparent;
+    padding: max(12vh, 5rem) 6vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* ── Legibility over the particle field ───────────────────────
+     The brief asks for transparent section backgrounds, and a panel
+     behind the copy would break exactly what makes this work. But
+     measured against the rendered field, the darkest particle under a
+     glyph is rgb(78,22,20) — dark ink on that is 1.24:1, which is not
+     a judgement call, it is unreadable.
+
+     So the halo goes on the glyphs rather than a box behind them:
+     each letterform carries its own small pool of cream, the section
+     background stays fully transparent, and particles still pass
+     behind the type. Two stops because one wide shadow reads as a
+     smudge while a tight one plus a soft one reads as paper. */
+  .label, h1, h2, .dim, .scroll-cue {
+    text-shadow:
+       0 0 6px  var(--cream),
+       0 0 14px var(--cream),
+       0 0 26px rgba(228, 226, 220, .9);
+  }
+
+  .label {
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: 1.4rem;
+  }
+
+  h1, h2 {
+    font-weight: 900;
+    line-height: .98;
+    letter-spacing: -.035em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  h1 { font-size: clamp(3.5rem, 6vw, 7rem); }
+  h2 { font-size: clamp(2rem, 3.4vw, 3.4rem); margin-bottom: 1.2rem; }
+
+  .dim {
+    color: var(--ink-dim);
+    font-size: clamp(1rem, 1.15vw, 1.15rem);
+    max-width: 46ch;
+  }
+
+  /* ── Section 1 ────────────────────────────────────────────── */
+  .hero { align-items: center; text-align: center; }
+  .hero h1 { margin-bottom: 1.6rem; }
+  .hero .dim { font-size: clamp(1.05rem, 1.3vw, 1.3rem); }
+
+  .scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 3.5rem;
+    transform: translateX(-50%);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    animation: pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: .35 } 50% { opacity: 1 } }
+
+  /* ── Section 2 ────────────────────────────────────────────── */
+  .centred { align-items: center; text-align: center; }
+  .centred .block { max-width: 600px; }
+  .centred .dim { margin-inline: auto; }
+
+  /* ── Section 3 ────────────────────────────────────────────── */
+  .split .side {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(26vw, 340px);
+  }
+  .split .side--l { left: 6vw; }
+  .split .side--r { right: 6vw; text-align: right; }
+  .split .side--r .dim { margin-left: auto; }
+  .split h2 { font-size: clamp(1.5rem, 2.1vw, 2.1rem); }
+  .split .dim { font-size: .95rem; max-width: 34ch; }
+
+  /* ── Section 4 ────────────────────────────────────────────── */
+  .waves .block {
+    position: absolute;
+    left: 6vw;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(36vw, 480px);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    margin-top: 2.2rem;
+    padding: 0 2rem;
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transform: scale(var(--press, 1));
+    transition: background-color var(--dur) var(--ease-out),
+                border-color var(--dur) var(--ease-out),
+                color var(--dur) var(--ease-out),
+                transform 90ms var(--ease-out);
+  }
+  .btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #FFFFFF;   /* 5.05:1 on the fill */
+  }
+  .btn:active { --press: .98; }
+
+  .btn--solid {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #FFFFFF;
+  }
+  .btn--solid:hover { background: var(--accent-hot); border-color: var(--accent-hot); }
+
+  /* ── Section 5 ────────────────────────────────────────────── */
+  .cta {
+    align-items: center;
+    text-align: center;
+    background: rgba(216, 213, 205, .9);
+  }
+  .cta h2 { font-size: clamp(2.4rem, 4.2vw, 4.2rem); }
+
+  /* ── Focus ────────────────────────────────────────────────────
+     The halo matters here more than on a flat page: a ring can land
+     on the particle field, the photo, or the cream, and a bare
+     outline disappears against at least one of them. */
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px var(--cream);
+    border-radius: 4px;
+  }
+
+  /* ── Cursor ───────────────────────────────────────────────────
+     Fine pointers only. A touch device has no cursor to replace, and
+     hiding the system one where it cannot be replaced is how you end
+     up with a page nobody can point at. */
+  @media (hover: hover) and (pointer: fine) {
+    body.has-cursor, body.has-cursor * { cursor: none; }
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 100;
+      border-radius: 50%;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .cursor-dot  { width: 8px;  height: 8px;  background: var(--ink); margin: -4px 0 0 -4px; }
+    .cursor-ring { width: 36px; height: 36px; border: 1.5px solid rgba(28,21,18,.45); margin: -18px 0 0 -18px; }
+  }
+  @media not all and (hover: hover) { .cursor-dot, .cursor-ring { display: none; } }
+
+  /* ── Motion preferences ───────────────────────────────────────
+     The scroll-driven morphs are user-initiated and stay. What goes
+     is everything that moves on its own: the tumble, the galaxy spin,
+     the disk rotation, the travelling wave, the pulse, and the cursor
+     repulsion. The JS reads the same query and matches. */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue { animation: none; opacity: .7; }
+    * { transition-duration: 1ms !important; }
+  }
+
+  /* ── Narrow ───────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    section { padding: max(10vh, 4rem) 7vw; }
+    .split .side {
+      position: static;
+      width: auto;
+      transform: none;
+      text-align: left;
+    }
+    .split .side--r { text-align: left; margin-top: 3rem; }
+    .split .side--r .dim { margin-left: 0; }
+    .waves .block { position: static; width: auto; transform: none; }
+  }
+
+  /* No WebGL, no canvas — the page is text on a cream gradient and
+     loses nothing it needs. */
+  .no-webgl #scene { display: none; }
+</style>
+</head>
+<body>
+
+<div id="hero-bg" aria-hidden="true"></div>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<main>
+
+  <section class="hero" data-formation="exploded">
+    <p class="label">Freelance Web Design</p>
+    <h1>A website<br>makes it real</h1>
+    <p class="dim">Three thousand points, four formations, one scroll. A study in
+      what a page can do when it stops sitting still.</p>
+    <p class="scroll-cue">Scroll to explore &darr;</p>
+  </section>
+
+  <section class="centred" data-formation="vortex">
+    <div class="block">
+      <p class="label">The Work</p>
+      <h2>Everything spirals in toward one thing</h2>
+      <p class="dim">Design, layout, build, handoff — they only look like separate
+        jobs from a distance. Up close they are one motion, and the whole point
+        is that you never have to see the seams.</p>
+    </div>
+  </section>
+
+  <section class="split" data-formation="polaris">
+    <div class="side side--l">
+      <p class="label">The Problem</p>
+      <h2>27% have no website at all</h2>
+      <p class="dim">More than a quarter of small businesses are still running
+        without one, while 98% of people look a local business up online before
+        they ever walk in.</p>
+    </div>
+    <div class="side side--r">
+      <p class="label">The Stake</p>
+      <h2>46% judge you on how it looks</h2>
+      <p class="dim">Nearly half of people decide whether a company is credible
+        from its site design alone. The first impression is the site, whether
+        you built one or not.</p>
+    </div>
+  </section>
+
+  <section class="waves" data-formation="waves">
+    <div class="block">
+      <p class="label">What I Do</p>
+      <h2>Built by hand, in order</h2>
+      <p class="dim">Web design, brand identity, portfolio sites, and the ongoing
+        care that keeps them fast and patched. Hand-written HTML, CSS and
+        JavaScript — no plugin stack to maintain, nothing left open that
+        shouldn't be.</p>
+      <a class="btn" href="../index.html#services">See the services</a>
+    </div>
+  </section>
+
+  <section class="cta" data-formation="waves">
+    <h2>Ready to make it real?</h2>
+    <p class="dim" style="margin: 1.4rem auto 0;">A free thirty-minute call, no
+      obligation, and a fixed quote before anything starts.</p>
+    <a class="btn btn--solid" href="../index.html#contact">Get in touch</a>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var COUNT  = 3000;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var fine   = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+  /* ── Custom cursor ────────────────────────────────────────────
+     Independent of Three.js, so it survives a WebGL failure. */
+  if (fine.matches && !reduce.matches) {
+    var dot  = document.querySelector(".cursor-dot");
+    var ring = document.querySelector(".cursor-ring");
+    document.body.classList.add("has-cursor");
+    var cx = innerWidth / 2, cy = innerHeight / 2, rx = cx, ry = cy;
+    addEventListener("pointermove", function (e) { cx = e.clientX; cy = e.clientY; }, { passive: true });
+    (function trail() {
+      rx += (cx - rx) * 0.1;          // the ring lags the dot; that lag is the whole effect
+      ry += (cy - ry) * 0.1;
+      dot.style.transform  = "translate3d(" + cx + "px," + cy + "px,0)";
+      ring.style.transform = "translate3d(" + rx + "px," + ry + "px,0)";
+      requestAnimationFrame(trail);
+    })();
+  }
+
+  if (!window.THREE) { document.body.classList.add("no-webgl"); return; }
+
+  var canvas = document.getElementById("scene");
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  } catch (e) {
+    document.body.classList.add("no-webgl");
+    return;
+  }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+
+  var scene  = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 4000);
+  camera.position.set(0, 0, 520);
+
+  /* Rotations live on a group, not on the scene. The cursor has to be
+     compared against particle positions in the *same* space, and a
+     group gives a matrix to invert through — see worldToLocal below. */
+  var swarm = new THREE.Group();
+  scene.add(swarm);
+
+  /* ── Buffers ──────────────────────────────────────────────────
+     basePos   — where the formation says a particle belongs
+     offset    — a decaying push away from the cursor
+     rendered  — base + offset, which is what both geometries draw   */
+  var basePos  = new Float32Array(COUNT * 3);
+  var startPos = new Float32Array(COUNT * 3);
+  var targetPos= new Float32Array(COUNT * 3);
+  var offset   = new Float32Array(COUNT * 3);
+  var rendered = new Float32Array(COUNT * 3);
+  var colors   = new Float32Array(COUNT * 3);
+
+  /* ── Palette ──────────────────────────────────────────────────
+     Assigned once and held across every morph, so a particle keeps
+     its identity as the shape changes. Deep pigment throughout: on a
+     cream ground anything pale simply disappears. */
+  var PALETTE = [
+    { c: [198,  74, 28], w: 0.35 },   // burnt orange
+    { c: [165,  48, 22], w: 0.25 },   // deep rust
+    { c: [112,  30, 26], w: 0.20 },   // maroon
+    { c: [222, 116, 40], w: 0.12 },   // bright amber
+    { c: [ 78,  22, 20], w: 0.08 }    // deep maroon
+  ];
+  function pickColour() {
+    var r = Math.random(), acc = 0;
+    for (var i = 0; i < PALETTE.length; i++) {
+      acc += PALETTE[i].w;
+      if (r <= acc) return PALETTE[i].c;
+    }
+    return PALETTE[0].c;
+  }
+  for (var i = 0; i < COUNT; i++) {
+    var c = pickColour();
+    colors[i * 3]     = c[0] / 255;
+    colors[i * 3 + 1] = c[1] / 255;
+    colors[i * 3 + 2] = c[2] / 255;
+  }
+
+  /* ── The two systems ──────────────────────────────────────────
+     Sharing one position buffer. NormalBlending, not additive:
+     additive light on a light ground washes to nothing, which is why
+     the usual neon-particle recipe fails here. The haze is a wide,
+     very faint point that reads as pigment bleeding into paper. */
+  function makeSystem(size, opacity) {
+    var g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(rendered, 3));
+    g.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
+    var m = new THREE.PointsMaterial({
+      size: size,
+      vertexColors: true,
+      transparent: true,
+      opacity: opacity,
+      blending: THREE.NormalBlending,
+      depthWrite: false,
+      sizeAttenuation: true
+    });
+    var p = new THREE.Points(g, m);
+    swarm.add(p);
+    return p;
+  }
+  var cores = makeSystem(1.8, 1.0);
+  var haze  = makeSystem(7.0, 0.08);
+
+  /* ── Formations ───────────────────────────────────────────── */
+
+  function exploded() {
+    var a = new Float32Array(COUNT * 3);
+    for (var i = 0; i < COUNT; i++) {
+      var r   = 80 + Math.random() * 320;
+      var th  = Math.random() * Math.PI * 2;
+      var ph  = Math.acos(2 * Math.random() - 1);
+      a[i*3]   = r * Math.sin(ph) * Math.cos(th) + (Math.random() - .5) * 10;
+      a[i*3+1] = r * Math.sin(ph) * Math.sin(th) + (Math.random() - .5) * 10;
+      a[i*3+2] = r * Math.cos(ph)               + (Math.random() - .5) * 10;
+    }
+    return a;
+  }
+
+  function vortex() {
+    var a = new Float32Array(COUNT * 3), i = 0;
+    var ARMS = 4, ARM_TOTAL = 2200, per = Math.floor(ARM_TOTAL / ARMS);
+    for (var arm = 0; arm < ARMS; arm++) {
+      var base = arm * (Math.PI / 2);
+      for (var k = 0; k < per; k++, i++) {
+        var t   = k / per;
+        var rad = 20 + t * 260;
+        var ang = base + t * 4.2 + Math.random() * 0.35;
+        a[i*3]   = rad * Math.cos(ang) + (Math.random() - .5) * 18;
+        a[i*3+1] = (Math.random() - .5) * 28;
+        a[i*3+2] = rad * Math.sin(ang) + (Math.random() - .5) * 18;
+      }
+    }
+    for (; i < 2700; i++) {                       // dense core
+      var cr_ = 35 * Math.cbrt(Math.random());
+      var ct  = Math.random() * Math.PI * 2;
+      var cp  = Math.acos(2 * Math.random() - 1);
+      a[i*3]   = cr_ * Math.sin(cp) * Math.cos(ct);
+      a[i*3+1] = cr_ * Math.sin(cp) * Math.sin(ct);
+      a[i*3+2] = cr_ * Math.cos(cp);
+    }
+    for (; i < COUNT; i++) {                      // outer haze
+      var hr = 260 + Math.random() * 160;
+      var ha = Math.random() * Math.PI * 2;
+      a[i*3]   = hr * Math.cos(ha);
+      a[i*3+1] = (Math.random() - .5) * 30;
+      a[i*3+2] = hr * Math.sin(ha);
+    }
+    return a;
+  }
+
+  function polaris() {
+    var a = new Float32Array(COUNT * 3), i = 0;
+    var radii  = [30, 60, 95, 130, 165, 200, 235, 270];
+    var counts = [50, 100, 150, 200, 250, 300, 400, 550];
+    for (var r = 0; r < radii.length; r++) {
+      for (var k = 0; k < counts[r]; k++, i++) {
+        var ang = (k / counts[r]) * Math.PI * 2;
+        a[i*3]   = radii[r] * Math.cos(ang);
+        a[i*3+1] = 0;
+        a[i*3+2] = radii[r] * Math.sin(ang);
+      }
+    }
+    var SPOKES = 12, perSpoke = Math.floor(800 / SPOKES);
+    for (var s = 0; s < SPOKES; s++) {
+      var sa = s * (Math.PI * 2 / SPOKES);
+      for (var j = 0; j < perSpoke && i < COUNT - 200; j++, i++) {
+        var sr = (j / perSpoke) * 270;
+        a[i*3]   = sr * Math.cos(sa);
+        a[i*3+1] = 0;
+        a[i*3+2] = sr * Math.sin(sa);
+      }
+    }
+    for (; i < COUNT; i++) {                      // centre hub
+      var hr2 = 8 * Math.cbrt(Math.random());
+      var ht  = Math.random() * Math.PI * 2;
+      a[i*3]   = hr2 * Math.cos(ht);
+      a[i*3+1] = (Math.random() - .5) * 3;
+      a[i*3+2] = hr2 * Math.sin(ht);
+    }
+    return a;
+  }
+
+  /* Waves are the one formation that keeps moving after it arrives, so
+     the grid is stored and the sheet is recomputed each frame once the
+     morph has landed. Recomputed on resize too — the brief asks the
+     sheets to fill the viewport, and the viewport changes. */
+  var waveGrid = [];
+  function buildWaveGrid() {
+    waveGrid.length = 0;
+    var SHEETS = 6, per = 500;
+    for (var s = 0; s < SHEETS; s++) {
+      for (var k = 0; k < per; k++) {
+        var col = k % 50, row = Math.floor(k / 50);
+        waveGrid.push({
+          s: s,
+          x: (col - 25) * (innerWidth / 50),
+          y: (row - 4.5) * (innerHeight / 10),
+          z: (s - 2.5) * 80
+        });
+      }
+    }
+  }
+  buildWaveGrid();
+
+  function waveAt(g, elapsed) {
+    var phase = -elapsed * 0.0014;                // negative → travels right to left
+    var amp   = 32 + g.s * 7;
+    var freq  = 0.012 - g.s * 0.001;
+    return {
+      x: g.x,
+      y: g.y + amp * Math.sin(freq * g.x + phase + g.s * 0.9),
+      z: g.z + amp * 0.3 * Math.cos(freq * g.x * 0.5 + phase)
+    };
+  }
+  function waves(elapsed) {
+    var a = new Float32Array(COUNT * 3);
+    for (var i = 0; i < COUNT; i++) {
+      var p = waveAt(waveGrid[i % waveGrid.length], elapsed || 0);
+      a[i*3] = p.x; a[i*3+1] = p.y; a[i*3+2] = p.z;
+    }
+    return a;
+  }
+
+  /* ── Per-formation camera and spin ────────────────────────── */
+  var MODES = {
+    exploded: { cam: [0, 0, 520], mx: 180, my: 110, lerp: 0.035, spin: [0.0002, 0.0003, 0] },
+    vortex:   { cam: [0, 380, 380], mx: 60, my: 35, lerp: 0.040, spin: [0, 0.0018, 0] },
+    polaris:  { cam: [0, 380, 380], mx: 60, my: 40, lerp: 0.040, spin: [0, 0.0060, 0] },
+    waves:    { cam: [0, 0, 600], mx: 30, my: 20, lerp: 0.030, spin: [0, 0, 0] }
+  };
+  var mode = MODES.exploded;
+  var current = "exploded";
+
+  /* ── Morph ────────────────────────────────────────────────── */
+  var morphStart = 0, morphDur = 1800, morphing = false;
+
+  function morphTo(target, duration) {
+    startPos.set(basePos);
+    targetPos.set(target);
+    morphDur = (duration === undefined) ? 1800 : duration;
+    if (reduce.matches) morphDur = 1;
+    morphStart = performance.now();
+    morphing = true;
+  }
+
+  function setFormation(name, elapsed) {
+    if (name === current) return;
+    current = name;
+    mode = MODES[name];
+    camFrom.copy(camera.position);
+    camShiftStart = performance.now();
+    morphTo(name === "exploded" ? exploded()
+          : name === "vortex"   ? vortex()
+          : name === "polaris"  ? polaris()
+          : waves(elapsed), 1800);
+  }
+
+  /* ── Camera transition ────────────────────────────────────── */
+  var camFrom = new THREE.Vector3().copy(camera.position);
+  var camShiftStart = -1e9;
+  var CAM_MS = 1500;
+
+  /* ── Pointer ──────────────────────────────────────────────── */
+  var mnx = 0, mny = 0, burst = 0;
+  addEventListener("pointermove", function (e) {
+    mnx = (e.clientX / innerWidth)  * 2 - 1;
+    mny = -((e.clientY / innerHeight) * 2 - 1);
+  }, { passive: true });
+  addEventListener("pointerdown", function () { burst = 1; });
+
+  /* ── Sections ─────────────────────────────────────────────── */
+  var sections = [].slice.call(document.querySelectorAll("[data-formation]"));
+  var heroBg = document.getElementById("hero-bg");
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) setFormation(en.target.dataset.formation, performance.now() - t0);
+      });
+    }, { threshold: 0.4 });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  // The photo belongs to section one only. Tied to scroll position
+  // rather than to the observer so it fades continuously rather than
+  // snapping when the next section trips.
+  addEventListener("scroll", function () {
+    var p = Math.min(scrollY / (innerHeight * 0.8), 1);
+    heroBg.style.opacity = String(1 - p);
+  }, { passive: true });
+
+  /* ── Init ─────────────────────────────────────────────────── */
+  var t0 = performance.now();
+  basePos.set(exploded());
+  rendered.set(basePos);
+  morphTo(exploded(), 2200);
+
+  var cursorWorld = new THREE.Vector3();
+  var ndc = new THREE.Vector3();
+  var localCursor = new THREE.Vector3();
+
+  function frame(now) {
+    requestAnimationFrame(frame);
+    var elapsed = now - t0;
+
+    /* 1. formation → basePos */
+    if (morphing) {
+      var t = Math.min((now - morphStart) / morphDur, 1);
+      var e = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;   // ease-in-out quad
+      for (var i = 0; i < basePos.length; i++) {
+        basePos[i] = startPos[i] + (targetPos[i] - startPos[i]) * e;
+      }
+      if (t >= 1) morphing = false;
+    } else if (current === "waves" && !reduce.matches) {
+      // Waves keep travelling after the morph lands.
+      for (var w = 0; w < COUNT; w++) {
+        var p = waveAt(waveGrid[w % waveGrid.length], elapsed);
+        basePos[w*3] = p.x; basePos[w*3+1] = p.y; basePos[w*3+2] = p.z;
+      }
+    }
+
+    /* 2. camera: the 1.5s move into position, then the mouse on top */
+    var ct = Math.min((now - camShiftStart) / CAM_MS, 1);
+    var ce = ct < 0.5 ? 2 * ct * ct : -1 + (4 - 2 * ct) * ct;
+    var bx = camFrom.x + (mode.cam[0] - camFrom.x) * ce;
+    var by = camFrom.y + (mode.cam[1] - camFrom.y) * ce;
+    var bz = camFrom.z + (mode.cam[2] - camFrom.z) * ce;
+
+    // Orbit pulled back 40% from the brief's figures, as it suggests:
+    // with the particles fleeing the cursor as well, the full swing
+    // made the two motions compete instead of layering.
+    var swing = reduce.matches ? 0 : 0.6;
+    camera.position.x += ((bx + mnx * mode.mx * swing) - camera.position.x) * mode.lerp;
+    camera.position.y += ((by + mny * mode.my * swing) - camera.position.y) * mode.lerp;
+    camera.position.z += (bz - camera.position.z) * mode.lerp;
+    camera.lookAt(0, 0, 0);
+
+    /* 3. spin */
+    if (!reduce.matches) {
+      swarm.rotation.x += mode.spin[0];
+      swarm.rotation.y += mode.spin[1];
+    }
+
+    /* 4. cursor repulsion, in the swarm's own space
+          The swarm rotates, so a world-space cursor would drift out of
+          register with the particles. Inverting through the group's
+          matrix is what keeps the hole under the pointer. */
+    if (!reduce.matches && fine.matches) {
+      ndc.set(mnx, mny, 0.5).unproject(camera);
+      var dir = ndc.sub(camera.position).normalize();
+      cursorWorld.copy(camera.position).add(dir.multiplyScalar(camera.position.length()));
+      swarm.updateMatrixWorld();
+      localCursor.copy(cursorWorld);
+      swarm.worldToLocal(localCursor);
+
+      var R = 90 * (burst ? 1.5 : 1);
+      var PUSH = 55 * (burst ? 4 : 1);
+      var R2 = R * R;
+      for (var j = 0; j < COUNT; j++) {
+        var k = j * 3;
+        var dx = basePos[k]     - localCursor.x;
+        var dy = basePos[k + 1] - localCursor.y;
+        var dz = basePos[k + 2] - localCursor.z;
+        var d2 = dx*dx + dy*dy + dz*dz;
+        if (d2 < R2) {
+          var d = Math.sqrt(d2) || 0.001;
+          var f = (1 - d / R) * PUSH * 0.35;
+          offset[k]     += (dx / d) * f;
+          offset[k + 1] += (dy / d) * f;
+          offset[k + 2] += (dz / d) * f;
+        }
+        offset[k]     *= 0.90;
+        offset[k + 1] *= 0.90;
+        offset[k + 2] *= 0.90;
+        rendered[k]     = basePos[k]     + offset[k];
+        rendered[k + 1] = basePos[k + 1] + offset[k + 1];
+        rendered[k + 2] = basePos[k + 2] + offset[k + 2];
+      }
+      burst = 0;
+    } else {
+      rendered.set(basePos);
+    }
+
+    /* 5. flush both geometries */
+    cores.geometry.attributes.position.needsUpdate = true;
+    haze.geometry.attributes.position.needsUpdate  = true;
+
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(frame);
+
+  addEventListener("resize", function () {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+    buildWaveGrid();            // the sheets are sized from the viewport
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>

@@ -298,6 +298,48 @@ Panel links point at real anchors (`#web-design`, `#discover`, …) that exist
 on this page. Keep it that way; check with the dead-anchor query in the
 menu test rather than assuming.
 
+## motion/ — the particle study
+
+A standalone one-page Three.js piece at `/motion/`, not part of the main
+site's system and not linked from it. Single self-contained file, r128 from
+cdnjs plus DM Sans; nothing else. 3000 particles morph through four
+formations as sections scroll into view.
+
+It borrows the portfolio's palette on purpose so it reads as the same
+studio, but **it does not share the stylesheet or the tokens** — changing
+`assets/css/styles.css` will not touch it, and it should not start
+importing from there. Two values deliberately differ from the brief that
+specified it, and both were measured:
+
+- The brief's `#c2451c` measures **3.44:1** as small text on the gradient's
+  darkest stop. It is kept for the button fill and the particles — a
+  background and a decoration — and `#9E3110` (4.94:1) carries the text.
+- Dim copy runs at `.70` alpha, not the brief's `.55`, which measured
+  3.58:1.
+
+**Text over a particle field needs a halo, not a panel.** Measured against
+the rendered field, the darkest particle under a glyph is `rgb(78,22,20)`
+and dark ink on it is **1.24:1** — not a judgement call. A panel behind the
+copy would have broken the whole effect, so the cream halo goes on the
+glyphs themselves: the section backgrounds stay genuinely transparent and
+particles still pass behind the type. That took every string from 1.0–2.0:1
+to **6.3–14.3:1**.
+
+Two things about the particle system that are load-bearing:
+
+- **NormalBlending, never additive.** The usual glowing-particle recipe is
+  additive blending, which on a light ground washes to nothing. Solid cores
+  at size 1.8 plus a size-7 haze at .08 opacity is what reads as pigment.
+- **Rotations live on a `THREE.Group`, not on the scene**, so the cursor can
+  be inverted into the same space with `worldToLocal`. Rotate the scene
+  instead and the repulsion hole drifts out of register with the pointer as
+  the formation spins.
+
+Reduced motion drops the tumble, the spin, the travelling wave and the
+repulsion but keeps the scroll-triggered morphs, which are user-initiated.
+Without Three.js the page is text on a cream gradient and loses nothing it
+needs.
+
 ## Source of truth
 
 The design lives in Claude Design project
