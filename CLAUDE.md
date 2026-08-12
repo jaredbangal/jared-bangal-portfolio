@@ -7,8 +7,8 @@ stylesheet, one progressive-enhancement script.
 index.html              Home
 assets/css/styles.css   all styles
 assets/js/main.js       nav state, reveals, scrollspy, form validation
-assets/img/             hero-tools-{960,1600,2400}.webp, portrait{,-480}.webp,
-                        process-painter.webp, work-<slug>.webp
+assets/img/             hero-sewing-{960,1600,2400}.webp, portrait{,-480}.webp,
+                        process-bench.webp, work-<slug>.webp
 assets/img/_source/     full-resolution masters, not served
 reference/              squarespace.com screenshots + scraped tokens
 ```
@@ -590,11 +590,12 @@ replace them with real quotes or delete the section. Anything that cannot
 be attributed to a named, consenting client comes out. The avatars are
 still empty `.slot` tiles.
 
-**Confirm the licence on `process-painter.webp`.** It came in as
-`tattooed-man-painting-walls.jpg`, which reads like a stock library file.
-Jared supplied it, but a commercial site needs the licence on record before
-launch, and the master in `assets/img/_source/` is what a takedown request
-would be measured against.
+**Confirm the licence on the supplied photography.** `hero-sewing-*.webp`
+and `process-bench.webp` came in as `sewing-tools-flatlay-knolling.jpg` and
+`neatly-kept-jewelers-desk.jpg`, filenames that read like a stock library.
+Jared supplied them, but a commercial site needs the licences on record
+before launch, and the masters in `assets/img/_source/` are what a takedown
+request would be measured against.
 
 Forms post to `action="#"` — point them at a real handler and delete the
 placeholder branch in `main.js`.
