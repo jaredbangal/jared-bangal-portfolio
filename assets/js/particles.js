@@ -52,21 +52,25 @@
   var rendered  = new Float32Array(COUNT * 3);
   var colors    = new Float32Array(COUNT * 3);
 
-  // Gold, held per particle across every morph so a point keeps its
+  // Blue, held per particle across every morph so a point keeps its
   // identity as the shape changes.
   //
-  // It is deliberately *old* gold, not yellow. Cream is a light, nearly
-  // neutral ground: a bright gold (#FFD700, relative luminance .70) sits
-  // within .06 of --cream-200's .76 and disappears. These five run .06–.49,
-  // so the field separates on luminance and on chroma at once, and the
-  // darkest two are the tarnish that keeps it reading as leaf rather than
-  // as a highlighter.
+  // Cool field on a warm ground — the pairing is deliberate, and it is the
+  // one thing on the page allowed to be cold. It is *not* on the --accent
+  // token: the maroon buttons and ink are untouched, and this palette must
+  // never be promoted into the token layer, or the page has two accents.
+  //
+  // "Bright" here still has a ceiling. Cream sits at relative luminance
+  // .76, so a genuinely light blue lands within a few points of the ground
+  // and vanishes exactly the way a yellow gold did. These five run
+  // .03–.50: the top two carry the brightness, the bottom two carry the
+  // depth that keeps a particle legible when it crosses a pale surface.
   var PALETTE = [
-    { c: [201, 151,  31], w: 0.34 },   // old gold — the dominant tone
-    { c: [224, 180,  74], w: 0.22 },   // champagne, the highlight
-    { c: [168, 117,  17], w: 0.22 },   // bronze
-    { c: [122,  82,   8], w: 0.14 },   // deep bronze
-    { c: [ 92,  61,   4], w: 0.08 }    // umber
+    { c: [ 46, 155, 214], w: 0.34 },   // bright blue — the dominant tone
+    { c: [110, 197, 240], w: 0.22 },   // sky, the highlight
+    { c: [ 28, 111, 184], w: 0.22 },   // true blue
+    { c: [ 20,  78, 134], w: 0.14 },   // deep blue
+    { c: [ 12,  46,  82], w: 0.08 }    // navy
   ];
   for (var i = 0; i < COUNT; i++) {
     var r = Math.random(), acc = 0, col = PALETTE[0].c;
@@ -192,7 +196,7 @@
     var dist = 520;                                    // MODES.sphere cam z
     var halfH = Math.tan((60 * Math.PI / 180) / 2) * dist;
     var halfW = halfH * (window.innerWidth / window.innerHeight);
-    return Math.min(halfH, halfW) * 0.82;
+    return Math.min(halfH, halfW) * 0.52;
   }
 
   function sphere() {

@@ -449,6 +449,114 @@
     counters.forEach(function (el) { counterWatch.observe(el); });
   }
 
+  /* ── Hero stage ─────────────────────────────────────────
+     The six concepts on a shallow 3D carousel. All this does is decide
+     which slide holds which slot; the geometry of a slot lives in the
+     stylesheet, so the two never drift apart and the arrangement in the
+     HTML is already a valid composition with this file removed.
+
+     The slot for a slide is its distance from the active one, wrapped into
+     a signed range so the set is centred on 0. Wrapping matters: without
+     it the last concept would be at +5 and travel the full width of the
+     stage to reach the left edge, instead of stepping one place. Six
+     slides over five slots means exactly one is parked out of sight each
+     tick, which is what the ±3 rule in the CSS is for. */
+  var stage = document.querySelector("[data-hero-stage]");
+
+  if (stage) {
+    var slides = Array.prototype.slice.call(stage.querySelectorAll(".stage__slide"));
+    var n = slides.length;
+
+    if (n > 1) {
+      var active = 0, timer = null, paused = false;
+      var HOLD = 4200;
+
+      function layout() {
+        slides.forEach(function (el, i) {
+          var d = ((i - active) % n + n) % n;          // 0 … n-1
+          if (d > Math.floor((n - 1) / 2)) d -= n;     // → centred on 0
+          el.setAttribute("data-slot", String(d));
+          // Only the three on stage are announced. The threshold has to
+          // match the CSS, where everything past ±1 sits at opacity 0 —
+          // an invisible image that is still read out is worse than one
+          // that is honestly absent.
+          el.setAttribute("aria-hidden", Math.abs(d) > 1 ? "true" : "false");
+        });
+        dots.forEach(function (dot, i) {
+          dot.setAttribute("aria-current", i === active ? "true" : "false");
+        });
+      }
+
+      function go(i) { active = ((i % n) + n) % n; layout(); }
+      function stop()  { if (timer) { clearInterval(timer); timer = null; } }
+      function start() {
+        stop();
+        if (paused || reducedMotion.matches) return;
+        timer = setInterval(function () { go(active + 1); }, HOLD);
+      }
+
+      /* Controls are built here, not in the HTML, for the same reason the
+         marquee's are: without this file nothing advances, and a dot that
+         cannot change anything is a lie about what the page does. */
+      var controls = document.createElement("div");
+      controls.className = "stage__controls";
+
+      var dots = slides.map(function (el, i) {
+        var img = el.querySelector("img");
+        var name = img ? (img.getAttribute("alt") || "").split(",")[0] : "Slide " + (i + 1);
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "stage__dot";
+        b.setAttribute("aria-label", "Show " + name);
+        b.addEventListener("click", function () { go(i); start(); });
+        controls.appendChild(b);
+        return b;
+      });
+
+      var pause = document.createElement("button");
+      pause.type = "button";
+      pause.className = "stage__pause";
+      function paintPause() {
+        pause.setAttribute("aria-label", paused ? "Play concept carousel" : "Pause concept carousel");
+        pause.innerHTML = paused
+          ? '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg>'
+          : '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1h3v10H2zM7 1h3v10H7z"/></svg>';
+      }
+      pause.addEventListener("click", function () {
+        paused = !paused;
+        paintPause();
+        start();
+      });
+      paintPause();
+      controls.appendChild(pause);
+
+      // Under reduced motion nothing auto-advances, so a pause control has
+      // nothing to pause — but the dots still work as a picker.
+      if (reducedMotion.matches) pause.hidden = true;
+
+      stage.parentNode.insertBefore(controls, stage);
+
+      // Hover and focus are conveniences on top of the button — they only
+      // reach a mouse and a keyboard, which is exactly why the button has
+      // to exist for touch.
+      stage.addEventListener("pointerenter", stop);
+      stage.addEventListener("pointerleave", start);
+      controls.addEventListener("focusin",  stop);
+      controls.addEventListener("focusout", start);
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) stop(); else start();
+      });
+
+      reducedMotion.addEventListener("change", function () {
+        pause.hidden = reducedMotion.matches;
+        start();
+      });
+
+      layout();
+      start();
+    }
+  }
+
   /* ── Testimonial marquee ────────────────────────────────
      The CSS animation runs to exactly -50%, so the track has to hold the
      set twice for the wrap to land invisibly. Doubling it here rather

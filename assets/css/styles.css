@@ -1063,11 +1063,19 @@ body  { background-color: var(--bg-page); }
 /* ── Hero ───────────────────────────────────────────────────
    Centred stack, huge light display type, one solid CTA and a
    short reassurance line — their homepage shape exactly.       */
+/* The hero is a column of two parts now: the copy, which sizes to its own
+   content, and the stage below it, which takes whatever height is left and
+   clips the screens against the fold. `.hero__inner` used to own the whole
+   100svh and centre inside it; that is what held the headline at the middle
+   of the screen, and with a stage underneath it has to give the height up
+   or the two fight over the viewport. */
 .hero {
   position: relative;
   min-height: 100svh;
-  margin-top: calc(var(--nav-h) * -1);   /* nav floats over the photo */
+  margin-top: calc(var(--nav-h) * -1);   /* nav floats over the hero */
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── The particle field ─────────────────────────────────────
@@ -1094,14 +1102,13 @@ body  { background-color: var(--bg-page); }
 .hero__inner {
   position: relative;
   z-index: var(--z-raised);
-  min-height: 100svh;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
-  padding-top: calc(var(--nav-h) + var(--space-24));
-  padding-bottom: var(--space-24);
+  padding-top: calc(var(--nav-h) + var(--space-12));
+  padding-bottom: var(--space-10);
 }
 
 .hero__title {
@@ -1119,6 +1126,162 @@ body  { background-color: var(--bg-page); }
   margin-top: var(--space-6);
   font-size: var(--text-md);
   color: var(--text-strong);
+}
+
+/* ── Hero stage ─────────────────────────────────────────────
+   Six concept sites on a shallow 3D carousel, running off the fold.
+
+   Perspective sits on `.stage__track`, not on `.hero__stage`, because
+   perspective only reaches an element's *direct* children — with it on the
+   stage, the track between them would flatten the slides unless the track
+   also carried `transform-style: preserve-3d`. Putting it on the immediate
+   parent of the slides removes that dependency entirely.
+
+   The stage is what clips: it takes the leftover column height and hides
+   the overflow, so the screens — deliberately taller than it — are cut by
+   the fold rather than shrunk to fit. That crop is the whole effect. */
+.hero__stage {
+  --stage-w: min(40rem, 47vw);
+  position: relative;
+  z-index: var(--z-raised);
+  flex: 1 1 auto;
+  min-height: clamp(190px, 30svh, 360px);
+  overflow: hidden;
+}
+
+.stage__track {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--stage-w);
+  margin-left: calc(var(--stage-w) / -2);
+  /* The height is not cosmetic. Every child is absolutely positioned, so
+     without it the track collapses to zero and `perspective-origin: 50% 50%`
+     resolves to the *top edge* — the vanishing point ends up above the
+     screens and the turn reads as a flat skew instead of a rotation. */
+  height: 100%;
+  perspective: 1200px;
+  list-style: none;
+  margin-block: 0;
+  padding: 0;
+}
+
+.stage__slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform-origin: 50% 0;
+  transition: transform var(--dur-slow) var(--ease-out),
+              opacity   var(--dur-base) var(--ease-out);
+}
+
+.stage__slide img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);        /* 8px — the media/card step */
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-4);
+  background: var(--cream-100);
+}
+
+/* Slots, not indices. main.js assigns which concept holds which slot, so
+   the geometry lives here once instead of being recomputed in script.
+
+   Three screens are visible, not five. At ±70% the neighbours overlapped
+   the centre and the row read as one wide panel with seams — the gap
+   between screens is what makes them read as separate sites, and it only
+   appears once the offset exceeds 100% of the slide's own width.
+
+   Slides travel right → left (`d` falls as `active` rises), so the parks
+   are sided: a slide waits off the right edge, crosses the stage, and
+   leaves off the left. Parking everything centre-stage instead would make
+   each one materialise out of the middle of the composition. */
+.stage__slide[data-slot="0"]  { transform: translate3d(0, 0, 0);                          z-index: 5; opacity: 1; }
+.stage__slide[data-slot="-1"] { transform: translate3d(-104%, 3%, -220px) rotateY(17deg); z-index: 4; opacity: 1; }
+.stage__slide[data-slot="1"]  { transform: translate3d(104%, 3%, -220px) rotateY(-17deg); z-index: 4; opacity: 1; }
+
+.stage__slide[data-slot="-2"],
+.stage__slide[data-slot="-3"] { transform: translate3d(-166%, 5%, -300px) rotateY(18deg); z-index: 2; opacity: 0; }
+.stage__slide[data-slot="2"],
+.stage__slide[data-slot="3"]  { transform: translate3d(166%, 5%, -300px) rotateY(-18deg); z-index: 2; opacity: 0; }
+
+/* ── Stage controls ─────────────────────────────────────────
+   Built by main.js. WCAG 2.2.2 wants a pause mechanism for motion that
+   runs past five seconds; hover and focus-within pause it too, but those
+   only reach a mouse and a keyboard, and a touch device has neither. */
+.stage__controls {
+  position: relative;
+  z-index: var(--z-raised);
+  flex: 0 0 auto;                   /* a flex child of .hero — never squash */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.stage__dot {
+  /* 44px is a floor, not a starting size — flex must not shrink these.
+     Seven controls plus gaps overrun a 360px viewport, and the default
+     `flex-shrink: 1` silently traded the touch target away to make it fit.
+     The gap goes instead; the visible bar is only 22px of the 44, so
+     zero gap still leaves plenty of air between them. */
+  flex: 0 0 44px;
+  width: 44px;                      /* touch target; the visible bar is inside */
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.stage__dot::before {
+  content: "";
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--border-strong);
+  transition: background var(--dur-fast) var(--ease-in-out),
+              transform  var(--dur-fast) var(--ease-in-out);
+}
+.stage__dot[aria-current="true"]::before { background: var(--accent-ink); transform: scaleY(2); }
+.stage__dot:hover::before                { background: var(--accent-ink-hover); }
+.stage__dot:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -8px;
+  border-radius: var(--radius-sm);
+}
+
+.stage__pause {
+  margin-left: var(--space-3);   /* off the dot row, not part of it */
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: grid;
+  place-items: center;
+  transition: color var(--dur-fast) var(--ease-in-out);
+}
+.stage__pause:hover { color: var(--accent-ink-hover); }
+.stage__pause:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -8px;
+  border-radius: var(--radius-sm);
+}
+.stage__pause svg { width: 13px; height: 13px; fill: currentColor; }
+
+/* Reduced motion: the carousel does not advance on its own (main.js never
+   starts the timer), so the transition here would only ever run from a
+   deliberate press — keep it, but short. */
+@media (prefers-reduced-motion: reduce) {
+  .stage__slide { transition-duration: .01ms; }
 }
 
 /* ── Section frames ─────────────────────────────────────── */
@@ -2045,9 +2208,33 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   .nav__links a { font-size: 11px; letter-spacing: .06em; }
   .nav__brand { font-size: var(--text-2xs); }
 
-  .hero__inner { padding-top: calc(var(--nav-h) + var(--space-16)); padding-bottom: var(--space-16); }
+  .hero__inner { padding-top: calc(var(--nav-h) + var(--space-12)); padding-bottom: var(--space-8); }
   .hero__cta { width: 100%; }
   .hero__cta .btn { flex: 1 1 auto; }
+
+  /* 56vw of a phone is a 220px screen — too small to read as a website at
+     all. The centre slide takes most of the width here and the neighbours
+     simply run further off both edges, which is the same composition. */
+  /* 47vw of a phone is a 180px screen — too small to read as a website at
+     all. The centre slide takes most of the width and the neighbours run
+     further off both edges, which is the same composition, tighter.
+
+     The hero also stops claiming 100svh here. A phone cannot fit a screen
+     tall enough to reach the fold *and* keep the neighbours in frame — the
+     slide would need to be 611px wide on a 390px viewport. Left as a flex
+     filler the stage just grew past the artwork and left dead cream under
+     it, so its height comes off the slide's own aspect (620/800) instead,
+     cropping the same fifth it crops on desktop. The next section peeking
+     under the fold is a better scroll affordance than blank ground. */
+  .stage__controls { gap: 0; }
+
+  .hero { min-height: 0; }
+  .hero__stage {
+    --stage-w: min(40rem, 78vw);
+    flex: 0 0 auto;
+    min-height: 0;
+    height: calc(var(--stage-w) * 0.62);
+  }
 
   .cards { grid-template-columns: 1fr; }
   .work { grid-template-columns: 1fr; gap: var(--space-10); }
@@ -2060,8 +2247,11 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   .footer__meta { gap: var(--space-3) var(--space-6); }
 }
 
-/* Landscape phones: the hero can't claim a whole 400px-tall viewport. */
+/* Landscape phones: the hero can't claim a whole 400px-tall viewport, and
+   there is no room left for a stage under the copy — it would be a 60px
+   sliver of screenshot. Drop it rather than clip it to nothing. */
 @media (max-height: 520px) and (orientation: landscape) {
-  .hero, .hero__inner { min-height: 0; }
-  .hero__inner { padding-block: calc(var(--nav-h) + var(--space-10)) var(--space-12); }
+  .hero { min-height: 0; }
+  .hero__inner { min-height: 0; padding-block: calc(var(--nav-h) + var(--space-10)) var(--space-12); }
+  .hero__stage { display: none; }
 }

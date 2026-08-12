@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css?v=ce21cf01">
+<link rel="stylesheet" href="assets/css/styles.css?v=0fea9bc0">
 </head>
 <body>
 
@@ -224,12 +224,41 @@
     <div class="hero__inner shell">
       <h1 class="hero__title reveal">
         <span>A website</span>
-        <span>makes it real</span>
+        <span>that you can feel</span>
       </h1>
       <div class="hero__cta reveal">
         <a class="btn btn--primary btn--lg" href="#contact">Book a Free Consult</a>
       </div>
       <p class="hero__note reveal">Free 30-minute call. No obligation.</p>
+    </div>
+
+    <!-- The concept sites on a stage, cut off by the fold. Slots are set by
+         data-slot; main.js rotates them. Without JS the default arrangement
+         below is a complete, static composition — nothing here needs the
+         script to be a valid hero. The dots and the pause control are built
+         by main.js for the same reason the marquee's is: a control for an
+         animation that never starts is a dead control. -->
+    <div class="hero__stage reveal" data-hero-stage role="group" aria-label="Concept site designs">
+      <ul class="stage__track">
+        <li class="stage__slide" data-slot="0">
+          <img src="assets/img/stage-botanica.webp" alt="Botanica, a floral studio concept — serif italic on cream" width="800" height="620" decoding="async">
+        </li>
+        <li class="stage__slide" data-slot="1">
+          <img src="assets/img/stage-borough.webp" alt="Borough Barber, a barber shop concept — condensed type on near-black" width="800" height="620" decoding="async">
+        </li>
+        <li class="stage__slide" data-slot="2">
+          <img src="assets/img/stage-kettle.webp" alt="Kettle, a coffee roaster concept — serif on sand" width="800" height="620" decoding="async">
+        </li>
+        <li class="stage__slide" data-slot="3">
+          <img src="assets/img/stage-sunday.webp" alt="Sunday, a bakery concept — butter and terracotta blocks" width="800" height="620" loading="lazy" decoding="async">
+        </li>
+        <li class="stage__slide" data-slot="-2">
+          <img src="assets/img/stage-meridian.webp" alt="Meridian, an architecture studio concept — a visible column grid" width="800" height="620" decoding="async">
+        </li>
+        <li class="stage__slide" data-slot="-1">
+          <img src="assets/img/stage-northline.webp" alt="Northline, a bike shop concept — monospace specs on slate" width="800" height="620" decoding="async">
+        </li>
+      </ul>
     </div>
   </section>
 
@@ -664,7 +693,7 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-<script src="assets/js/particles.js?v=6e7d15ed" defer></script>
-<script src="assets/js/main.js?v=5b2857fb" defer></script>
+<script src="assets/js/particles.js?v=919b7873" defer></script>
+<script src="assets/js/main.js?v=c77cd922" defer></script>
 </body>
 </html>

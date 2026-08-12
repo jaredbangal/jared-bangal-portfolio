@@ -544,7 +544,8 @@ position instead.
 
 `assets/js/particles.js` renders a fixed WebGL field behind the whole page —
 2400 points morphing between four formations (`sphere`, `vortex`, `polaris`,
-`waves`) as sections scroll past.
+`waves`) as sections scroll past. The sphere fits **0.52** of the smaller
+viewport half-extent.
 Ported from `/motion/`, which still exists as the full-strength study.
 
 **The hero formation is a globe, and it is a *thin shell*.** It began as
@@ -577,13 +578,18 @@ scroll-driven `hero-drift` parallax all went with it — about 70 lines. If a
 photo ever comes back, the scrim has to be re-solved from scratch (the
 method is in git history at `331840d`), not restored from memory.
 
-**The field is gold, and it is old gold, not yellow.** Cream is a light,
-near-neutral ground: a bright gold (`#FFD700`, relative luminance .70) sits
-within .06 of `--cream-200`'s .76 and disappears. The five palette stops run
-**.06–.49**, so the field separates on luminance *and* on chroma at once, and
-the darkest two are the tarnish that keeps it reading as leaf rather than as
-a highlighter. Note this palette is the field's own — it is **not** on the
-`--accent` token, and the page's maroon buttons and ink are untouched.
+**The field is blue — a cool field on a warm ground.** It is the one thing
+on the page allowed to be cold, and it is **not** on the `--accent` token:
+the maroon buttons and ink are untouched, and this palette must never be
+promoted into the token layer or the page has two accents.
+
+"Bright" has a ceiling here. Cream sits at relative luminance .76, so a
+genuinely light blue lands within a few points of the ground and vanishes
+the same way a yellow gold did. The five stops run **.03–.50** — the top two
+carry the brightness, the bottom two the depth that keeps a particle legible
+crossing a pale surface. The palette was gold before this and the two
+measure close enough that `CORE_ALPHA` did not move (gold's weighted mean
+luminance .29, blue's .25); that is a coincidence, not a rule.
 
 **`CORE_ALPHA` is the contrast budget.** This is the one thing to understand
 before touching it. In `/motion/` the particles could run at full strength
@@ -595,6 +601,14 @@ per unit alpha, and the round sprite covers less of its quad than the old
 square did. Together that is what pays for **`.34`**. It is not a
 transferable number: **re-solve it against rendered pixels if the palette
 moves again.**
+
+The measurement harness has a trap of its own. Playwright's
+`scroll_into_view_if_needed()` does the *minimum* scroll, so an element
+already technically on screen is never moved — it stays below the reveal
+observer's threshold, never fades in, and the clip reads as empty ground.
+That reported **1.27:1** on the stats figures at 390 and looked exactly like
+a real failure. Scroll with `block: "center"` and assert computed opacity is
+1 before sampling.
 
 Verified on rendered pixels with the field live, worst case **6.14:1** at
 1440 and **6.28:1** at 390, across 17 text runs — hero, stats, intro,
@@ -653,6 +667,72 @@ Everything degrades to the site as it was: no `particles.js`, no Three.js,
 no WebGL, or `prefers-reduced-motion` — all of them leave a complete cream,
 textured page. The script returns early rather than throwing. `serve.py`
 stamps it like every other asset.
+
+## Hero stage
+
+Six concept sites on a shallow 3D carousel under the headline, cut off by
+the fold — Squarespace's template showcase, on our own work. `main.js`
+decides which concept holds which slot; every slot's geometry lives in the
+stylesheet, so the two cannot drift and the arrangement written into the
+HTML is already a valid composition with the script removed.
+
+**Three screens are visible, not five.** At ±70% the neighbours overlapped
+the centre and the row read as one wide panel with seams. The gap between
+screens is what makes them read as separate sites, and it only appears once
+the offset passes **100%** of the slide's own width — they now sit at ±104%.
+
+**`perspective-origin` collapsed the first build, and it looks like the
+rotation simply isn't applying.** `.stage__track` is absolutely positioned
+and every child is too, so its height resolves to **zero** — and
+`perspective-origin: 50% 50%` of a zero-height box lands on its *top edge*.
+The vanishing point sat above the artwork and a real `rotateY` rendered as
+a flat skew. `height: 100%` on the track is the fix, and it is load-bearing,
+not tidying. Check the computed value before touching the angles.
+
+Perspective sits on the **track**, not on `.hero__stage`, because
+perspective only reaches an element's direct children — on the stage, the
+track between them would flatten the slides unless it also carried
+`transform-style: preserve-3d`.
+
+**The parks are sided.** Slides travel right → left (`d` falls as `active`
+rises), so one waits off the right edge, crosses, and leaves off the left.
+Parking them centre-stage instead makes each concept materialise out of the
+middle of the composition.
+
+**The hero gave up `100svh` to make room.** `.hero` is a flex column now:
+the copy sizes to its content, the stage takes what is left and clips. On
+mobile the hero stops claiming a full viewport at all — a phone cannot fit
+a screen tall enough to reach the fold *and* keep the neighbours in frame
+(the slide would need to be 611px wide on a 390px viewport). Left as a flex
+filler the stage grew past the artwork and left dead cream under it, so
+below 620px its height comes off the slide's own aspect instead. The next
+section peeking under the fold is a better scroll affordance than blank
+ground. Landscape phones drop the stage outright rather than show a 60px
+sliver of screenshot.
+
+**Images are purpose-cropped.** `stage-<slug>.webp` is the top 800×620 of
+each full-page `work-<slug>.webp`, ~16KB against ~45KB. The stage shows
+roughly the top fifth of a 1600px-tall render, so serving the full page
+here would be six times the bytes for pixels nobody sees. Re-crop from the
+master if a concept is re-shot.
+
+**Controls are built by `main.js`, like the marquee's**, and for the same
+reason: without the script nothing advances, and a dot that cannot change
+anything is a lie about what the page does. WCAG 2.2.2 wants a pause for
+motion running past five seconds — hover and `focus-within` pause it too,
+but those only reach a mouse and a keyboard, and a touch device has neither.
+Under reduced motion nothing auto-advances and the pause button hides, but
+the dots still work as a picker.
+
+`aria-hidden` on the slides must track the CSS: everything past ±1 is at
+opacity 0, so that is where the threshold goes. An invisible image that is
+still announced is worse than one honestly absent.
+
+**44px is a floor, not a starting size.** Seven controls plus gaps overrun a
+360px viewport and the default `flex-shrink: 1` silently traded the touch
+target down to 43px to fit. `flex: 0 0 44px` pins them and the gap gives way
+instead — the visible bar is only 22px of the 44, so zero gap still leaves
+air.
 
 ## Testimonial marquee
 
