@@ -35,7 +35,17 @@
   --ink-dk:     #16171A;                 /* 12.5:1 on cream-300 */
   --ink-dk-78:  rgba(22, 23, 26, .78);   /*  7.1:1 */
   --ink-dk-72:  rgba(22, 23, 26, .72);   /*  5.9:1 */
-  --ink-dk-66:  rgba(22, 23, 26, .66);   /*  4.9:1 — AA floor for body copy */
+  --ink-dk-70:  rgba(22, 23, 26, .70);   /*  4.7:1 against the darkest
+                                              *textured* patch of cream-300,
+                                              the worst surface on the page.
+                                              Was .66, which measured 4.9:1
+                                              against the flat band and only
+                                              4.2:1 once that band had
+                                              texture on it. A ramp
+                                              calibrated on flat colour does
+                                              not survive a textured one:
+                                              measure the darkest patch, not
+                                              the token. */
   --ink-dk-16:  rgba(22, 23, 26, .16);   /*  non-text: rules, borders */
   --ink-dk-10:  rgba(22, 23, 26, .10);
   --ink-dk-06:  rgba(22, 23, 26, .06);
@@ -137,7 +147,7 @@
   --text-primary:   var(--ink-dk);
   --text-body:      var(--ink-dk-78);
   --text-secondary: var(--ink-dk-72);
-  --text-muted:     var(--ink-dk-66);   /* AA floor */
+  --text-muted:     var(--ink-dk-70);   /* AA floor */
   --text-strong:    var(--ink-dk-78);   /* a step above body, still not primary */
 
   --border-subtle: var(--ink-dk-10);
@@ -306,63 +316,57 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
 
 #nav-sentinel { position: absolute; top: 0; height: 1px; width: 100%; }
 
-/* ── Grain ──────────────────────────────────────────────────
-   Two passes of the same tile. `.grain` is local to the hero and sits
-   between the scrim and the copy, so it textures the photo only and
-   never lands on text. `body::after` is the page-wide film: fixed, so it
-   does not scroll with the content, and above the nav so no surface is
-   left smooth.
+/* ── Texture ───────────────────────────────────────────────
+   Paper tooth on every surface. Four octaves of fractal noise in one tile,
+   which carries both the fine speckle and the slower mottling — two
+   frequencies are what separate paper from digital noise, and fractalNoise
+   gives both from one pass.
 
-   Blend mode is the whole problem, and which mode wins depends entirely on
-   which end of the range the page sits at. `overlay` degenerates to
-   `multiply` below 50% luminance, so against a #14171C ground it has no
-   headroom: measured, it moved a flat surface's stdev from 0.76 to 0.83 —
-   invisible. `soft-light` is the one that reads. It does lift the average
-   slightly (23 → 28 on the L channel) because grain on near-black can only
-   work by adding light, but the floor stays put, so blacks stay black and
-   the specks are what you see.
+   **It sits behind the content, not over it**, as a background layer on
+   the surface itself. That is the whole reason it can be this strong. The
+   film it replaced was a fixed overlay above everything including live
+   text, so its strength was capped by contrast and it never got past a
+   stdev of 2.2 on a flat surface — invisible. Behind the content the
+   glyphs stay solid ink and only the ground varies, exactly like print.
+   This runs at 8.2, nearly four times as much, for *better* contrast
+   rather than worse.
 
-   Opacity is capped by text, not by looks: the film composites over live
-   copy, and soft-light at .26 costs the worst-case pixel about 1.2:1. That
-   keeps --text-muted, the 5.8:1 AA floor, above 4.5:1 at its darkest pixel. */
-.grain,
-body::after {
-  pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0' intercept='1'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+   **The blend mode is `luminosity`, and the tile is calibrated, not
+   guessed.** multiply can only darken, so texture and page colour trade
+   against each other — at a visible strength it dragged the ground down
+   nearly 30 levels. soft-light and overlay compress at the light end and
+   never got past 3.8. luminosity takes the noise's luminance and keeps the
+   cream's hue, so the only requirement is that the noise be *centred* on
+   the surface's own luminance.
+
+   That centre cannot be derived from the surface's channel value — the
+   blend's Lum() weighting and clipping at the top of the range both move
+   it. It was calibrated by measuring: slope .70 about centre .775 lands
+   the ground at +1.5 levels of untextured, which is nothing. If you change
+   --cream-200, re-measure rather than recompute. */
+:root { --tex: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='t' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.35' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncR type='linear' slope='0.700' intercept='0.425'/><feFuncG type='linear' slope='0.700' intercept='0.425'/><feFuncB type='linear' slope='0.700' intercept='0.425'/><feFuncA type='linear' slope='0' intercept='1'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23t)'/></svg>"); }
+
+body,
+.band,
+.u-textured {
+  background-image: var(--tex);
+  background-blend-mode: luminosity;
+  background-repeat: repeat;
 }
 
-/* Hero-local pass: sits between the scrim and the copy, so it textures the
-   photo and never lands on text. Overlay works here — there is a real
-   image underneath with luminance to push against. */
-/* multiply, like the page film — the photo is light now, and overlay has
-   no headroom above 50% luminance. */
+body  { background-color: var(--bg-page); }
+.band { background-color: var(--bg-band); }
+
+/* Hero-local pass over the photo. This one *is* an overlay — a photograph
+   wants grain on top of it, not behind — and it sits under .hero__inner,
+   so it still never lands on the copy. */
 .grain {
   position: absolute;
   inset: 0;
-  opacity: .10;
+  opacity: .12;
   mix-blend-mode: multiply;
-}
-
-/* Page-wide film: fixed, so it does not scroll with the content, and above
-   the nav so no surface is left smooth. */
-/* `multiply`, because the page is cream. This is the mirror of the problem
-   the dark page had: `soft-light` at .26 moved a flat cream surface's stdev
-   from 0.00 to 0.50 — invisible — because it compresses near the top of the
-   range just as `overlay` compressed near the bottom. Even at full opacity
-   it only reached 1.68. `multiply` has all its headroom on a light ground:
-   at .14 it reads as paper tooth rather than as noise, and it darkens the
-   ground very slightly (226 → 218 on the L channel), which is the correct
-   direction for texture on paper.
-
-   If the page ever goes dark again, this has to go back to soft-light. The
-   two are not interchangeable. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-grain);
-  opacity: .14;
-  mix-blend-mode: multiply;
+  pointer-events: none;
+  background-image: var(--tex);
 }
 
 /* ── Type primitives ────────────────────────────────────── */
@@ -1099,7 +1103,7 @@ body::after {
 .section--tight-bottom { padding-bottom: var(--space-20); }
 .section--tight-top    { padding-top: var(--space-16); }
 
-.band { background: var(--bg-band); padding: var(--section-y) var(--gutter); }
+.band { padding: var(--section-y) var(--gutter); }
 .band--tight { padding-block: var(--space-24); }
 /* Lets a child run the full width of the band — the testimonial marquee
    has to reach both edges for its fade to read as off-screen rather than

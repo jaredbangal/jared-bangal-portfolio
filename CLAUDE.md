@@ -64,43 +64,59 @@ value.** `--focus-ring` deliberately stays ink: an on-theme focus ring is
 weaker than a maximum-contrast one, and the ring is an accessibility
 affordance before it is a brand surface.
 
-## Grain
+## Texture
 
-Two passes of one SVG turbulence tile.
+Paper tooth on every surface, at four times the strength the old grain
+managed. `--tex` is one tile of four-octave `fractalNoise` — four octaves
+carries both the fine speckle and the slower mottling, and two frequencies
+are what separate paper from digital noise.
 
-- `.grain` is hero-local, between the scrim and the copy, so it textures
-  the photo and never lands on text. `overlay` at `.14` — there is a real
-  image underneath with luminance to push against.
-- `body::after` is the page-wide film: `position: fixed` (it should not
-  scroll with the content) at `--z-grain` 60, above the nav so no surface
-  is left smooth. **`multiply` at `.14`.**
+**It sits behind the content, not over it**, as a background layer on the
+surface itself. That is the whole reason it can be this strong. The film it
+replaced was a fixed overlay above everything including live text, so its
+strength was capped by contrast and it never got past a stdev of 2.2 on a
+flat surface — invisible. Behind the content the glyphs stay solid ink and
+only the ground varies, exactly like print. This runs at **8.2**.
 
-**Blend mode is the whole problem, and which mode wins depends entirely on
-which end of the range the page sits at.** Both failures have now been
-measured on this repo:
+**The blend mode is `luminosity`, and the tile is calibrated, not guessed.**
+Everything else was tried and measured:
 
-| Page | Mode | Flat-surface stdev | Verdict |
-|---|---|---|---|
-| dark `#14171C` | `overlay` .04 | 0.76 → 0.83 | invisible |
-| dark `#14171C` | `soft-light` .26 | 0.76 → 2.06 | reads |
-| cream `#E4E2DC` | `soft-light` .26 | 0.00 → 0.50 | invisible |
-| cream `#E4E2DC` | `soft-light` 1.0 | 0.00 → 1.68 | still weak |
-| cream `#E4E2DC` | `multiply` .14 | 0.00 → ~2.0 | reads |
+| Mode | stdev | mean shift |
+|---|---|---|
+| `multiply` (the old film) | 2.2 | −8 |
+| `multiply`, visible strength | 6.0 | **−30** |
+| `soft-light` | 2.1 | +6 |
+| `overlay` | 3.8 | +13 |
+| `luminosity`, centred | **8.2** | **+1.5** |
 
-`overlay` degenerates to `multiply` below 50% luminance and had no headroom
-on the dark ground; `soft-light` compresses near the *top* of the range and
-had none on cream. `multiply` has all its headroom on a light ground, and
-darkening slightly (226 → 218 on the L channel) is the right direction for
-texture on paper.
+`multiply` can only darken, so texture and page colour trade against each
+other. `soft-light` and `overlay` compress at the light end of the range and
+never got anywhere. `luminosity` takes the noise's luminance and keeps the
+cream's hue, so the only requirement is that the noise be *centred* on the
+surface's own luminance.
 
-**If the page ever goes dark again, this must go back to `soft-light`.**
-The two are not interchangeable, and the failure mode in both directions is
-silent — the film simply stops being visible.
+**That centre cannot be computed from the surface's channel value** — the
+blend's `Lum()` weighting and clipping at the top of the range both move it.
+It was found by measuring: slope `.70` about centre `.775`. If `--cream-200`
+changes, re-measure rather than recompute.
 
-The film composites over live text, which is what caps its opacity and what
-forced `--accent-ink` a step darker. Re-measure on rendered pixels, not
-computed styles: a blend layer is invisible to a contrast checker that
-reads the CSSOM.
+Strength is baked into the tile with `feComponentTransfer` (RGB remapped to
+a band around the centre), not set with `opacity`, so `slope` reads as
+"how much this can vary". Tune there. The tile scrolls with the surface
+rather than being fixed to the viewport — texture belongs to the paper, not
+the window — which also sidesteps the iOS `background-attachment: fixed`
+bug, and `stitchTiles` keeps the repeat seamless.
+
+**Texture invalidates a ramp calibrated on flat colour.** `--ink-dk-66`
+measured 4.9:1 against the flat band and **4.2:1** once that band had
+texture on it — a real AA failure, not a rounding one. The floor is now
+`--ink-dk-70` (4.7:1 against the darkest textured patch of `--cream-300`,
+the worst surface on the page). Measure ink against the *darkest patch*,
+never against the token's nominal value.
+
+The automated contrast pass reads computed styles and cannot see any of
+this. Checking texture means sampling rendered pixels: find the darkest
+patch in a gutter strip, then test each ink against it.
 
 ## Polarity
 
