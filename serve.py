@@ -32,6 +32,7 @@ ROOT = pathlib.Path(__file__).parent
 ASSETS = {
     "assets/css/styles.css": r'href="assets/css/styles\.css(?:\?v=[a-f0-9]+)?"',
     "assets/js/main.js": r'src="assets/js/main\.js(?:\?v=[a-f0-9]+)?"',
+    "assets/js/particles.js": r'src="assets/js/particles\.js(?:\?v=[a-f0-9]+)?"',
 }
 
 

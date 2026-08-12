@@ -540,60 +540,45 @@ way to reverse the state and would be stranded mid-scroll. Under
 rule only shortens the transition, which would snap the image to its end
 position instead.
 
-## Hero imagery
+## The particle field
 
-A knolled flatlay of sewing and craft tools on white cloth (3:2,
-4460×2973 master), served at 960/1600/2400w. The portrait lives in About —
-one photo each, doing different jobs. Don't put the portrait back in the
-hero; a 2:3 crop fights a full-bleed hero at every anchor point.
+`assets/js/particles.js` renders a fixed WebGL field behind the whole page —
+2400 points morphing between four formations as sections scroll past.
+Ported from `/motion/`, which still exists as the full-strength study.
 
-**The hero is light, and so is the type problem.** This replaced a dark
-flatlay, and every polarity in the section inverted with it: the copy is
-page ink, the scrim *lifts* the plate instead of sinking it, the nav's
-scrim went from dark-protecting-light to light-protecting-dark, and the
-hero-local grain went `overlay` → `multiply`. If the photo ever changes
-again, ask which end of the range it sits at before touching an alpha.
+**The hero has no photograph.** It was removed when the field went in; the
+hero is now type on cream with particles behind it, like every other
+section. `.hero__media`, `.hero__scrim`, the hero-local `.grain` and the
+scroll-driven `hero-drift` parallax all went with it — about 70 lines. If a
+photo ever comes back, the scrim has to be re-solved from scratch (the
+method is in git history at `331840d`), not restored from memory.
 
-**The photo drifts on scroll**, 7% over the first viewport, driven by
-`animation-timeline` — no scroll listener, no per-frame JavaScript, the
-compositor runs it. `@supports`-guarded, since where it is unavailable the
-right outcome is simply no parallax.
+**Cores render at `.20` opacity, and that number is the entire budget.**
+This is the one thing to understand before touching it. In `/motion/` the
+particles could run at full strength because that page carries eight short
+strings. Here they sit behind every paragraph on the site, and a deep-maroon
+particle at full opacity puts `--text-muted` at **1.19:1** — measured. At
+`.20` the composite is identical to an 80% cream veil over the field, which
+is what makes it work without a veil element at all. Below `.20` the muted
+floor breaks; above it the field stops being visible.
 
-**It has to be `scroll(root)`, not `view()`.** `view()` resolves against the
-nearest ancestor *scroll container*, and `.hero` has `overflow: hidden` —
-which makes it one, even though it never scrolls. The timeline attached
-perfectly and sat at 0% progress forever, which looks exactly like the
-feature not being supported. Name the document scroller explicitly;
-`animation-range: 0 100vh` keeps the drift on the first screen rather than
-spreading it over the whole page. The `scale(1.08)` is what stops the drift
-exposing an edge.
+Verified on rendered pixels with the field live, worst case **6.84:1**
+across stats, intro, services, work, about and contact copy.
 
-Re-measured with the photo moving under the copy: headline 7.4:1 at rest
-and 7.3:1 mid-drift, note 7.6:1 throughout.
+Layering: `#field` is `position: fixed` at `z-index: 0`, and `.nav`, `main`
+and `footer` sit at 1. The canvas is transparent, so the cream ground and
+its paper texture still show through — the particles are a layer *on* the
+paper, not a replacement for it. `.band` and the cards keep their own opaque
+fills, so the field passes behind them.
 
-**The scrim is solved, never eyeballed.** The method, which is repeatable:
+The camera orbit runs at 45% of the study's figures. There the swing was the
+whole show; here it is behind body copy, and a camera swinging under a
+paragraph is just motion sickness.
 
-1. Hide `.hero__scrim`, `.grain`, `body::after` and `.nav::before`, and set
-   the type to `visibility: hidden`.
-2. Screenshot, and take the **darkest** pixel inside each text box — the
-   worst case for dark ink. (On the old dark hero it was the brightest.)
-3. Solve for the cream alpha that brings that pixel far enough for the
-   text's own colour to clear its ratio.
-
-That gave: headline 0.29, note 0.41, nav 0.00 at 1440; headline 0.27, note
-0.40, nav trigger 0.40 at 390. The scrim carries margin over those, since
-the grain film composites on top. Composited result: headline 6.3:1 against
-a 3:1 bar, note 6.2–6.8:1, nav 11–12:1.
-
-**Three gradient layers, three jobs, and they must stay separate:** the
-bottom dissolve into `--cream-200` so the photo ends in the page colour
-rather than at an edge; a radial plate over the copy footprint only; and a
-light top pass so the nav reads. Eyeballing one combined gradient is how
-the first attempt washed the flatlay out until the tools were barely
-visible — the numbers above are what pulled it back.
-
-The automated contrast pass skips anything sitting on an image, so it will
-not catch a regression here. Re-run the solver by hand.
+Everything degrades to the site as it was: no `particles.js`, no Three.js,
+no WebGL, or `prefers-reduced-motion` — all of them leave a complete cream,
+textured page. The script returns early rather than throwing. `serve.py`
+stamps it like every other asset.
 
 ## Testimonial marquee
 

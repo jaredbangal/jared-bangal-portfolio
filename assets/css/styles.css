@@ -381,18 +381,6 @@ body,
 body  { background-color: var(--bg-page); }
 .band { background-color: var(--bg-band); }
 
-/* Hero-local pass over the photo. This one *is* an overlay — a photograph
-   wants grain on top of it, not behind — and it sits under .hero__inner,
-   so it still never lands on the copy. */
-.grain {
-  position: absolute;
-  inset: 0;
-  opacity: .12;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  background-image: var(--tex);
-}
-
 /* ── Type primitives ────────────────────────────────────── */
 
 /* Section labels: small, uppercase, opened-up tracking. */
@@ -1082,75 +1070,26 @@ body  { background-color: var(--bg-page); }
   overflow: hidden;
 }
 
-/* Scroll-linked parallax: the photo drifts a little slower than the page,
-   which is what gives the hero depth rather than the flatness of a picture
-   that scrolls at exactly the speed of everything on top of it.
+/* ── The particle field ─────────────────────────────────────
+   Fixed behind the entire page. The canvas is transparent, so the cream
+   ground and its paper texture still show through — the particles are an
+   extra layer on the paper, not a replacement for it.
 
-   Driven by `animation-timeline`, so there is no scroll listener and no
-   per-frame JavaScript — the compositor runs it. @supports-guarded, because
-   where it is unavailable the correct outcome is simply no parallax. The
-   scale(1.08) is what stops the drift exposing an edge at the bottom.
-
-   **`scroll(root)`, not `view()`.** `view()` resolves against the nearest
-   ancestor *scroll container*, and `.hero` has `overflow: hidden` — which
-   makes it one, even though it never scrolls. The timeline attached fine
-   and sat at 0% progress forever. Naming the document scroller explicitly
-   is the fix, and `animation-range: 0 100vh` is what keeps the drift to
-   the first screen instead of spreading it over the whole page. */
-@keyframes hero-drift {
-  from { transform: translate3d(0, 0, 0) scale(1.08); }
-  to   { transform: translate3d(0, 7%, 0) scale(1.08); }
-}
-
-@supports (animation-timeline: scroll(root)) {
-  @media (prefers-reduced-motion: no-preference) {
-    .hero__media {
-      animation: hero-drift linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 100vh;
-    }
-  }
-}
-
-.hero__media {
-  position: absolute;
+   z-index 0 with the content at 1: the field has to sit *above* body's
+   background and *below* everything else. `.band` and the cards keep their
+   own opaque fills, so the field passes behind them exactly as it passes
+   behind the ground. */
+#field {
+  position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* 3:2 source against a ~1.6:1 hero — barely any overflow to place, so
-     the frame keeps the flatlay's own composition. */
-  object-position: 50% 50%;
-}
-
-.hero__scrim {
-  position: absolute;
-  inset: 0;
+  z-index: 0;
+  display: block;
   pointer-events: none;
-  /* Inverted with the photo. The flatlay is white cloth and the type on it
-     is page ink, so the scrim's job is now to *lift* the plate under the
-     copy rather than sink it — the tools are the dark pixels here, and a
-     headline crossing a pair of shears is the failure case.
-
-     Three layers, three jobs, and they must stay separate:
-       1. the bottom dissolve into --cream-200, so the photo ends in the
-          page colour instead of at an edge;
-       2. a radial plate over the copy footprint only;
-       3. a light top pass so the nav reads over whatever is up there.
-     Measured, not eyeballed — see the note in CLAUDE.md for the method. */
-  background:
-    linear-gradient(180deg, rgba(228, 226, 220, 0)   62%,
-                            rgba(228, 226, 220, .38) 82%,
-                            rgba(228, 226, 220, .9)  94%,
-                            rgba(228, 226, 220,  1) 100%),
-    radial-gradient(64% 56% at 50% 50%, rgba(250, 249, 246, .58)  0%,
-                                        rgba(250, 249, 246, .50) 62%,
-                                        rgba(250, 249, 246, 0)  100%),
-    linear-gradient(180deg, rgba(250, 249, 246, .30)  0%,
-                            rgba(250, 249, 246, .14) 24%,
-                            rgba(250, 249, 246, .08) 62%,
-                            rgba(250, 249, 246, .16) 100%);
 }
+
+/* Anything that carries content has to clear the field. */
+.nav, main, footer { position: relative; z-index: 1; }
+.nav { z-index: var(--z-nav); }
 
 .hero__inner {
   position: relative;

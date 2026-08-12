@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css?v=8be431d8">
+<link rel="stylesheet" href="assets/css/styles.css?v=ce21cf01">
 </head>
 <body>
 
@@ -26,6 +26,10 @@
 
 <!-- Sentinel: when this scrolls out of view the nav takes on its solid state. -->
 <div id="nav-sentinel" aria-hidden="true"></div>
+
+<!-- Particle field. Fixed behind the whole page; the canvas is transparent
+     so the cream ground and its paper texture still show through it. -->
+<canvas id="field" aria-hidden="true"></canvas>
 
 <header class="nav" data-nav>
   <a class="nav__brand" href="index.html">
@@ -216,18 +220,7 @@
 <main id="main">
 
   <!-- ── Hero ───────────────────────────────────────────────────────── -->
-  <section class="hero">
-    <img class="hero__media"
-         src="assets/img/hero-sewing-1600.webp"
-         srcset="assets/img/hero-sewing-960.webp   960w,
-                 assets/img/hero-sewing-1600.webp 1600w,
-                 assets/img/hero-sewing-2400.webp 2400w"
-         sizes="100vw" width="2400" height="1600"
-         alt="Sewing and craft tools — shears, spools, rulers, buttons and needles — laid out in neat rows on white cloth."
-         fetchpriority="high" decoding="async">
-    <div class="hero__scrim" aria-hidden="true"></div>
-    <div class="grain" aria-hidden="true"></div>
-
+  <section class="hero" data-formation="exploded">
     <div class="hero__inner shell">
       <h1 class="hero__title reveal">
         <span>A website</span>
@@ -246,7 +239,7 @@
        numbers are load-bearing: they are the argument for hiring anyone
        at all, so they must stay attributable. If one cannot be traced to
        a named study with a date, it does not belong here. -->
-  <section class="shell stats" id="stats">
+  <section class="shell stats" id="stats" data-formation="vortex">
     <p class="stats__lead reveal">Plenty of good businesses are still run without a website. Their customers are already looking for one.</p>
 
     <ul class="stats__grid">
@@ -277,7 +270,7 @@
     </ul>
   </section>
 
-  <section class="section section--tight-bottom shell intro" id="intro">
+  <section class="section section--tight-bottom shell intro" id="intro" data-formation="vortex">
     <div class="intro__lead reveal">
       <p class="label">What I do</p>
       <h2 class="h2 intro__statement">I build websites for small businesses that need to look like they mean it.</h2>
@@ -301,7 +294,7 @@
   </section>
 
   <!-- ── Services ───────────────────────────────────────────────────── -->
-  <section class="section section--tight-bottom shell services" id="services">
+  <section class="section section--tight-bottom shell services" id="services" data-formation="polaris">
     <header class="section__head reveal">
       <p class="label">Services</p>
       <h2 class="h2">What I can build for you.</h2>
@@ -341,7 +334,7 @@
   </section>
 
   <!-- ── Selected work ─────────────────────────────────────────────── -->
-  <section class="section section--tight-top" id="work" data-showcase>
+  <section class="section section--tight-top" id="work" data-showcase data-formation="polaris">
     <div class="shell">
       <header class="section__head reveal">
         <p class="label">Selected Work</p>
@@ -451,7 +444,7 @@
   </section>
 
   <!-- ── About ──────────────────────────────────────────────────────── -->
-  <section class="about shell" id="about">
+  <section class="about shell" id="about" data-formation="waves">
     <svg class="about__lines" viewBox="0 0 400 300" fill="none" aria-hidden="true" focusable="false">
       <path d="M0 220 Q100 150 200 200 T400 140" stroke="currentColor" stroke-width="1.5"/>
       <path d="M0 260 Q100 190 200 240 T400 180" stroke="currentColor" stroke-width="1.5"/>
@@ -479,7 +472,7 @@
        with genuine quotes before this page is published. Publishing
        invented reviews as real is deceptive and, in the US, unlawful
        (16 CFR Part 465). Delete any row you cannot attribute. -->
-  <section class="band band--flush" id="feedback">
+  <section class="band band--flush" id="feedback" data-formation="waves">
     <div class="shell">
       <header class="section__head reveal">
         <p class="label">Client Feedback</p>
@@ -593,7 +586,7 @@
   </section>
 
   <!-- ── Contact ────────────────────────────────────────────────────── -->
-  <section class="contact shell" id="contact">
+  <section class="contact shell" id="contact" data-formation="exploded">
     <div class="contact__copy reveal">
       <p class="label">Contact</p>
       <h2 class="h2 u-measure-14">Let's talk about your site.</h2>
@@ -670,6 +663,8 @@
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="assets/js/particles.js?v=4af04c48" defer></script>
 <script src="assets/js/main.js?v=5b2857fb" defer></script>
 </body>
 </html>
