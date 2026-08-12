@@ -670,34 +670,50 @@ stamps it like every other asset.
 
 ## Hero stage
 
-Six concept sites on a shallow 3D carousel under the headline, cut off by
-the fold — Squarespace's template showcase, on our own work. `main.js`
-decides which concept holds which slot; every slot's geometry lives in the
-stylesheet, so the two cannot drift and the arrangement written into the
-HTML is already a valid composition with the script removed.
+Six concept sites under the headline, cut off by the fold — Squarespace's
+template showcase, on our own work. It advances itself every **2s**.
 
-**Three screens are visible, not five.** At ±70% the neighbours overlapped
-the centre and the row read as one wide panel with seams. The gap between
-screens is what makes them read as separate sites, and it only appears once
-the offset passes **100%** of the slide's own width — they now sit at ±104%.
+**The geometry is Selected Work's, not a 3D carousel**: flat cards in a row
+with a real gap and the neighbours peeking. It ran as a coverflow first —
+screens set back and turned on `rotateY` — and the two patterns sat badly
+together on one page, since the same six concepts appear twice. One
+language for a row of concepts.
 
-**`perspective-origin` collapsed the first build, and it looks like the
-rotation simply isn't applying.** `.stage__track` is absolutely positioned
-and every child is too, so its height resolves to **zero** — and
-`perspective-origin: 50% 50%` of a zero-height box lands on its *top edge*.
-The vanishing point sat above the artwork and a real `rotateY` rendered as
-a flat skew. `height: 100%` on the track is the fix, and it is load-bearing,
-not tidying. Check the computed value before touching the angles.
+Where it differs is the *mechanism*. Selected Work is native scroll-snap
+because it is a thing you browse; this one advances itself, so it moves on
+a transform. Transform stays off the main thread and does not fight a
+user's own scrolling the way a programmatic `scrollLeft` every two seconds
+would.
 
-Perspective sits on the **track**, not on `.hero__stage`, because
-perspective only reaches an element's direct children — on the stage, the
-track between them would flatten the slides unless it also carried
-`transform-style: preserve-3d`.
+**`left: 50%` plus `translate3d(calc(-50% of a slide − i × (slide + gap)))`
+is the whole positioning model.** The track's origin sits at the centre of
+the viewport, so pulling it back half a slide centres slide 0 and every
+further index is one slide-plus-gap. `--i` is the only thing script ever
+sets — no per-slide maths in JS, and the two halves cannot drift.
 
-**The parks are sided.** Slides travel right → left (`d` falls as `active`
-rises), so one waits off the right edge, crosses, and leaves off the left.
-Parking them centre-stage instead makes each concept materialise out of the
-middle of the composition.
+**The loop clones, exactly like Selected Work.** Last two slides before the
+first, first two after the last, so a neighbour always peeks on both sides
+and the set is never rewound across. When the index lands on a clone the
+position is corrected by one set with `[data-jump]` killing the transition
+— an animated correction is precisely the artefact the clones exist to
+hide. Verified by recording the rendered `translateX` every frame: every
+instantaneous jump is exactly one set, and total travel never exceeds one
+set width.
+
+**There is no pause button, and that was a deliberate trade.** WCAG 2.2.2
+wants a pause/stop/hide for motion running past five seconds. Taking hold
+of an arrow or a dot **stops the auto-advance permanently** — that is the
+stop mechanism, and unlike hover it is reachable by touch and by keyboard.
+Hover only suspends, and it resumes on leave. If the arrows and dots are
+ever removed, the pause control has to come back.
+
+**`aria-current` is written only when it changes.** The loop correction
+lands on a clone of the slide already showing, so both paints resolve to
+the same dot — and re-setting an attribute to the value it already holds
+still fires a mutation, which a screen reader can announce twice. Caught by
+recording the dot sequence with a MutationObserver; polling from the test
+harness could not see it, because a 2s poll against a 2s tick straddles
+ticks and produces phantom skips of its own.
 
 **The hero gave up `100svh` to make room.** `.hero` is a flex column now:
 the copy sizes to its content, the stage takes what is left and clips. On
@@ -716,23 +732,10 @@ roughly the top fifth of a 1600px-tall render, so serving the full page
 here would be six times the bytes for pixels nobody sees. Re-crop from the
 master if a concept is re-shot.
 
-**Controls are built by `main.js`, like the marquee's**, and for the same
-reason: without the script nothing advances, and a dot that cannot change
-anything is a lie about what the page does. WCAG 2.2.2 wants a pause for
-motion running past five seconds — hover and `focus-within` pause it too,
-but those only reach a mouse and a keyboard, and a touch device has neither.
-Under reduced motion nothing auto-advances and the pause button hides, but
-the dots still work as a picker.
-
-`aria-hidden` on the slides must track the CSS: everything past ±1 is at
-opacity 0, so that is where the threshold goes. An invisible image that is
-still announced is worse than one honestly absent.
-
-**44px is a floor, not a starting size.** Seven controls plus gaps overrun a
+**44px is a floor, not a starting size.** Eight controls plus gaps overrun a
 360px viewport and the default `flex-shrink: 1` silently traded the touch
-target down to 43px to fit. `flex: 0 0 44px` pins them and the gap gives way
-instead — the visible bar is only 22px of the 44, so zero gap still leaves
-air.
+target down to 43px to fit. `flex: 0 0 44px` pins them and the gap gives
+way instead.
 
 ## Testimonial marquee
 

@@ -1107,7 +1107,7 @@ body  { background-color: var(--bg-page); }
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-top: calc(var(--nav-h) + var(--space-12));
+  padding-top: calc(var(--nav-h) + var(--space-20));
   padding-bottom: var(--space-10);
 }
 
@@ -1129,52 +1129,58 @@ body  { background-color: var(--bg-page); }
 }
 
 /* ── Hero stage ─────────────────────────────────────────────
-   Six concept sites on a shallow 3D carousel, running off the fold.
+   Six concept sites under the headline, cut off by the fold.
 
-   Perspective sits on `.stage__track`, not on `.hero__stage`, because
-   perspective only reaches an element's *direct* children — with it on the
-   stage, the track between them would flatten the slides unless the track
-   also carried `transform-style: preserve-3d`. Putting it on the immediate
-   parent of the slides removes that dependency entirely.
+   The geometry is Selected Work's, not a 3D carousel: flat cards in a row
+   with a real gap and the neighbours peeking. It ran as a coverflow first
+   — screens set back and turned on `rotateY` — and the two patterns sat
+   badly together on one page, since the same six concepts appear twice.
+   One language for a row of concepts.
 
-   The stage is what clips: it takes the leftover column height and hides
-   the overflow, so the screens — deliberately taller than it — are cut by
-   the fold rather than shrunk to fit. That crop is the whole effect. */
+   Where it differs from Selected Work is the mechanism: that track is
+   native scroll-snap because it is a thing you browse, and this one
+   advances itself, so it moves on a transform. Transform stays off the
+   main thread and does not fight a user's own scrolling the way a
+   programmatic `scrollLeft` every two seconds would. */
 .hero__stage {
-  --stage-w: min(40rem, 47vw);
+  --slide-w: min(44rem, 50vw);
+  --slide-gap: var(--space-6);
   position: relative;
   z-index: var(--z-raised);
   flex: 1 1 auto;
-  min-height: clamp(190px, 30svh, 360px);
+  min-height: clamp(160px, 26svh, 320px);
   overflow: hidden;
 }
 
+/* `left: 50%` puts the track's origin at the centre of the viewport, so
+   pulling it back half a slide centres slide 0 and every further index is
+   one slide-plus-gap. That is the whole positioning model — no per-slide
+   maths, and --i is the only thing script ever sets. */
 .stage__track {
+  --i: 1;                          /* without JS: slide 1 centred, both
+                                      neighbours peeking. JS re-bases this
+                                      to the first real slide once the
+                                      clones are in. */
   position: absolute;
   top: 0;
   left: 50%;
-  width: var(--stage-w);
-  margin-left: calc(var(--stage-w) / -2);
-  /* The height is not cosmetic. Every child is absolutely positioned, so
-     without it the track collapses to zero and `perspective-origin: 50% 50%`
-     resolves to the *top edge* — the vanishing point ends up above the
-     screens and the turn reads as a flat skew instead of a rotation. */
-  height: 100%;
-  perspective: 1200px;
+  display: flex;
+  gap: var(--slide-gap);
   list-style: none;
-  margin-block: 0;
+  margin: 0;
   padding: 0;
+  transform: translate3d(
+    calc(var(--slide-w) / -2 - var(--i) * (var(--slide-w) + var(--slide-gap))), 0, 0);
+  transition: transform var(--dur-slow) var(--ease-out);
 }
 
-.stage__slide {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  transform-origin: 50% 0;
-  transition: transform var(--dur-slow) var(--ease-out),
-              opacity   var(--dur-base) var(--ease-out);
-}
+/* The loop correction must not animate — it is a jump of exactly one set,
+   and seeing it is the artefact the clones exist to hide. Same rule as the
+   Selected Work track, which has to defeat `scroll-behavior: smooth` for
+   the same reason. */
+.stage__track[data-jump] { transition: none; }
+
+.stage__slide { flex: 0 0 var(--slide-w); }
 
 .stage__slide img {
   display: block;
@@ -1182,35 +1188,15 @@ body  { background-color: var(--bg-page); }
   height: auto;
   border-radius: var(--radius-sm);        /* 8px — the media/card step */
   border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-4);
+  box-shadow: var(--shadow-2);            /* slides rest at 2, as elsewhere */
   background: var(--cream-100);
 }
 
-/* Slots, not indices. main.js assigns which concept holds which slot, so
-   the geometry lives here once instead of being recomputed in script.
-
-   Three screens are visible, not five. At ±70% the neighbours overlapped
-   the centre and the row read as one wide panel with seams — the gap
-   between screens is what makes them read as separate sites, and it only
-   appears once the offset exceeds 100% of the slide's own width.
-
-   Slides travel right → left (`d` falls as `active` rises), so the parks
-   are sided: a slide waits off the right edge, crosses the stage, and
-   leaves off the left. Parking everything centre-stage instead would make
-   each one materialise out of the middle of the composition. */
-.stage__slide[data-slot="0"]  { transform: translate3d(0, 0, 0);                          z-index: 5; opacity: 1; }
-.stage__slide[data-slot="-1"] { transform: translate3d(-104%, 3%, -220px) rotateY(17deg); z-index: 4; opacity: 1; }
-.stage__slide[data-slot="1"]  { transform: translate3d(104%, 3%, -220px) rotateY(-17deg); z-index: 4; opacity: 1; }
-
-.stage__slide[data-slot="-2"],
-.stage__slide[data-slot="-3"] { transform: translate3d(-166%, 5%, -300px) rotateY(18deg); z-index: 2; opacity: 0; }
-.stage__slide[data-slot="2"],
-.stage__slide[data-slot="3"]  { transform: translate3d(166%, 5%, -300px) rotateY(-18deg); z-index: 2; opacity: 0; }
-
 /* ── Stage controls ─────────────────────────────────────────
-   Built by main.js. WCAG 2.2.2 wants a pause mechanism for motion that
-   runs past five seconds; hover and focus-within pause it too, but those
-   only reach a mouse and a keyboard, and a touch device has neither. */
+   Built by main.js. Previous / dots / next — no pause button: taking hold
+   of the arrows or a dot stops the auto-advance for good, which is the
+   stop mechanism WCAG 2.2.2 asks for and is reachable by touch and
+   keyboard alike. Hover only suspends it. */
 .stage__controls {
   position: relative;
   z-index: var(--z-raised);
@@ -1218,18 +1204,18 @@ body  { background-color: var(--bg-page); }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  gap: var(--space-1);
+  margin-bottom: var(--space-5);
 }
 
-.stage__dot {
+.stage__dot,
+.stage__arrow {
   /* 44px is a floor, not a starting size — flex must not shrink these.
-     Seven controls plus gaps overrun a 360px viewport, and the default
+     Eight controls plus gaps overrun a 360px viewport, and the default
      `flex-shrink: 1` silently traded the touch target away to make it fit.
-     The gap goes instead; the visible bar is only 22px of the 44, so
-     zero gap still leaves plenty of air between them. */
+     The gap goes instead; the visible mark is far smaller than the box. */
   flex: 0 0 44px;
-  width: 44px;                      /* touch target; the visible bar is inside */
+  width: 44px;
   height: 44px;
   padding: 0;
   border: 0;
@@ -1238,9 +1224,16 @@ body  { background-color: var(--bg-page); }
   display: grid;
   place-items: center;
 }
+.stage__dot:focus-visible,
+.stage__arrow:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -8px;
+  border-radius: var(--radius-sm);
+}
+
 .stage__dot::before {
   content: "";
-  width: 22px;
+  width: 20px;
   height: 2px;
   border-radius: 2px;
   background: var(--border-strong);
@@ -1249,39 +1242,20 @@ body  { background-color: var(--bg-page); }
 }
 .stage__dot[aria-current="true"]::before { background: var(--accent-ink); transform: scaleY(2); }
 .stage__dot:hover::before                { background: var(--accent-ink-hover); }
-.stage__dot:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -8px;
-  border-radius: var(--radius-sm);
-}
 
-.stage__pause {
-  margin-left: var(--space-3);   /* off the dot row, not part of it */
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
+.stage__arrow {
   color: var(--text-muted);
-  display: grid;
-  place-items: center;
   transition: color var(--dur-fast) var(--ease-in-out);
 }
-.stage__pause:hover { color: var(--accent-ink-hover); }
-.stage__pause:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -8px;
-  border-radius: var(--radius-sm);
-}
-.stage__pause svg { width: 13px; height: 13px; fill: currentColor; }
+.stage__arrow:hover { color: var(--accent-ink-hover); }
+.stage__arrow svg   { width: 8px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.stage__arrow--prev { margin-right: var(--space-2); }
+.stage__arrow--next { margin-left:  var(--space-2); }
 
-/* Reduced motion: the carousel does not advance on its own (main.js never
-   starts the timer), so the transition here would only ever run from a
-   deliberate press — keep it, but short. */
+/* Reduced motion: main.js never starts the timer, so the only movement
+   left comes from a deliberate press. Keep it, but short. */
 @media (prefers-reduced-motion: reduce) {
-  .stage__slide { transition-duration: .01ms; }
+  .stage__track { transition-duration: .01ms; }
 }
 
 /* ── Section frames ─────────────────────────────────────── */
@@ -2208,7 +2182,7 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   .nav__links a { font-size: 11px; letter-spacing: .06em; }
   .nav__brand { font-size: var(--text-2xs); }
 
-  .hero__inner { padding-top: calc(var(--nav-h) + var(--space-12)); padding-bottom: var(--space-8); }
+  .hero__inner { padding-top: calc(var(--nav-h) + var(--space-16)); padding-bottom: var(--space-8); }
   .hero__cta { width: 100%; }
   .hero__cta .btn { flex: 1 1 auto; }
 
@@ -2230,10 +2204,10 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 
   .hero { min-height: 0; }
   .hero__stage {
-    --stage-w: min(40rem, 78vw);
+    --slide-w: min(40rem, 78vw);
     flex: 0 0 auto;
     min-height: 0;
-    height: calc(var(--stage-w) * 0.62);
+    height: calc(var(--slide-w) * 0.62);
   }
 
   .cards { grid-template-columns: 1fr; }

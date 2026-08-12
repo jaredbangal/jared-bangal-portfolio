@@ -450,109 +450,137 @@
   }
 
   /* ── Hero stage ─────────────────────────────────────────
-     The six concepts on a shallow 3D carousel. All this does is decide
-     which slide holds which slot; the geometry of a slot lives in the
-     stylesheet, so the two never drift apart and the arrangement in the
-     HTML is already a valid composition with this file removed.
+     The six concepts on a self-advancing track. All script does is set
+     --i, the slide index; the stylesheet turns that into a translate. The
+     arrangement in the HTML is already a valid composition with this file
+     removed — there are simply no clones, so it does not wrap.
 
-     The slot for a slide is its distance from the active one, wrapped into
-     a signed range so the set is centred on 0. Wrapping matters: without
-     it the last concept would be at +5 and travel the full width of the
-     stage to reach the left edge, instead of stepping one place. Six
-     slides over five slots means exactly one is parked out of sight each
-     tick, which is what the ±3 rule in the CSS is for. */
+     Clones follow the Selected Work pattern: the last two slides go before
+     the first and the first two after the last, so a neighbour always
+     peeks on both sides and the set can be stepped through without ever
+     rewinding across it. When the index lands on a clone the position is
+     corrected by exactly one set, with the transition suppressed — an
+     animated correction is precisely the artefact the clones exist to
+     hide.
+
+     There is no pause button. Taking hold of an arrow or a dot stops the
+     auto-advance for good, which is the stop mechanism WCAG 2.2.2 wants
+     and, unlike hover, is reachable by touch and by keyboard. Hover only
+     suspends it. */
   var stage = document.querySelector("[data-hero-stage]");
 
   if (stage) {
-    var slides = Array.prototype.slice.call(stage.querySelectorAll(".stage__slide"));
-    var n = slides.length;
+    var track = stage.querySelector(".stage__track");
+    var real  = track ? Array.prototype.slice.call(track.children) : [];
+    var n     = real.length;
 
-    if (n > 1) {
-      var active = 0, timer = null, paused = false;
-      var HOLD = 4200;
+    if (track && n > 1) {
+      var CLONES = 2;
+      var STEP   = 2000;
+      var idx = CLONES, timer = null, taken = false;
 
-      function layout() {
-        slides.forEach(function (el, i) {
-          var d = ((i - active) % n + n) % n;          // 0 … n-1
-          if (d > Math.floor((n - 1) / 2)) d -= n;     // → centred on 0
-          el.setAttribute("data-slot", String(d));
-          // Only the three on stage are announced. The threshold has to
-          // match the CSS, where everything past ±1 sits at opacity 0 —
-          // an invisible image that is still read out is worse than one
-          // that is honestly absent.
-          el.setAttribute("aria-hidden", Math.abs(d) > 1 ? "true" : "false");
-        });
-        dots.forEach(function (dot, i) {
-          dot.setAttribute("aria-current", i === active ? "true" : "false");
+      for (var c = 0; c < CLONES; c++) {
+        var head = real[n - 1 - c].cloneNode(true);
+        head.setAttribute("aria-hidden", "true");
+        track.insertBefore(head, track.firstChild);
+        var tail = real[c].cloneNode(true);
+        tail.setAttribute("aria-hidden", "true");
+        track.appendChild(tail);
+      }
+
+      function realIndex() { return ((idx - CLONES) % n + n) % n; }
+
+      function paint(animate) {
+        if (!animate) track.setAttribute("data-jump", "");
+        track.style.setProperty("--i", String(idx));
+        if (!animate) {
+          void track.offsetWidth;          // flush, or removing the
+          track.removeAttribute("data-jump");  // attribute re-enables the
+        }                                  // transition before the reflow
+        // Written only when it actually changes. The loop correction lands
+        // on a clone of the slide already showing, so both paints resolve
+        // to the same dot — and re-setting aria-current to the value it
+        // already holds still fires a mutation, which a screen reader can
+        // announce a second time.
+        var r = realIndex();
+        dots.forEach(function (d, k) {
+          var want = k === r ? "true" : "false";
+          if (d.getAttribute("aria-current") !== want) d.setAttribute("aria-current", want);
         });
       }
 
-      function go(i) { active = ((i % n) + n) % n; layout(); }
+      function step(dir) { idx += dir; paint(true); }
+
+      // The correction happens after the move lands, not during it, so the
+      // travel a viewer sees is always exactly one slide.
+      track.addEventListener("transitionend", function (e) {
+        if (e.propertyName !== "transform") return;
+        if (idx >= CLONES + n) { idx -= n; paint(false); }
+        else if (idx < CLONES) { idx += n; paint(false); }
+      });
+
       function stop()  { if (timer) { clearInterval(timer); timer = null; } }
       function start() {
         stop();
-        if (paused || reducedMotion.matches) return;
-        timer = setInterval(function () { go(active + 1); }, HOLD);
+        if (taken || reducedMotion.matches) return;
+        timer = setInterval(function () { step(1); }, STEP);
       }
+      function take() { taken = true; stop(); }
 
-      /* Controls are built here, not in the HTML, for the same reason the
-         marquee's are: without this file nothing advances, and a dot that
-         cannot change anything is a lie about what the page does. */
       var controls = document.createElement("div");
       controls.className = "stage__controls";
 
-      var dots = slides.map(function (el, i) {
-        var img = el.querySelector("img");
+      function arrow(dir, label, d) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "stage__arrow stage__arrow--" + (dir < 0 ? "prev" : "next");
+        b.setAttribute("aria-label", label);
+        b.innerHTML = '<svg viewBox="0 0 6 10" aria-hidden="true"><path d="' + d +
+                      '" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        b.addEventListener("click", function () { take(); step(dir); });
+        return b;
+      }
+
+      controls.appendChild(arrow(-1, "Previous concept", "M5 1L1 5l4 4"));
+
+      var dots = real.map(function (el, i) {
+        var img  = el.querySelector("img");
         var name = img ? (img.getAttribute("alt") || "").split(",")[0] : "Slide " + (i + 1);
         var b = document.createElement("button");
         b.type = "button";
         b.className = "stage__dot";
         b.setAttribute("aria-label", "Show " + name);
-        b.addEventListener("click", function () { go(i); start(); });
+        b.addEventListener("click", function () {
+          take();
+          // Travel to whichever copy of the target is nearer, so jumping
+          // from the last concept to the first goes forward rather than
+          // rewinding the whole set.
+          var want = CLONES + i, here = idx;
+          if (Math.abs(want + n - here) < Math.abs(want - here)) want += n;
+          else if (Math.abs(want - n - here) < Math.abs(want - here)) want -= n;
+          idx = want;
+          paint(true);
+        });
         controls.appendChild(b);
         return b;
       });
 
-      var pause = document.createElement("button");
-      pause.type = "button";
-      pause.className = "stage__pause";
-      function paintPause() {
-        pause.setAttribute("aria-label", paused ? "Play concept carousel" : "Pause concept carousel");
-        pause.innerHTML = paused
-          ? '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg>'
-          : '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1h3v10H2zM7 1h3v10H7z"/></svg>';
-      }
-      pause.addEventListener("click", function () {
-        paused = !paused;
-        paintPause();
-        start();
-      });
-      paintPause();
-      controls.appendChild(pause);
-
-      // Under reduced motion nothing auto-advances, so a pause control has
-      // nothing to pause — but the dots still work as a picker.
-      if (reducedMotion.matches) pause.hidden = true;
-
+      controls.appendChild(arrow(1, "Next concept", "M1 1l4 4-4 4"));
       stage.parentNode.insertBefore(controls, stage);
 
-      // Hover and focus are conveniences on top of the button — they only
-      // reach a mouse and a keyboard, which is exactly why the button has
-      // to exist for touch.
+      // Hover suspends; it does not count as taking control, so the
+      // carousel picks up again when the pointer leaves.
       stage.addEventListener("pointerenter", stop);
       stage.addEventListener("pointerleave", start);
-      controls.addEventListener("focusin",  stop);
-      controls.addEventListener("focusout", start);
+      controls.addEventListener("pointerenter", stop);
+      controls.addEventListener("pointerleave", start);
+      controls.addEventListener("focusin", stop);
       document.addEventListener("visibilitychange", function () {
         if (document.hidden) stop(); else start();
       });
+      reducedMotion.addEventListener("change", start);
 
-      reducedMotion.addEventListener("change", function () {
-        pause.hidden = reducedMotion.matches;
-        start();
-      });
-
-      layout();
+      paint(false);
       start();
     }
   }
