@@ -673,11 +673,24 @@ stamps it like every other asset.
 Six concept sites under the headline, cut off by the fold — Squarespace's
 template showcase, on our own work. It advances itself every **2s**.
 
-**The geometry is Selected Work's, not a 3D carousel**: flat cards in a row
-with a real gap and the neighbours peeking. It ran as a coverflow first —
-screens set back and turned on `rotateY` — and the two patterns sat badly
-together on one page, since the same six concepts appear twice. One
-language for a row of concepts.
+**The row is Selected Work's, the depth is its own.** Flat cards in a row
+with a real gap and the neighbours peeking — the same composition as the
+work section, so the six concepts read as one component in both places.
+On top of that the centre slide stands proud: neighbours drop 2.5%, go
+back 140px and turn 10°, and the centre steps from `--shadow-2` to `3`.
+
+The centre **keeps the level the flat version sat at** — nothing rises
+above it, the neighbours fall away instead. That is what lets the middle
+read as raised without the stage needing any more height, which matters
+because the stage is the one thing here competing with the sphere for
+vertical room.
+
+**`perspective-origin` has to track `--i`.** The default 50% resolves
+against the *whole* track, which is ten slides wide — the vanishing point
+would sit 3,600px off to one side of everything on screen. It is placed on
+the centre of the active slide, and transitioned alongside the transform,
+or the viewpoint snaps to the destination while the track is still
+travelling and the neighbours warp mid-move.
 
 Where it differs is the *mechanism*. Selected Work is native scroll-snap
 because it is a thing you browse; this one advances itself, so it moves on
@@ -696,9 +709,17 @@ first, first two after the last, so a neighbour always peeks on both sides
 and the set is never rewound across. When the index lands on a clone the
 position is corrected by one set with `[data-jump]` killing the transition
 — an animated correction is precisely the artefact the clones exist to
-hide. Verified by recording the rendered `translateX` every frame: every
-instantaneous jump is exactly one set, and total travel never exceeds one
-set width.
+hide.
+
+**`[data-jump]` has to silence the slides and their images too, not just
+the track**, and *every* state change has to land inside that silenced
+window. Writing the depth attributes after the flag came off meant the
+whole set re-stacked with transitions live and eased for 600ms on top of a
+correction that is supposed to be instantaneous. Nothing in a screenshot
+shows this. It was found by tracing the centre slide's rendered height
+frame by frame: the tell is a settle longer than `--dur-slow`, and the
+proof of the fix is that all fifteen steps of two full loops settle in
+698–722ms, wrap steps included.
 
 **There is no pause button, and that was a deliberate trade.** WCAG 2.2.2
 wants a pause/stop/hide for motion running past five seconds. Taking hold

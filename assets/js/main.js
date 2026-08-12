@@ -488,15 +488,39 @@
         track.appendChild(tail);
       }
 
+      // Re-read after cloning: `real` is the six concepts, `all` is the ten
+      // elements actually in the track, and depth is assigned over `all`.
+      var all = Array.prototype.slice.call(track.children);
+
       function realIndex() { return ((idx - CLONES) % n + n) % n; }
 
+      /* Order matters here, and getting it wrong is invisible in a
+         screenshot: *every* state change has to land inside the silenced
+         window, not just --i. The depth attributes were being written
+         after `data-jump` came off, so at each wrap the whole set
+         re-stacked with transitions live and eased for 600ms on top of a
+         correction that is supposed to be instantaneous. It only showed up
+         by tracing the centre slide's rendered height frame by frame. */
       function paint(animate) {
         if (!animate) track.setAttribute("data-jump", "");
+
         track.style.setProperty("--i", String(idx));
+
+        // Position in the run, clamped: the stylesheet turns it into depth,
+        // so the centre stands proud of its neighbours. Clamped at ±2
+        // because anything further is off the edge at every breakpoint and
+        // only needs to be already turned when it enters the frame.
+        all.forEach(function (el, k) {
+          var d = Math.max(-2, Math.min(2, k - idx));
+          var pos = String(d);
+          if (el.getAttribute("data-pos") !== pos) el.setAttribute("data-pos", pos);
+        });
+
         if (!animate) {
-          void track.offsetWidth;          // flush, or removing the
-          track.removeAttribute("data-jump");  // attribute re-enables the
-        }                                  // transition before the reflow
+          void track.offsetWidth;              // flush every one of the above,
+          track.removeAttribute("data-jump");  // or lifting the silence lets
+        }                                      // them transition after all
+
         // Written only when it actually changes. The loop correction lands
         // on a clone of the slide already showing, so both paints resolve
         // to the same dot — and re-setting aria-current to the value it

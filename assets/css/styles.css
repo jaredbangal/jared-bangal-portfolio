@@ -1171,16 +1171,40 @@ body  { background-color: var(--bg-page); }
   padding: 0;
   transform: translate3d(
     calc(var(--slide-w) / -2 - var(--i) * (var(--slide-w) + var(--slide-gap))), 0, 0);
-  transition: transform var(--dur-slow) var(--ease-out);
+
+  /* The centre slide stands proud of its neighbours, so the slides carry
+     their own depth and the track has to give them a viewpoint.
+
+     `perspective-origin` has to track --i, and this is the part that is
+     easy to get wrong: the default 50% resolves against the *whole* track,
+     which is ten slides wide — the vanishing point would sit 3,600px off
+     to one side of everything on screen. It is placed on the centre of the
+     active slide instead, and it is transitioned alongside the transform,
+     or the viewpoint would snap to the destination while the track was
+     still travelling and the neighbours would warp mid-move. */
+  perspective: 1400px;
+  perspective-origin:
+    calc(var(--i) * (var(--slide-w) + var(--slide-gap)) + var(--slide-w) / 2) 30%;
+  transition: transform         var(--dur-slow) var(--ease-out),
+              perspective-origin var(--dur-slow) var(--ease-out);
 }
 
 /* The loop correction must not animate — it is a jump of exactly one set,
    and seeing it is the artefact the clones exist to hide. Same rule as the
    Selected Work track, which has to defeat `scroll-behavior: smooth` for
    the same reason. */
-.stage__track[data-jump] { transition: none; }
+/* The slides have to be silenced too, not just the track. At the
+   correction every element changes which position it holds — the clone
+   handing off to the real slide — so without this the whole set would
+   visibly re-stack while the track jumped. */
+.stage__track[data-jump],
+.stage__track[data-jump] .stage__slide,
+.stage__track[data-jump] .stage__slide img { transition: none; }
 
-.stage__slide { flex: 0 0 var(--slide-w); }
+.stage__slide {
+  flex: 0 0 var(--slide-w);
+  transition: transform var(--dur-slow) var(--ease-out);
+}
 
 .stage__slide img {
   display: block;
@@ -1190,7 +1214,25 @@ body  { background-color: var(--bg-page); }
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-2);            /* slides rest at 2, as elsewhere */
   background: var(--cream-100);
+  transition: box-shadow var(--dur-slow) var(--ease-out);
 }
+
+/* Depth, by position in the run. The centre keeps the level the flat
+   version sat at — nothing rises above it — and the neighbours drop and
+   turn away instead, which is what reads as the middle being raised
+   without the stage needing any more height. Shadow does the rest: the
+   centre steps to 3 while the neighbours hold the slides' resting 2. */
+.stage__slide[data-pos="0"]  { transform: none; }
+.stage__slide[data-pos="0"] img { box-shadow: var(--shadow-3); }
+
+.stage__slide[data-pos="-1"] { transform: translate3d(0, 2.5%, -140px) rotateY(10deg); }
+.stage__slide[data-pos="1"]  { transform: translate3d(0, 2.5%, -140px) rotateY(-10deg); }
+
+/* Clamped at ±2: these are off the edge at every breakpoint, and they
+   exist only so a slide entering the frame is already turned and set back
+   rather than popping into the angle as it arrives. */
+.stage__slide[data-pos="-2"] { transform: translate3d(0, 3.5%, -230px) rotateY(13deg); }
+.stage__slide[data-pos="2"]  { transform: translate3d(0, 3.5%, -230px) rotateY(-13deg); }
 
 /* ── Stage controls ─────────────────────────────────────────
    Built by main.js. Previous / dots / next — no pause button: taking hold
@@ -1255,7 +1297,9 @@ body  { background-color: var(--bg-page); }
 /* Reduced motion: main.js never starts the timer, so the only movement
    left comes from a deliberate press. Keep it, but short. */
 @media (prefers-reduced-motion: reduce) {
-  .stage__track { transition-duration: .01ms; }
+  .stage__track,
+  .stage__slide,
+  .stage__slide img { transition-duration: .01ms; }
 }
 
 /* ── Section frames ─────────────────────────────────────── */
