@@ -1948,6 +1948,18 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 .js .reveal:nth-child(3) { transition-delay: calc(var(--stagger) * 2); }
 .js .reveal:nth-child(4) { transition-delay: calc(var(--stagger) * 3); }
 
+/* The stagger belongs to the entrance and must not outlive it. A
+   transition-delay is not a one-off — it applies to *every* later
+   transition on that element, so the fourth card in a row was starting its
+   hover a quarter of a second after the first, and the third and second
+   were in between. It read as those cards being less responsive, which is
+   exactly what it was.
+
+   main.js adds .is-settled once the entrance transition ends. Same
+   specificity as the nth-child rules above, so it has to stay below
+   them. */
+.js .reveal.is-settled { transition-delay: 0s; }
+
 @media (prefers-reduced-motion: reduce) {
   .js .reveal { opacity: 1; transform: translateY(var(--lift, 0px)); }
 }

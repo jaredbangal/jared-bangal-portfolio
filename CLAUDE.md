@@ -360,6 +360,17 @@ sits at `--ink-60` or lighter (5.8:1 floor). `--ink-40` is for large bold text
 only (3:1). Anything below that is non-text — rules and borders. If you add a
 value, compute the ratio and record it.
 
+**The entrance stagger must not outlive the entrance.** `--stagger` is
+applied as a `transition-delay` on `.reveal:nth-child(n)`, and a
+transition-delay is not a one-off — it applies to *every* transition that
+element ever runs. Left in place it delayed the hover on the fourth service
+card by 240ms and the third by 160ms, which read exactly as those cards
+being less responsive than the first. `main.js` adds `.is-settled` on
+`transitionend` (with a 1400ms fallback, since transitionend never fires
+for an entrance that was not actually animated) and that zeroes the delay.
+Any new staggered group inherits the fix; anything that sets its own
+delay must do the same.
+
 **Motion shares one rhythm.** `--dur-fast` 200ms buttons, `--dur-base` 300ms
 nav/surfaces, `--dur-slow` 800ms scroll entrances, `--stagger` 80ms between
 siblings — all matching squarespace.com's timings. Transform and opacity

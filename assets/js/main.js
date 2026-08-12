@@ -12,11 +12,31 @@
   if (!reducedMotion.matches && "IntersectionObserver" in window) {
     root.classList.add("js");
 
+    // The entrance stagger is a transition-delay, and a transition-delay
+    // applies to everything that element ever transitions — not just the
+    // entrance. Clearing it once the entrance is over is what keeps a
+    // hover on the fourth card as immediate as one on the first.
+    function settle(el) {
+      var timer;
+      function done(e) {
+        if (e && e.target !== el) return;
+        el.classList.add("is-settled");
+        el.removeEventListener("transitionend", done);
+        clearTimeout(timer);
+      }
+      el.addEventListener("transitionend", done);
+      // transitionend never fires if the entrance was not actually
+      // animated — a background tab, or an element already at its end
+      // state. Long enough to outlast --dur-slow plus the largest stagger.
+      timer = setTimeout(done, 1400);
+    }
+
     var revealer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
         entry.target.classList.add("is-in");
         revealer.unobserve(entry.target);
+        settle(entry.target);
       });
     }, { rootMargin: "0px 0px -10% 0px", threshold: 0.1 });
 
