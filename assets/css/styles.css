@@ -19,6 +19,25 @@
   --shade-700: #1B1F26;
   --shade-600: #20252E;
 
+  /* Cream. Lifted from the Meridian concept — --paper #FAFAF8 was too close
+     to white to read as a colour, so the surface is that concept's card
+     value instead, with a lighter partner above it. Elevation runs the same
+     direction as the dark ramp: raised is lighter than ground. */
+  --cream-200: #E4E2DC;   /* ground  — Meridian's own */
+  --cream-100: #F4F2EC;   /* raised  — cards on cream */
+
+  /* Dark ink, for the cream scope. Mirrors the light ramp, and the alphas
+     are measured against the *darker* of the two cream surfaces, which is
+     the binding one. Note the muted floor is .66, not .60 as it is on dark:
+     .60 only reaches 4.30:1 here. */
+  --ink-dk:     #16171A;                 /* 13.8:1 on cream-200 */
+  --ink-dk-78:  rgba(22, 23, 26, .78);   /*  7.5:1 */
+  --ink-dk-72:  rgba(22, 23, 26, .72);   /*  6.2:1 */
+  --ink-dk-66:  rgba(22, 23, 26, .66);   /*  5.2:1 — AA floor for body copy */
+  --ink-dk-16:  rgba(22, 23, 26, .16);   /*  non-text: rules, borders */
+  --ink-dk-10:  rgba(22, 23, 26, .10);
+  --ink-dk-06:  rgba(22, 23, 26, .06);
+
   /* Ink ramp. Each alpha carries its measured contrast against the
      ramp; see the semantic layer for what may use what. */
   --ink:        #E8E4DC;
@@ -118,17 +137,17 @@
   --border-field:  var(--ink-20);
   --border-strong: var(--ink-20);
 
-  /* Saturated red-leaning orange. Chroma is what makes it read as a chosen
-     colour rather than a tinted grey, so it is picked on OKLCH chroma with
-     contrast as the constraint, not the other way round:
-       #FF6B2C  okL .70  okC .195  hue 41°   6.6 / 6.3 / 5.8 / 5.4 on shade-900…600
-       #FF7F45  okL .73  okC .172  hue 41°   7.5 / 7.2 / 6.6 / 6.1
-     Hue sits at 41° on purpose — a pure signal orange (45–50°) has similar
-     chroma but reads as a warning, not as a brand. Used as a fill under
+  /* Saturated red-leaning orange, Jared's pick. Used as a fill under
      --text-on-accent and as hover ink on the surface ramp; those are the
-     same pair, so one measurement covers both. */
-  --accent:       #FF6B2C;
-  --accent-hover: #FF7F45;
+     same pair, so one measurement covers both:
+       #F25939  okL .66  okC .194  hue 34°   5.6 / 5.4 / 4.9 / 4.6 on shade-900…600
+       #F57052  okL .70  okC .170  hue 34°   6.6 / 6.3 / 5.8 / 5.4
+     Note how little headroom the base has: 4.59:1 on --shade-600, the
+     chip-hover surface. Darkening or desaturating it any further breaks AA
+     there first, so if this value moves, re-measure against shade-600
+     before anything else. */
+  --accent:       #F25939;
+  --accent-hover: #F57052;
   --focus-ring:   var(--ink);   /* stays ink — max contrast beats on-theme */
 
   /* Desaturated for dark surfaces rather than inverted; both clear AA on
@@ -142,6 +161,56 @@
   --nav-h:  80px;
   --section-y:    var(--space-32);
   --section-y-lg: var(--space-40);
+}
+
+/* ── 2b. The cream scope ────────────────────────────────────
+   One light section in an otherwise dark page. Because components only
+   ever reference semantic tokens, flipping the page's polarity is a matter
+   of redefining that layer on a container — no component rule knows this
+   exists, and none should have to.
+
+   `.on-cream` is portable by design: it is on the testimonial band today,
+   but the placeholder quotes there may not survive to launch. If that
+   section goes, move the class to the newsletter band rather than losing
+   the page's one light moment.
+
+   Two things to know before putting it somewhere new:
+
+   - **The accent flips too.** #F25939 on cream measures 2.6:1 — unusable
+     as ink or even as a border. The deep pair below is the same hue an
+     octave down (5.2:1 / 5.7:1 on the ground). It follows that a section
+     in this scope must not contain an accent *fill* under dark ink, which
+     is the one combination these values cannot serve.
+   - **The muted floor moves.** Body copy sits at --ink-dk-66 here, not the
+     .60 the dark ramp uses; .60 only reaches 4.30:1 on cream-200. */
+.on-cream {
+  /* Redefining --text-primary is not enough on its own. `color` inherits as
+     the *resolved* value, and body already resolved it against the dark
+     ramp, so anything that merely inherits (every .h2) would keep the light
+     ink and vanish here. Re-resolving it on the scope fixes the whole
+     subtree in one line. */
+  color: var(--text-primary);
+
+  --bg-band:     var(--cream-200);
+  --bg-page:     var(--cream-200);
+  --bg-raised:   var(--cream-100);
+  --bg-raised-h: #FFFFFF;
+  --bg-chip:     var(--ink-dk-06);
+  --bg-chip-h:   var(--ink-dk-10);
+
+  --text-primary:   var(--ink-dk);
+  --text-body:      var(--ink-dk-78);
+  --text-secondary: var(--ink-dk-72);
+  --text-muted:     var(--ink-dk-66);
+  --text-on-accent: var(--cream-100);
+
+  --border-subtle: var(--ink-dk-10);
+  --border-field:  var(--ink-dk-16);
+  --border-strong: var(--ink-dk-16);
+
+  --accent:       #A8320F;   /* 5.2:1 on cream-200, 6.0:1 on cream-100 */
+  --accent-hover: #9E2E0C;   /* 5.7:1 / 6.6:1 */
+  --focus-ring:   var(--ink-dk);
 }
 
 /* ── Reset ──────────────────────────────────────────────── */
@@ -941,6 +1010,78 @@ body::after {
    with .shell. */
 .band--flush { padding-inline: 0; }
 
+/* ── The case ───────────────────────────────────────────────
+   Their "Join millions of entrepreneurs" band, on Jared's argument. Sits
+   on --bg-page rather than --bg-band on purpose: the hero dissolves into
+   the page colour, and a band here would put a hard edge immediately
+   under that fade and undo it. */
+.stats { text-align: center; }
+
+.stats__lead {
+  max-width: 46ch;
+  margin: 0 auto var(--space-20);
+  font-size: var(--text-md);
+  line-height: var(--leading-loose);
+  color: var(--text-muted);
+}
+
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-12);
+  list-style: none;
+}
+
+.stat__figure {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  font-size: clamp(3.25rem, 2rem + 5.5vw, 6rem);
+  font-weight: var(--weight-display);
+  line-height: 1;
+  letter-spacing: var(--track-display);
+  margin-bottom: var(--space-6);
+}
+
+/* Tabular figures are not decoration here. The number counts up from 0,
+   and proportional digits would change the element's width on every frame,
+   shuffling the row for the whole animation. */
+.stat__num { font-variant-numeric: tabular-nums; }
+
+.stat__unit { color: var(--accent); }
+
+.stat__label {
+  max-width: 22ch;
+  margin: 0 auto var(--space-3);
+  font-size: var(--text-lg);
+  font-weight: 400;
+  line-height: var(--leading-snug);
+  letter-spacing: -.02em;
+}
+
+.stat__source {
+  max-width: 26ch;
+  margin-inline: auto;
+  font-size: var(--text-2xs);
+  line-height: var(--leading-body);
+  color: var(--text-muted);
+}
+
+/* The figure and the unit resolve after the card has arrived, so the
+   count-up is the thing you notice rather than one motion among three. */
+.js .stat .stat__unit {
+  opacity: 0;
+  transform: translateY(.12em);
+  transition: opacity var(--dur-base) var(--ease-out) var(--dur-base),
+              transform var(--dur-base) var(--ease-out) var(--dur-base);
+}
+.js .stat.is-in .stat__unit { opacity: 1; transform: none; }
+
+@media (max-width: 860px) {
+  .stats__grid { grid-template-columns: 1fr; gap: var(--space-14); }
+  .stats__lead { margin-bottom: var(--space-12); }
+}
+
 /* ── What I do ──────────────────────────────────────────────
    The page's plain-language opener: one statement, then how I work — kept
    deliberately distinct from Services, which lists what you can buy.
@@ -1432,11 +1573,13 @@ body::after {
   margin-bottom: var(--space-6);
 }
 /* Unfilled avatar slot — a calm tile, not a dashed box. Lived with the work
-   grid until that became a carousel; the testimonials still need it. */
+   grid until that became a carousel; the testimonials still need it.
+   Tokens, not the rgba it used to carry: this sits inside .on-cream now and
+   a hard-coded light ink disappeared against it. */
 .slot {
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--ink-08), rgba(232, 228, 220, .02));
+  background: var(--bg-chip);
   border: 1px solid var(--border-subtle);
 }
 .slot--avatar {

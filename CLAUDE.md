@@ -7,7 +7,8 @@ stylesheet, one progressive-enhancement script.
 index.html              Home
 assets/css/styles.css   all styles
 assets/js/main.js       nav state, reveals, scrollspy, form validation
-assets/img/             hero-tools-{960,1600,2400}.webp, portrait{,-480}.webp
+assets/img/             hero-tools-{960,1600,2400}.webp, portrait{,-480}.webp,
+                        process-painter.webp, work-<slug>.webp
 assets/img/_source/     full-resolution masters, not served
 reference/              squarespace.com screenshots + scraped tokens
 ```
@@ -42,22 +43,24 @@ licensed grotesque with a true 300 weight.
 
 ## Accent
 
-The one saturated colour on the page: `--accent` `#FF6B2C`, `--accent-hover`
-`#FF7F45`.
+The one saturated colour on the page: `--accent` `#F25939`, `--accent-hover`
+`#F57052`.
 
-**Picked on OKLCH chroma, with contrast as the constraint** — that order
-matters. Chroma is what makes a colour read as chosen rather than as a
-tinted grey, and the first orange here (`#E8703A`, C .164) looked dusty
-next to everything else for exactly that reason. The current pair runs
-C .195 / .172 at hue 41°. Hue is deliberate too: a pure signal orange at
-45–50° carries similar chroma but reads as a warning rather than a brand.
+Jared's pick, arrived at after two rounds — `#E8703A` (OKLCH chroma .164)
+read dusty, `#FF6B2C` (.195) was the correction, and this is where he
+landed. Chroma is what makes a colour read as chosen rather than as a
+tinted grey, so that is the axis to reason on if it ever moves again.
 
 It does two jobs and has to clear 4.5:1 for both — a fill under
 `--text-on-accent` (dark ink) and hover ink on the surface ramp. Those are
-the same pair, so one measurement covers both: `#FF6B2C` reaches
-6.6 / 6.3 / 5.8 / 5.4 on shade-900…600, `#FF7F45` reaches 7.5 / 7.2 / 6.6 /
-6.1. `--shade-600`, the chip-hover surface, is always the binding one — if
-a candidate fails anywhere it fails there first.
+the same pair, so one measurement covers both: `#F25939` reaches
+5.6 / 5.4 / 4.9 / **4.6** on shade-900…600, `#F57052` reaches 6.6 / 6.3 /
+5.8 / 5.4.
+
+**Watch that 4.6.** `--shade-600` (the chip-hover surface) is always the
+binding one, and this value has almost no headroom left there. Darkening or
+desaturating it any further breaks AA on shade-600 before anywhere else, so
+measure against that surface first, not the page ground.
 
 Everything accented comes off those two tokens — buttons, the active
 carousel pill, the skip link, input focus borders, nav and panel link
@@ -99,6 +102,82 @@ copy. Measured on rendered pixels at 1st/99th percentile, it costs
 nothing at `.26` (label 4.42 → 4.70, body 7.47 → 7.68; it slightly helps,
 because it lifts the ink end more than the ground). Raising it further
 starts eating the `--text-muted` floor. Re-measure if you change it.
+
+## The cream scope
+
+One light section in an otherwise dark page, lifted from the Meridian
+concept: `--cream-200` `#E4E2DC` is that concept's own card value,
+`--cream-100` `#F4F2EC` sits above it, and `--ink-dk` `#16171A` is its ink.
+Meridian's `--paper` `#FAFAF8` was too close to white to read as a colour
+at all, which is why the ground is the darker of the two.
+
+`.on-cream` works by redefining the **semantic** layer on a container. No
+component rule knows the scope exists, and none should have to — that
+one-directional token architecture is exactly what makes a polarity flip a
+twenty-line change instead of a rewrite.
+
+Three things bite, all already hit:
+
+- **`color` must be re-resolved on the scope.** It inherits as the
+  *computed* value, and `body` already resolved `--text-primary` against
+  the dark ramp, so every `.h2` — which only inherits — stayed light ink
+  and vanished. `.on-cream { color: var(--text-primary) }` fixes the whole
+  subtree. Elements that set their own `color` (labels, `.section__sub`)
+  were never affected, which is what makes the bug look random.
+- **The accent flips too.** `#F25939` on cream measures 2.6:1 — unusable as
+  ink and below even the 3:1 non-text bar. The scope swaps in `#A8320F` /
+  `#9E2E0C` (5.2:1 / 5.7:1 on the ground). It follows that **a section in
+  this scope must not contain an accent fill under dark ink**, which is the
+  one combination these values cannot serve. Today it contains no buttons.
+- **The muted floor moves.** Body copy sits at `--ink-dk-66` here, not the
+  `.60` the dark ramp uses; `.60` only reaches 4.30:1 on `--cream-200`.
+
+The grain film composites over this too. Measured on solid swatches, it
+costs about 4% at the median and 10% at the worst pixel — accent ink on the
+cream ground, the tightest pair, goes 5.18 → 4.87 median / 4.51 worst. That
+still clears, but it is the value with the least room, so re-measure it
+rather than the heading if anything here changes.
+
+`.on-cream` is portable by design. It is on the testimonial band today, and
+those quotes are placeholders that may not survive to launch — if the
+section goes, move the class to the newsletter band rather than losing the
+page's one light moment.
+
+## The case (stats)
+
+Their "Join millions of entrepreneurs" band, on Jared's argument: three
+figures for why a business without a website is losing something. Sits on
+`--bg-page`, not `--bg-band` — the hero dissolves into the page colour and a
+band here would put a hard edge immediately under that fade and undo it.
+
+**The numbers are load-bearing and every one is attributable on the page.**
+That visible source line is what separates research from decoration, so it
+is not optional trim:
+
+| Figure | Source |
+|---|---|
+| 27% of small businesses have no website | Top Design Firms, May 2022, n=1,003 |
+| 98% use the internet to find a local business | BrightLocal, Local Consumer Review Survey |
+| 46% judge credibility on how a site looks | Stanford Web Credibility Project |
+
+If a figure cannot be traced to a named study with a date, it does not go
+here. Note in particular that the widely-repeated **"75% judge credibility
+on design" is a misattribution** — Stanford's actual finding is 46.1%.
+It is quoted correctly here; don't let anyone "improve" it.
+
+**The count-up.** Fires once, the first time each figure crosses into view,
+and never again — a number that re-runs every time you pass it stops being
+information and becomes a fidget. easeOutQuart over 1400ms, the same curve
+everything else enters on.
+
+- The final value is in the HTML, so with `main.js` removed the figures
+  simply read correctly.
+- `font-variant-numeric: tabular-nums` is not decoration. Proportional
+  digits change the element's width every frame and shuffle the row for the
+  whole animation.
+- The animated span is `aria-hidden` beside a visually-hidden copy of the
+  true value, so assistive tech never sees a partial number regardless of
+  when it looks.
 
 ## Nav panels
 
@@ -393,8 +472,13 @@ The end fades are a `mask-image`, not a gradient overlay: the band sits on
 
 ## Page order
 
-Hero → **What I do** → Services → Selected Work → Process → **About** →
+Hero → **The case** → **What I do** → Services → Selected Work → Process → **About** →
 Testimonials → Contact → Newsletter.
+
+"The case" states the problem, "What I do" answers it — that order is the
+point, and the two only work in sequence. Don't move the stats below
+Services; a figure about businesses without websites lands as an argument
+before the pitch and as filler after it.
 
 "What I do" is the plain-language opener: one statement plus how I work.
 Keep it distinct from Services, which lists what you can buy — if the two
@@ -475,6 +559,12 @@ testimonials on a business's own site. Before this page goes public,
 replace them with real quotes or delete the section. Anything that cannot
 be attributed to a named, consenting client comes out. The avatars are
 still empty `.slot` tiles.
+
+**Confirm the licence on `process-painter.webp`.** It came in as
+`tattooed-man-painting-walls.jpg`, which reads like a stock library file.
+Jared supplied it, but a commercial site needs the licence on record before
+launch, and the master in `assets/img/_source/` is what a takedown request
+would be measured against.
 
 Forms post to `action="#"` — point them at a real handler and delete the
 placeholder branch in `main.js`.

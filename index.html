@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css?v=bf4380f8">
+<link rel="stylesheet" href="assets/css/styles.css?v=9a277e76">
 </head>
 <body>
 
@@ -147,10 +147,13 @@
             </ul>
           </div>
 
-          <a class="panel__promo" href="concepts/meridian.html">
-            <img src="assets/img/work-meridian.webp" width="800" height="1597"
+          <!-- Cropped to 4:5, the ratio .panel__promo actually renders, so
+               object-fit is not silently discarding half the file the way
+               it did with the full-page concept render this replaced. -->
+          <a class="panel__promo" href="#process">
+            <img src="assets/img/process-painter.webp" width="800" height="1000"
                  alt="" loading="lazy" decoding="async">
-            <span class="panel__promo-cap">Meridian — architecture studio</span>
+            <span class="panel__promo-cap">Built the way a trade builds — in order</span>
           </a>
         </div>
       </li>
@@ -239,6 +242,42 @@
   </section>
 
   <!-- ── What I do ──────────────────────────────────────────────────── -->
+  <!-- ── The case ─────────────────────────────────────────────────────
+       Three researched figures, each with its source on the page. The
+       numbers are load-bearing: they are the argument for hiring anyone
+       at all, so they must stay attributable. If one cannot be traced to
+       a named study with a date, it does not belong here. -->
+  <section class="section section--tight-bottom shell stats" id="stats">
+    <p class="stats__lead reveal">Plenty of good businesses are still run without a website. Their customers are already looking for one.</p>
+
+    <ul class="stats__grid">
+      <li class="stat reveal">
+        <p class="stat__figure">
+          <span class="u-visually-hidden">27 percent</span>
+          <span class="stat__num" data-count-to="27" aria-hidden="true">27</span><span class="stat__unit" aria-hidden="true">%</span>
+        </p>
+        <p class="stat__label">of small businesses still have no website</p>
+        <p class="stat__source">Top Design Firms, 2022 — 1,003 owners surveyed</p>
+      </li>
+      <li class="stat reveal">
+        <p class="stat__figure">
+          <span class="u-visually-hidden">98 percent</span>
+          <span class="stat__num" data-count-to="98" aria-hidden="true">98</span><span class="stat__unit" aria-hidden="true">%</span>
+        </p>
+        <p class="stat__label">of people use the internet to find a local business</p>
+        <p class="stat__source">BrightLocal, Local Consumer Review Survey</p>
+      </li>
+      <li class="stat reveal">
+        <p class="stat__figure">
+          <span class="u-visually-hidden">46 percent</span>
+          <span class="stat__num" data-count-to="46" aria-hidden="true">46</span><span class="stat__unit" aria-hidden="true">%</span>
+        </p>
+        <p class="stat__label">judge a company's credibility on how its site looks</p>
+        <p class="stat__source">Stanford Web Credibility Project</p>
+      </li>
+    </ul>
+  </section>
+
   <section class="section section--tight-bottom shell intro" id="intro">
     <div class="intro__lead reveal">
       <p class="label">What I do</p>
@@ -475,7 +514,7 @@
        with genuine quotes before this page is published. Publishing
        invented reviews as real is deceptive and, in the US, unlawful
        (16 CFR Part 465). Delete any row you cannot attribute. -->
-  <section class="band band--flush" id="feedback">
+  <section class="band band--flush on-cream" id="feedback">
     <div class="shell">
       <header class="section__head reveal">
         <p class="label">Client Feedback</p>
@@ -666,6 +705,6 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js?v=5db192de" defer></script>
+<script src="assets/js/main.js?v=b52b1c15" defer></script>
 </body>
 </html>

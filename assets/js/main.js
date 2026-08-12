@@ -310,6 +310,49 @@
     });
   }
 
+  /* ── Stat counters ──────────────────────────────────────
+     Counts each figure up from zero the first time it scrolls into view,
+     once, and never again — a number that re-runs every time you pass it
+     stops being information and becomes a fidget.
+
+     The final value is already in the HTML, so with this file removed the
+     figures simply read correctly. The animated span is aria-hidden and
+     sits beside a visually-hidden copy of the true value, so assistive
+     tech never sees a partial number no matter when it looks. */
+  var counters = [].slice.call(document.querySelectorAll("[data-count-to]"));
+
+  if (counters.length && !reducedMotion.matches && "IntersectionObserver" in window) {
+    var COUNT_MS = 1400;
+
+    function runCount(el) {
+      var target = parseInt(el.getAttribute("data-count-to"), 10);
+      if (isNaN(target)) return;
+      var started = null;
+
+      function frame(now) {
+        if (started === null) started = now;
+        var t = Math.min((now - started) / COUNT_MS, 1);
+        // easeOutQuart, the same curve everything else enters on.
+        var eased = 1 - Math.pow(1 - t, 4);
+        el.textContent = String(Math.round(target * eased));
+        if (t < 1) requestAnimationFrame(frame);
+      }
+
+      el.textContent = "0";
+      requestAnimationFrame(frame);
+    }
+
+    var counterWatch = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        counterWatch.unobserve(entry.target);
+        runCount(entry.target);
+      });
+    }, { rootMargin: "0px 0px -15% 0px", threshold: 0.6 });
+
+    counters.forEach(function (el) { counterWatch.observe(el); });
+  }
+
   /* ── Testimonial marquee ────────────────────────────────
      The CSS animation runs to exactly -50%, so the track has to hold the
      set twice for the wrap to land invisibly. Doubling it here rather
