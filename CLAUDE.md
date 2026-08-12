@@ -61,8 +61,9 @@ a candidate fails anywhere it fails there first.
 
 Everything accented comes off those two tokens — buttons, the active
 carousel pill, the skip link, input focus borders, nav and panel link
-hover, and the hovered Process step. **Never introduce a second accent
-value**; if a new component needs orange it references the token.
+hover, and the three hover states under "The accent hover" below.
+**Never introduce a second accent value**; if a new component needs orange
+it references the token.
 
 `--accent` is the resting/fill value and `--accent-hover` the brighter ink
 value. Where both appear in one component (a Process step: rule in
