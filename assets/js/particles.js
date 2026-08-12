@@ -4,11 +4,9 @@
 
    The study could render particles at full strength because it carried
    eight short strings of text. Here they sit behind every paragraph on the
-   site, and a deep-maroon particle at full opacity puts --text-muted at
-   1.19:1 — measured, not estimated. So the cores render at .20 alpha,
-   which composites to the same result as an 80% cream veil over the field
-   without needing a veil element at all. Below that the muted floor
-   breaks; above it the field stops being visible. It is the whole budget.
+   site, so the alpha the cores render at is a contrast budget, not a taste
+   decision — it is solved against rendered pixels and re-solved whenever
+   the palette changes. See CORE_ALPHA below.
 
    Progressive enhancement, same contract as main.js: with this file, or
    Three.js, or WebGL missing, the page is exactly the site it was before —
@@ -54,14 +52,21 @@
   var rendered  = new Float32Array(COUNT * 3);
   var colors    = new Float32Array(COUNT * 3);
 
-  // The portfolio's own maroon-orange, held per particle across every morph
-  // so a point keeps its identity as the shape changes.
+  // Gold, held per particle across every morph so a point keeps its
+  // identity as the shape changes.
+  //
+  // It is deliberately *old* gold, not yellow. Cream is a light, nearly
+  // neutral ground: a bright gold (#FFD700, relative luminance .70) sits
+  // within .06 of --cream-200's .76 and disappears. These five run .06–.49,
+  // so the field separates on luminance and on chroma at once, and the
+  // darkest two are the tarnish that keeps it reading as leaf rather than
+  // as a highlighter.
   var PALETTE = [
-    { c: [198,  74, 28], w: 0.35 },
-    { c: [165,  48, 22], w: 0.25 },
-    { c: [112,  30, 26], w: 0.20 },
-    { c: [222, 116, 40], w: 0.12 },
-    { c: [ 78,  22, 20], w: 0.08 }
+    { c: [201, 151,  31], w: 0.34 },   // old gold — the dominant tone
+    { c: [224, 180,  74], w: 0.22 },   // champagne, the highlight
+    { c: [168, 117,  17], w: 0.22 },   // bronze
+    { c: [122,  82,   8], w: 0.14 },   // deep bronze
+    { c: [ 92,  61,   4], w: 0.08 }    // umber
   ];
   for (var i = 0; i < COUNT; i++) {
     var r = Math.random(), acc = 0, col = PALETTE[0].c;
@@ -74,21 +79,93 @@
     colors[i * 3 + 2] = col[2] / 255;
   }
 
-  // NormalBlending, never additive. Additive light on a light ground washes
-  // to nothing — the usual glowing-particle recipe fails on cream.
-  function system(size, opacity) {
+  /* ── Sprite ─────────────────────────────────────────────────
+     A PointsMaterial with no map draws gl_PointCoord's full square, which
+     at these sizes is a visible 4–6px pixel. Every point therefore samples
+     a generated disc instead.
+
+     RGB is flat white and only alpha carries the shape, because
+     PointsMaterial multiplies map × vertexColor: a white sprite passes the
+     particle's own gold through untouched, so one texture serves all five
+     palette stops.
+
+     `plateau` is the fraction of the radius held at full alpha before the
+     falloff starts, and it is what separates the two sprites: a core needs
+     a solid middle and a soft rim (a disc), a glow needs no middle at all
+     (a halo). Mipmaps are off — points pick a mip from screen-space
+     derivatives that are meaningless for a quad this small, and the result
+     is a dot that blurs in and out as the camera moves. */
+  function sprite(plateau, falloff) {
+    var S = 128, half = S / 2;
+    var cv = document.createElement("canvas");
+    cv.width = cv.height = S;
+    var ctx = cv.getContext("2d");
+    if (!ctx) return null;           // map:null is the old square — still a field
+    var img = ctx.createImageData(S, S), d = img.data;
+    for (var y = 0; y < S; y++) {
+      for (var x = 0; x < S; x++) {
+        var dx = (x + 0.5 - half) / half, dy = (y + 0.5 - half) / half;
+        var r = Math.sqrt(dx * dx + dy * dy), a;
+        if (r >= 1)            a = 0;
+        else if (r <= plateau) a = 1;
+        else                   a = Math.pow(1 - (r - plateau) / (1 - plateau), falloff);
+        var o = (y * S + x) * 4;
+        d[o] = d[o + 1] = d[o + 2] = 255;
+        d[o + 3] = Math.round(a * 255);
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    var t = new THREE.CanvasTexture(cv);
+    t.minFilter = t.magFilter = THREE.LinearFilter;
+    t.generateMipmaps = false;
+    return t;
+  }
+  var DISC = sprite(0.34, 1.8);    // solid centre, feathered rim
+  var HALO = sprite(0.00, 2.6);    // falls off from the very centre
+
+  /* ── Glow ───────────────────────────────────────────────────
+     NormalBlending, never additive. Additive light on a light ground
+     washes to nothing — the usual glowing-particle recipe fails on cream,
+     which is why the glow here is built out of *coverage* instead: a dense
+     core inside a wide, very faint halo, exactly how a pigment blooms into
+     paper. Three layers rather than two because two gave a dot with a ring
+     around it; the middle one is what fills the step between them.
+
+     CORE_ALPHA is the contrast budget. Gold's weighted mean luminance is
+     .29 against maroon's .13, so it darkens the ground about three-fifths
+     as hard per unit alpha, and the disc covers less of its quad than the
+     old square did — together that is what pays for .34 where maroon could
+     only afford .20. Re-solve it against rendered pixels if the palette
+     moves again; it is not transferable. */
+  var CORE_ALPHA = 0.34;
+
+  // One BufferAttribute shared by all three layers, not one each: they draw
+  // identical points and Three keys its GPU buffer cache on the attribute
+  // object, so sharing turns three uploads per frame into one — and leaves
+  // a single `needsUpdate` to remember to set.
+  var posAttr = new THREE.BufferAttribute(rendered, 3);
+  var colAttr = new THREE.BufferAttribute(colors, 3);
+
+  function system(size, opacity, map) {
     var g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(rendered, 3));
-    g.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
+    g.setAttribute("position", posAttr);
+    g.setAttribute("color",    colAttr);
     var p = new THREE.Points(g, new THREE.PointsMaterial({
-      size: size, vertexColors: true, transparent: true, opacity: opacity,
-      blending: THREE.NormalBlending, depthWrite: false, sizeAttenuation: true
+      size: size, map: map, vertexColors: true, transparent: true,
+      opacity: opacity, blending: THREE.NormalBlending, depthWrite: false,
+      sizeAttenuation: true
     }));
     swarm.add(p);
     return p;
   }
-  var cores = system(2.2, 0.20);   // .20 is the contrast budget — see the top
-  var haze  = system(8.0, 0.03);
+  // Sizes are fill-rate, and a point sprite's cost is its *area*. The outer
+  // haze ran at 24 units first and cost 24fps of a 70fps budget under a
+  // software rasteriser — a third of the frame for a layer whose mean
+  // contribution measured under two levels out of 255. At 18 it keeps the
+  // bloom and gives most of that back. Measure before growing it again.
+  system(4.2,  CORE_ALPHA, DISC);   // core
+  system(10.0, 0.060,      HALO);   // inner bloom
+  system(18.0, 0.020,      HALO);   // outer haze
 
   /* ── Formations ─────────────────────────────────────────── */
 
@@ -324,8 +401,7 @@
       rendered.set(basePos);
     }
 
-    cores.geometry.attributes.position.needsUpdate = true;
-    haze.geometry.attributes.position.needsUpdate  = true;
+    posAttr.needsUpdate = true;       // shared — one flag covers all three
     renderer.render(scene, camera);
   }
   requestAnimationFrame(frame);

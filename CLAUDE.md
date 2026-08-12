@@ -553,17 +553,67 @@ scroll-driven `hero-drift` parallax all went with it — about 70 lines. If a
 photo ever comes back, the scrim has to be re-solved from scratch (the
 method is in git history at `331840d`), not restored from memory.
 
-**Cores render at `.20` opacity, and that number is the entire budget.**
-This is the one thing to understand before touching it. In `/motion/` the
-particles could run at full strength because that page carries eight short
-strings. Here they sit behind every paragraph on the site, and a deep-maroon
-particle at full opacity puts `--text-muted` at **1.19:1** — measured. At
-`.20` the composite is identical to an 80% cream veil over the field, which
-is what makes it work without a veil element at all. Below `.20` the muted
-floor breaks; above it the field stops being visible.
+**The field is gold, and it is old gold, not yellow.** Cream is a light,
+near-neutral ground: a bright gold (`#FFD700`, relative luminance .70) sits
+within .06 of `--cream-200`'s .76 and disappears. The five palette stops run
+**.06–.49**, so the field separates on luminance *and* on chroma at once, and
+the darkest two are the tarnish that keeps it reading as leaf rather than as
+a highlighter. Note this palette is the field's own — it is **not** on the
+`--accent` token, and the page's maroon buttons and ink are untouched.
 
-Verified on rendered pixels with the field live, worst case **6.84:1**
-across stats, intro, services, work, about and contact copy.
+**`CORE_ALPHA` is the contrast budget.** This is the one thing to understand
+before touching it. In `/motion/` the particles could run at full strength
+because that page carries eight short strings; here they sit behind every
+paragraph on the site. Maroon could only afford `.20` — at full opacity it
+put `--text-muted` at **1.19:1**. Gold's weighted mean luminance is .29
+against maroon's .13, so it darkens the ground about three-fifths as hard
+per unit alpha, and the round sprite covers less of its quad than the old
+square did. Together that is what pays for **`.34`**. It is not a
+transferable number: **re-solve it against rendered pixels if the palette
+moves again.**
+
+Verified on rendered pixels with the field live, worst case **6.14:1** at
+1440 and **6.28:1** at 390, across 17 text runs — hero, stats, intro,
+services, cards, work, about, contact, footer.
+
+**Particles are round, and that needs a texture.** A `PointsMaterial` with
+no `map` draws `gl_PointCoord`'s full square, which at these sizes is a
+visible 4–6px pixel. `sprite()` generates the disc procedurally into a
+canvas. Three things about it are load-bearing:
+
+- **RGB is flat white; only alpha carries the shape.** `PointsMaterial`
+  multiplies map × vertexColor, so a white sprite passes each particle's own
+  gold through untouched and one texture serves all five stops.
+- **Mipmaps are off.** Points pick a mip from screen-space derivatives that
+  are meaningless for a quad this small; leave them on and the dot blurs in
+  and out as the camera moves.
+- **`plateau` is what separates the two sprites** — the fraction of the
+  radius held at full alpha before falloff. A core needs a solid middle and
+  a soft rim (`DISC`, .34); a glow needs no middle at all (`HALO`, 0).
+
+**The glow is coverage, not additive blending.** NormalBlending, never
+additive — additive light on a light ground washes to nothing, which is why
+the usual glowing-particle recipe fails on cream. Instead a dense core sits
+inside a wide faint halo, the way a pigment blooms into paper. **Three
+layers, not two**: two gave a dot with a ring around it, and the middle one
+fills the step between them.
+
+**Sizes are fill-rate, and a sprite's cost is its area.** The outer haze ran
+at 24 units first and cost **24fps of a 70fps budget** under a software
+rasteriser — a third of the frame for a layer whose mean contribution
+measured under two levels out of 255. At 18 it keeps the bloom and gives
+most of that back. Currently 55fps under software GL. Measure before growing
+any of the three.
+
+All three layers **share one `BufferAttribute`**, not one each. They draw
+identical points, and Three keys its GPU buffer cache on the attribute
+object, so sharing turns three uploads per frame into one — and leaves a
+single `needsUpdate` to remember to set.
+
+`/motion/` still runs the **maroon** palette with hard square points. Its
+text contrast was solved against maroon particles (darkest `rgb(78,22,20)`,
+fixed with a cream halo on the glyphs), so porting the gold there means
+re-measuring that page, not copying these numbers.
 
 Layering: `#field` is `position: fixed` at `z-index: 0`, and `.nav`, `main`
 and `footer` sit at 1. The canvas is transparent, so the cream ground and
