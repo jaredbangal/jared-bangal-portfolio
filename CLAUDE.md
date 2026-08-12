@@ -543,8 +543,32 @@ position instead.
 ## The particle field
 
 `assets/js/particles.js` renders a fixed WebGL field behind the whole page —
-2400 points morphing between four formations as sections scroll past.
+2400 points morphing between four formations (`sphere`, `vortex`, `polaris`,
+`waves`) as sections scroll past.
 Ported from `/motion/`, which still exists as the full-strength study.
+
+**The hero formation is a globe, and it is a *thin shell*.** It began as
+`exploded()`, a filled volume spread over radius 80–320, and a shell that
+thick has no silhouette — from outside it is just dust, which is exactly how
+it read. Holding every point at one radius is what makes a sphere legible,
+because projection then piles points up at the limb and leaves the middle
+open. That open middle is where the headline sits, so the shape and the
+contrast budget happen to want the same thing.
+
+Two details carry it:
+
+- **Points sit on a Fibonacci lattice, not on random spherical coordinates.**
+  Random points clump and leave holes at this count; the lattice spaces them
+  evenly, which is the whole difference between a deliberate object and a
+  spray. `SHELL_JITTER` then breaks the spiral up just enough that it does
+  not read as a wireframe when the swarm turns.
+- **The radius is sized from the viewport.** The camera's 60° fov is
+  *vertical*, so a phone's horizontal half-extent is about a third of the
+  desktop's — a fixed 250-unit globe hangs off both sides and looks like
+  scattered dust again. `shellRadius()` fits to whichever half-extent is
+  smaller, which is also why resize has to rebuild it (debounced, and
+  re-morphed rather than snapped). A phone rotating 90° is the case that
+  matters.
 
 **The hero has no photograph.** It was removed when the field went in; the
 hero is now type on cream with particles behind it, like every other

@@ -169,15 +169,42 @@
 
   /* ── Formations ─────────────────────────────────────────── */
 
-  function exploded() {
-    var a = new Float32Array(COUNT * 3);
+  // A globe: one thin shell, not a filled volume. The radius spread used to
+  // run 80–320, and a shell that thick has no silhouette — from outside it
+  // is just dust. Holding every point at one radius is what makes a sphere
+  // read, because projection then piles points up at the limb and leaves
+  // the middle open. That middle is where the headline sits, so the shape
+  // and the contrast budget happen to want the same thing.
+  //
+  // Points are placed on a Fibonacci lattice rather than by rejection
+  // sampling. Random points on a sphere clump and leave holes at this count;
+  // the lattice spaces them evenly, which is the difference between a
+  // deliberate object and a spray. SHELL_JITTER then breaks the spiral up
+  // just enough that it does not read as a wireframe when the swarm turns.
+  var GOLDEN = Math.PI * (3 - Math.sqrt(5));
+  var SHELL_JITTER = 7;
+
+  // Sized from the viewport, not fixed. The camera's 60° fov is *vertical*,
+  // so on a phone the horizontal half-extent is a third of the desktop's —
+  // a fixed 250-unit globe would hang off both sides and look, again, like
+  // scattered dust. Fit to whichever half-extent is smaller.
+  function shellRadius() {
+    var dist = 520;                                    // MODES.sphere cam z
+    var halfH = Math.tan((60 * Math.PI / 180) / 2) * dist;
+    var halfW = halfH * (window.innerWidth / window.innerHeight);
+    return Math.min(halfH, halfW) * 0.82;
+  }
+
+  function sphere() {
+    var a = new Float32Array(COUNT * 3), R = shellRadius();
     for (var i = 0; i < COUNT; i++) {
-      var rr = 80 + Math.random() * 320;
-      var th = Math.random() * Math.PI * 2;
-      var ph = Math.acos(2 * Math.random() - 1);
-      a[i*3]   = rr * Math.sin(ph) * Math.cos(th) + (Math.random() - .5) * 10;
-      a[i*3+1] = rr * Math.sin(ph) * Math.sin(th) + (Math.random() - .5) * 10;
-      a[i*3+2] = rr * Math.cos(ph)                + (Math.random() - .5) * 10;
+      var y   = 1 - (i / (COUNT - 1)) * 2;             // 1 → −1, evenly
+      var rad = Math.sqrt(Math.max(0, 1 - y * y));
+      var th  = GOLDEN * i;
+      var r   = R + (Math.random() - .5) * SHELL_JITTER;
+      a[i*3]   = r * rad * Math.cos(th);
+      a[i*3+1] = r * y;
+      a[i*3+2] = r * rad * Math.sin(th);
     }
     return a;
   }
@@ -273,12 +300,12 @@
   }
 
   var MODES = {
-    exploded: { cam: [0, 0, 520],   mx: 180, my: 110, lerp: .035, spin: [.0002, .0003] },
+    sphere:   { cam: [0, 0, 520],   mx: 120, my: 80,  lerp: .035, spin: [.00012, .00055] },
     vortex:   { cam: [0, 380, 380], mx: 60,  my: 35,  lerp: .040, spin: [0, .0018] },
     polaris:  { cam: [0, 380, 380], mx: 60,  my: 40,  lerp: .040, spin: [0, .0060] },
     waves:    { cam: [0, 0, 600],   mx: 30,  my: 20,  lerp: .030, spin: [0, 0] }
   };
-  var mode = MODES.exploded, current = "exploded";
+  var mode = MODES.sphere, current = "sphere";
 
   /* ── Morph ──────────────────────────────────────────────── */
   var morphStart = 0, morphDur = 1800, morphing = false;
@@ -299,7 +326,7 @@
     mode = MODES[name];
     camFrom.copy(camera.position);
     camShiftStart = performance.now();
-    morphTo(name === "exploded" ? exploded()
+    morphTo(name === "sphere"   ? sphere()
           : name === "vortex"   ? vortex()
           : name === "polaris"  ? polaris()
           : waves(elapsed), 1800);
@@ -323,9 +350,9 @@
     document.querySelectorAll("[data-formation]").forEach(function (s) { io.observe(s); });
   }
 
-  basePos.set(exploded());
+  basePos.set(sphere());
   rendered.set(basePos);
-  morphTo(exploded(), 2400);
+  morphTo(sphere(), 2400);
 
   var cursorWorld = new THREE.Vector3();
   var ndc = new THREE.Vector3();
@@ -406,10 +433,22 @@
   }
   requestAnimationFrame(frame);
 
+  // The wave sheets and the sphere shell are both sized from the viewport,
+  // so both have to be rebuilt when it changes. The sphere is debounced and
+  // re-morphed rather than snapped: resize fires continuously through a
+  // window drag, and rebuilding on every event would re-target the morph
+  // dozens of times a second. A phone rotating 90° is the case that matters
+  // — the shell fits the *narrow* extent, and without this a landscape
+  // globe would stay phone-sized after the turn.
+  var resizeTimer;
   window.addEventListener("resize", function () {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     buildGrid();
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      if (current === "sphere") morphTo(sphere(), 600);
+    }, 200);
   }, { passive: true });
 })();
