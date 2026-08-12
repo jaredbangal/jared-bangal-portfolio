@@ -366,7 +366,28 @@ four lines, so if the copy grows, the measures are what hold — not the
 alignment.
 
 About sits directly above the testimonials so the portrait introduces the
-person right before other people vouch for him. **The portrait is shown
+person right before other people vouch for him. **Its copy is sourced from
+Jared's résumé, and every claim in it is checkable** — the security
+background is the section's whole argument, so an overstatement there costs
+more than it buys. Three things are easy to get wrong and must stay right:
+
+- The master's is **Information Systems**, weighted toward security. It is
+  not a master's in cybersecurity. Write it the long way.
+- **CompTIA Security+ is not held** — it is scheduled for December 2026.
+  Anywhere it appears it must be marked as upcoming.
+- Figures come from the résumé: 2,500+ students and staff at BYU–Hawaii,
+  350+ machines at the Polynesian Cultural Center. Don't round them up.
+
+The `.about__creds` rows carry degree, role and certificate. They use the
+same name / value / note shape as `.panel__facts` in the nav, deliberately
+— both are information rather than destinations — but are their own block
+so the nav can restyle without dragging this along. Their measure is capped
+at 52ch against the copy's 46ch: at full column width the rules ran far
+past the paragraphs and the block read as detached.
+
+The nav's About panel carries the same line. If one changes, change both.
+
+**The portrait is shown
 whole, not cropped** — `height: auto`, no `object-fit: cover`, and the
 column narrowed to `.7fr` to pay for the extra height a full 2:3 frame
 needs. `height: auto` has to be explicit: the `width`/`height` attributes

@@ -996,7 +996,10 @@ body::after {
   display: grid;
   grid-template-columns: .7fr 1.3fr;
   gap: var(--space-16);
-  align-items: center;
+  /* start, not center: the copy column runs much taller than the portrait
+     now that the credentials sit under it, and centring the photo against
+     it leaves a hole above the frame. */
+  align-items: start;
   overflow: hidden;
 }
 
@@ -1028,6 +1031,50 @@ body::after {
 }
 
 .about__copy { position: relative; z-index: var(--z-raised); }
+
+/* Credentials. Same three-part row as .panel__facts in the nav — name,
+   value, note — because they are the same kind of thing: information, not
+   a destination. Kept as its own block rather than reusing that class so
+   the nav can restyle without dragging this along. */
+.about__creds {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 52ch;              /* the copy above sits at 46ch — the rules
+                                   have to stop near it, not run the full
+                                   column, or the block reads as detached */
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--border-strong);
+  list-style: none;
+}
+.about__creds > li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.about__creds > li:last-child { border-bottom: 0; padding-bottom: 0; }
+.about__creds b {
+  font-size: var(--text-lg);
+  font-weight: 400;
+  letter-spacing: -.01em;
+}
+.about__creds u {
+  text-decoration: none;
+  font-size: var(--text-md);
+  color: var(--ink-85);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.about__creds span {
+  grid-column: 1 / -1;
+  margin-top: var(--space-1);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-body);
+  color: var(--text-muted);
+}
 
 /* ── Service cards ──────────────────────────────────────── */
 .cards {
