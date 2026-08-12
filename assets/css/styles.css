@@ -126,6 +126,21 @@
   --dur-panel-settle: 1100ms;
   --panel-stagger:     90ms;
 
+  /* Elevation. Four steps, and every one is two shadows: a tight contact
+     shadow that sells the edge, and a wide ambient one that sells the
+     height. A single shadow can do one or the other, never both — which is
+     why the hand-written values this replaced looked flat at rest and
+     muddy when raised. Light is from directly above, so the offsets are
+     vertical only; nothing on this page is lit from the side. */
+  --shadow-1: 0 1px 2px rgba(22, 23, 26, .05),
+              0 1px 3px rgba(22, 23, 26, .04);
+  --shadow-2: 0 1px 2px rgba(22, 23, 26, .06),
+              0 6px 16px rgba(22, 23, 26, .08);
+  --shadow-3: 0 2px 4px rgba(22, 23, 26, .07),
+              0 16px 40px rgba(22, 23, 26, .13);
+  --shadow-4: 0 4px 10px rgba(22, 23, 26, .09),
+              0 32px 70px rgba(22, 23, 26, .17);
+
   /* Layering */
   --z-base: 0;  --z-raised: 10;  --z-nav: 40;  --z-grain: 60;  --z-skip: 100;
 }
@@ -244,7 +259,11 @@ html {
 }
 
 body {
-  background: var(--bg-page);
+  /* background-color, never the `background` shorthand — the shorthand
+     resets background-image, and the paper texture lives there. This rule
+     currently sits above the texture block, so it would only bite if the
+     order changed, which is exactly the kind of thing that changes. */
+  background-color: var(--bg-page);
   color: var(--text-primary);
   font-family: var(--font);
   font-size: var(--text-md);
@@ -262,9 +281,14 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
 
 :target { scroll-margin-top: calc(var(--nav-h) + var(--space-6)); }
 
+/* The halo is the point. An outline alone can land on a surface close to
+   its own colour — ink on a dark concept card, the ring on its own button —
+   and vanish. The second ring is the page's own colour sitting between
+   them, so the pair stays legible on anything. */
 :focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
+  box-shadow: 0 0 0 5px var(--bg-page);
   border-radius: var(--radius-xs);
 }
 
@@ -420,10 +444,28 @@ body  { background-color: var(--bg-page); }
   font-weight: 500;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
+  position: relative;
   text-decoration: none;
   border-bottom: 1px solid var(--border-strong);
   transition: border-color var(--dur-fast) var(--ease-in-out),
               color var(--dur-fast) var(--ease-in-out);
+}
+/* The accent rule draws in over the resting border rather than recolouring
+   it. transform-origin flips on the way out so it retracts to the edge it
+   entered from — same rule as the service card's wipe. */
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: var(--accent-ink);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
 }
 .link-underline span { transition: transform var(--dur-fast) var(--ease-out); }
 .link-underline:hover { color: var(--accent-ink-hover); border-color: var(--accent-ink-hover); }
@@ -449,10 +491,27 @@ body  { background-color: var(--bg-page); }
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
+  /* --press is the button's own transform channel, so :active does not
+     have to out-specify anything to use it. */
+  transform: scale(var(--press, 1));
   transition: background-color var(--dur-fast) var(--ease-in-out),
               color var(--dur-fast) var(--ease-in-out),
-              border-color var(--dur-fast) var(--ease-in-out);
+              border-color var(--dur-fast) var(--ease-in-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
+
+/* Press. Apple and Material both want feedback inside 100ms; --dur-fast is
+   200ms for the colour, but the scale wants to be quicker than that or the
+   button feels spongy under the finger. 2% is enough to register and small
+   enough not to shift the label. */
+.btn:active { --press: .98; transition-duration: 90ms; }
+
+/* Raised on hover, planted on press — the shadow has to move with the
+   scale or the button reads as sliding rather than being pushed. */
+.btn--primary:hover,
+.btn--ghost:hover { box-shadow: var(--shadow-2); }
+.btn:active { box-shadow: var(--shadow-1); }
 
 .btn--primary { background: var(--accent); color: var(--text-on-accent); }
 .btn--primary:hover { background: var(--accent-hover); color: var(--text-on-accent); }
@@ -681,7 +740,7 @@ body  { background-color: var(--bg-page); }
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   background: var(--bg-band);
-  box-shadow: 0 24px 60px rgba(22, 23, 26, .18);
+  box-shadow: var(--shadow-4);
   opacity: 0;
   visibility: hidden;
   /* Their timing, scraped from the live site: the shell settles over 750ms
@@ -942,7 +1001,7 @@ body  { background-color: var(--bg-page); }
     padding: var(--space-4) var(--gutter) var(--space-8);
     background: var(--bg-band);
     border-top: 1px solid var(--border-subtle);
-    box-shadow: 0 24px 60px rgba(22, 23, 26, .18);
+    box-shadow: var(--shadow-4);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
@@ -1021,6 +1080,36 @@ body  { background-color: var(--bg-page); }
   min-height: 100svh;
   margin-top: calc(var(--nav-h) * -1);   /* nav floats over the photo */
   overflow: hidden;
+}
+
+/* Scroll-linked parallax: the photo drifts a little slower than the page,
+   which is what gives the hero depth rather than the flatness of a picture
+   that scrolls at exactly the speed of everything on top of it.
+
+   Driven by `animation-timeline`, so there is no scroll listener and no
+   per-frame JavaScript — the compositor runs it. @supports-guarded, because
+   where it is unavailable the correct outcome is simply no parallax. The
+   scale(1.08) is what stops the drift exposing an edge at the bottom.
+
+   **`scroll(root)`, not `view()`.** `view()` resolves against the nearest
+   ancestor *scroll container*, and `.hero` has `overflow: hidden` — which
+   makes it one, even though it never scrolls. The timeline attached fine
+   and sat at 0% progress forever. Naming the document scroller explicitly
+   is the fix, and `animation-range: 0 100vh` is what keeps the drift to
+   the first screen instead of spreading it over the whole page. */
+@keyframes hero-drift {
+  from { transform: translate3d(0, 0, 0) scale(1.08); }
+  to   { transform: translate3d(0, 7%, 0) scale(1.08); }
+}
+
+@supports (animation-timeline: scroll(root)) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__media {
+      animation: hero-drift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
 }
 
 .hero__media {
@@ -1358,8 +1447,7 @@ body  { background-color: var(--bg-page); }
   border: 1px solid color-mix(in srgb, #FFFFFF 55%, var(--border-subtle));
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
           backdrop-filter: blur(16px) saturate(1.5);
-  box-shadow: 0 1px 1px rgba(255, 255, 255, .5) inset,
-              0 1px 3px rgba(22, 23, 26, .05);
+  box-shadow: 0 1px 1px rgba(255, 255, 255, .5) inset, var(--shadow-1);
 
   transform: translateY(var(--lift, 0px))
              rotateX(var(--rx, 0deg))
@@ -1419,9 +1507,7 @@ body  { background-color: var(--bg-page); }
   background: color-mix(in srgb, var(--cream-050) 76%, transparent);
   border-color: color-mix(in srgb, var(--accent-ink) 45%, #FFFFFF);
   --lift: -6px;
-  box-shadow: 0 1px 1px rgba(255, 255, 255, .7) inset,
-              0 2px 4px rgba(22, 23, 26, .07),
-              0 18px 44px rgba(22, 23, 26, .15);
+  box-shadow: 0 1px 1px rgba(255, 255, 255, .7) inset, var(--shadow-3);
 }
 
 /* The wipe. transform-origin flips on the way out so it retracts to the
@@ -1553,15 +1639,13 @@ body  { background-color: var(--bg-page); }
   background: var(--slide-bg);
   color: var(--slide-ink);
   text-decoration: none;
-  box-shadow: 0 1px 2px rgba(22, 23, 26, .08),
-              0 10px 30px rgba(22, 23, 26, .12);
+  box-shadow: var(--shadow-2);
   transition: transform var(--dur-base) var(--ease-out),
               box-shadow var(--dur-base) var(--ease-out);
 }
 .slide__link:hover {
   transform: translateY(-4px);
-  box-shadow: 0 2px 4px rgba(22, 23, 26, .10),
-              0 18px 44px rgba(22, 23, 26, .18);
+  box-shadow: var(--shadow-3);
 }
 
 /* Sized against the card, not in ch — ch resolves at the container's own
@@ -1619,7 +1703,7 @@ body  { background-color: var(--bg-page); }
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-xs);
-  box-shadow: 0 24px 60px rgba(22, 23, 26, .14);
+  box-shadow: var(--shadow-4);
 }
 .slide__shot { width: 100%; height: auto; display: block; }
 

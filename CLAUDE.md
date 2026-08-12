@@ -387,6 +387,22 @@ for an entrance that was not actually animated) and that zeroes the delay.
 Any new staggered group inherits the fix; anything that sets its own
 delay must do the same.
 
+**Depth is a four-step scale, not per-component shadows.** `--shadow-1`…`4`,
+each of them *two* shadows: a tight contact shadow that sells the edge and
+a wide ambient one that sells the height. One shadow can do either, never
+both, which is why the five hand-written values these replaced looked flat
+at rest and muddy when raised. Light is from directly above — offsets are
+vertical only, nothing here is lit from the side. Cards rest at 1 and hover
+at 3, slides rest at 2, panels sit at 4, buttons take 2 on hover and drop
+to 1 on press.
+
+**Everything pressable has an `:active`.** There were none at all before;
+that absence is most of what makes an interface feel like a document rather
+than a product. Buttons scale to `.98` through their own `--press` channel
+(so `:active` never has to out-specify anything) and the transition drops
+to 90ms — Apple and Material both want feedback inside 100ms, and
+`--dur-fast` at 200ms feels spongy under a finger.
+
 **Motion shares one rhythm.** `--dur-fast` 200ms buttons, `--dur-base` 300ms
 nav/surfaces, `--dur-slow` 800ms scroll entrances, `--stagger` 80ms between
 siblings — all matching squarespace.com's timings. Transform and opacity
@@ -495,6 +511,23 @@ page ink, the scrim *lifts* the plate instead of sinking it, the nav's
 scrim went from dark-protecting-light to light-protecting-dark, and the
 hero-local grain went `overlay` → `multiply`. If the photo ever changes
 again, ask which end of the range it sits at before touching an alpha.
+
+**The photo drifts on scroll**, 7% over the first viewport, driven by
+`animation-timeline` — no scroll listener, no per-frame JavaScript, the
+compositor runs it. `@supports`-guarded, since where it is unavailable the
+right outcome is simply no parallax.
+
+**It has to be `scroll(root)`, not `view()`.** `view()` resolves against the
+nearest ancestor *scroll container*, and `.hero` has `overflow: hidden` —
+which makes it one, even though it never scrolls. The timeline attached
+perfectly and sat at 0% progress forever, which looks exactly like the
+feature not being supported. Name the document scroller explicitly;
+`animation-range: 0 100vh` keeps the drift on the first screen rather than
+spreading it over the whole page. The `scale(1.08)` is what stops the drift
+exposing an edge.
+
+Re-measured with the photo moving under the copy: headline 7.4:1 at rest
+and 7.3:1 mid-drift, note 7.6:1 throughout.
 
 **The scrim is solved, never eyeballed.** The method, which is repeatable:
 
