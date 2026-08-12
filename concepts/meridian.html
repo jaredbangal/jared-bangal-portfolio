@@ -11,11 +11,19 @@
   /* Concept: Meridian — architecture studio.
      Direction: one typeface, three sizes, almost no colour. Structure comes
      from hairline rules and a visible column grid. The restrained one — a
-     deliberate counterweight to Sunday Bakehouse. */
+     deliberate counterweight to Sunday Bakehouse.
+
+     Blue-grey rather than the near-white paper it started on. The portfolio
+     page went cream, and a #FAFAF8 card on a #E4E2DC ground had nothing to
+     sit against — the tile dissolved into the page. Blue is also the one
+     hue the other five concepts do not use, and this sits 2.0:1 from the
+     page while staying 6.6:1 away from Northline, which is its neighbour in
+     the carousel. Restraint here is carried by the type and the hairlines,
+     not by the absence of colour. */
   :root {
-    --paper: #FAFAF8;
-    --ink:   #16171A;
-    --rule:  rgba(22, 23, 26, .16);
+    --paper: #8FA3B0;
+    --ink:   #0F1518;
+    --rule:  rgba(15, 21, 24, .22);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -37,7 +45,7 @@
     grid-template-columns: repeat(6, 1fr);
     pointer-events: none;
   }
-  .grid span { border-left: 1px solid rgba(22, 23, 26, .06); }
+  .grid span { border-left: 1px solid rgba(15, 21, 24, .06); }
 
   header, main, footer { position: relative; }
 

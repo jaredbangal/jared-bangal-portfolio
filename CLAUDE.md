@@ -196,10 +196,24 @@ everything else enters on.
 
 ## Nav panels
 
-Four disclosures — Services, Pricing, Process, About — all built to one
+Three disclosures — Services, Pricing, About — all built to one
 three-column shape (index / explore / promo) so they read as a set. Keep
 new ones to that shape; a panel noticeably smaller than its neighbours
-looks like an oversight.
+looks like an oversight. (Process was the fourth; it went with its page
+section.)
+
+**Each panel points at its own trigger.** An 8px gap under the bar and a
+caret at `--caret-x`, which `main.js` sets from the trigger's centre — the
+panel is positioned against the *bar*, so without a pointer a wide panel
+centred under the bar belongs to no item in particular. Squarespace's does
+the same thing, and the gap is what lets the caret read at all.
+
+The caret is `.nav__panel::before`, **not a child element**, and that is
+load-bearing: `.nav__panel > *` carries the column stagger, so a real
+element would be treated as a fourth column and shift every `nth-child`
+delay after it. It is a rotated square rather than a border triangle so it
+can carry the panel's own background and border; `clip-path` drops the two
+lower edges, which would otherwise draw a line across the panel's top.
 
 Column one is links where real destinations exist and `.panel__facts` data
 rows where it does not — a price tier is information, not a destination, so
@@ -502,7 +516,7 @@ The end fades are a `mask-image`, not a gradient overlay: the band sits on
 
 ## Page order
 
-Hero → **The case** → **What I do** → Services → Selected Work → Process → **About** →
+Hero → **The case** → **What I do** → Services → Selected Work → **About** →
 Testimonials → Contact → Newsletter.
 
 "The case" states the problem, "What I do" answers it — that order is the
@@ -551,10 +565,17 @@ removed.
 
 ## The accent hover
 
-Three sections share one hover behaviour — **What I do** points, **Services**
-cards, **Process** steps. In each: the heading (and the numeral where there
-is one) goes `--accent-hover`, and the rule or border goes `--accent`. The
-service cards keep their own lift and fill underneath it.
+Two sections share one hover behaviour — **What I do** points and
+**Services** cards. In each: the heading (and the numeral where there is
+one) goes `--accent-ink-hover`, and the rule or border goes `--accent-ink`.
+
+The service cards go further, and the staggering is the point: the card
+lifts and gains a shadow at `--dur-base`, a 2px rule wipes across the
+bottom at `--dur-slow`, and the numeral and title take the accent at
+`--dur-fast` so colour lands first. The numeral travels 3px and the title
+1px, so the two do not move as one block. `transform-origin` on the wipe
+flips between hover and rest, so it retracts to the edge it came from
+instead of jumping across to reverse.
 
 Treat this as one pattern, not three rules. It is what makes the page feel
 like a single system rather than a set of separately-styled blocks, so a

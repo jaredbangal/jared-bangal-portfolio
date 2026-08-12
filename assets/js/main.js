@@ -68,12 +68,26 @@
       }
     }
 
+    // The panel is centred on the bar, not on its trigger, so the caret is
+    // the only thing tying the two together. Measured rather than guessed:
+    // the panel's width depends on its content and the bar's on the viewport.
+    function aimCaret(item) {
+      var panel = panelOf(item);
+      var t = triggerOf(item).getBoundingClientRect();
+      var p = panel.getBoundingClientRect();
+      if (!p.width) return;
+      // Keep the point on the panel, with a corner's clearance at each end.
+      var x = Math.min(Math.max(t.left + t.width / 2 - p.left, 18), p.width - 18);
+      panel.style.setProperty("--caret-x", x + "px");
+    }
+
     function open(item) {
       clearTimeout(closeTimer);
       closeAll(item);
       item.setAttribute("data-open", "");
       triggerOf(item).setAttribute("aria-expanded", "true");
       nav.setAttribute("data-menu-open", "");
+      aimCaret(item);
     }
 
     function toggle(item) {
@@ -113,6 +127,13 @@
 
       panel.addEventListener("click", function (e) {
         if (e.target.closest("a")) { close(item); closeAll(); }
+      });
+    });
+
+    // The bar reflows on resize and the panel's centre moves with it.
+    window.addEventListener("resize", function () {
+      menuItems.forEach(function (item) {
+        if (item.hasAttribute("data-open")) aimCaret(item);
       });
     });
 

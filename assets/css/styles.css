@@ -647,7 +647,7 @@ body::after {
    panel can transition while still leaving the tab order when closed. */
 .nav__panel {
   position: absolute;
-  top: calc(100% - 6px);
+  top: calc(100% + 8px);
   left: 50%;
   z-index: 1;
   display: grid;
@@ -670,6 +670,34 @@ body::after {
               transform var(--dur-panel-settle) var(--ease-out),
               visibility 0s linear var(--dur-panel);
 }
+/* A caret pointing back at whichever trigger is open, and the 8px gap above
+   that lets it read. The panel is centred on the *bar*, not on its trigger,
+   so without a pointer a wide panel belongs to no item in particular.
+
+   ::before, not a child element: `.nav__panel > *` carries the column
+   stagger, and a real element here would be treated as a fourth column and
+   shift every nth-child delay after it.
+
+   A rotated square rather than a border triangle, so it can carry the
+   panel's own background and border and read as part of the same surface.
+   clip-path drops the two lower edges, which would otherwise draw a line
+   across the panel's top. --caret-x is set by main.js from the trigger's
+   centre. */
+.nav__panel::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: var(--caret-x, 50%);
+  width: 13px;
+  height: 13px;
+  margin-left: -6.5px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-band);
+  transform: rotate(45deg);
+  clip-path: polygon(-40% -40%, 140% -40%, 140% 140%);
+  pointer-events: none;
+}
+
 .nav__panel--wide {
   grid-template-columns: 240px minmax(0, 1fr) 260px;
   width: min(1040px, calc(100vw - var(--space-10) * 2));
@@ -866,6 +894,10 @@ body::after {
    accordion section — same markup, same triggers, same JS. */
 @media (max-width: 900px) {
   .nav__burger { display: inline-flex; }
+
+  /* No caret in the accordion — the panel sits directly under its own
+     trigger there, so there is nothing for a pointer to disambiguate. */
+  .nav__panel::before { display: none; }
 
   .nav__links {
     position: absolute;
@@ -1258,21 +1290,66 @@ body::after {
   padding: var(--space-8) var(--space-6) var(--space-10);
   transition: background-color var(--dur-base) var(--ease-in-out),
               border-color var(--dur-base) var(--ease-in-out),
+              box-shadow var(--dur-base) var(--ease-out),
               transform var(--dur-base) var(--ease-out);
 }
-/* Same accent hover as a Process step — see the note there for why these
-   carry no pointer cursor. The card keeps its own lift and fill on top;
-   the accent is what makes the three hover states on this page read as
-   one behaviour rather than three. */
+/* Four things move, and they are staggered rather than simultaneous — that
+   is the whole difference between this reading as a considered response and
+   as a colour swap. The card lifts and gains a shadow at --dur-base, the
+   rule wipes across underneath it at --dur-slow, and the numeral and title
+   take the accent at --dur-fast so the colour lands first.
+
+   Still no pointer cursor: a service card is not a link. See "The accent
+   hover" in CLAUDE.md for why that stays true no matter how rich this
+   gets. */
+.card {
+  position: relative;
+  overflow: hidden;
+  transform: translateY(var(--lift, 0px));   /* the no-JS path; with JS the
+                                                reveal's settled rule wins,
+                                                and reads the same variable */
+}
 .card:hover {
   background: var(--bg-raised-h);
   border-color: var(--accent-ink);
-  transform: translateY(-4px);
+  --lift: -6px;
+  box-shadow: 0 2px 4px rgba(22, 23, 26, .07),
+              0 16px 40px rgba(22, 23, 26, .13);
 }
+
+/* The wipe. transform-origin flips on the way out so it retracts to the
+   same edge it entered from, instead of jumping across to reverse. */
+.card::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.card:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
 .card__num,
-.card__title { transition: color var(--dur-fast) var(--ease-in-out); }
+.card__title { transition: color var(--dur-fast) var(--ease-in-out),
+                           transform var(--dur-base) var(--ease-out); }
 .card:hover .card__num,
 .card:hover .card__title { color: var(--accent-ink-hover); }
+/* The numeral travels further than the title, so the two do not move as
+   one block — the card reads as reacting rather than sliding. */
+.card:hover .card__num   { transform: translateY(-3px); }
+.card:hover .card__title { transform: translateY(-1px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover { --lift: 0px; }
+  .card:hover .card__num,
+  .card:hover .card__title { transform: none; }
+  .card::after { transition-duration: 1ms; }
+}
 
 .card__num {
   /* 22px at weight 500 does not qualify for the large-text 3:1 exemption
@@ -1476,73 +1553,6 @@ body::after {
   .slide__copy { width: auto; padding: var(--space-6); }
   .slide__frame { width: 78%; right: 11%; bottom: -10%; }
 }
-
-/* ── Process ────────────────────────────────────────────── */
-.process { position: relative; overflow: hidden; }
-
-.process__lines {
-  position: absolute;
-  right: -100px;
-  top: var(--space-10);
-  width: 900px;
-  height: 250px;
-  color: var(--text-primary);
-  opacity: .10;
-  pointer-events: none;
-}
-
-.process__inner { position: relative; z-index: var(--z-raised); }
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-8);
-}
-
-.step {
-  border-top: 1px solid var(--border-strong);
-  padding-top: var(--space-6);
-}
-
-/* Hover picks out one step the way the nav picks out one link: the numeral
-   and the title go accent together, and the rule above them lights up so
-   the whole column reads as the thing under the cursor.
-
-   This is decoration, not an affordance — a step is not a destination, and
-   nothing here is reachable only by hovering. That is why there is no
-   pointer cursor and no focus equivalent: promising an interaction that
-   does not exist is worse than having no hover at all. */
-.step__num,
-.step__title,
-.step { transition: color var(--dur-fast) var(--ease-in-out),
-                    border-color var(--dur-fast) var(--ease-in-out); }
-
-.step:hover { border-top-color: var(--accent-ink); }
-.step:hover .step__num,
-.step:hover .step__title { color: var(--accent-ink-hover); }
-
-.step__num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 30px;
-  height: 25px;
-  padding: 0 var(--space-3);
-  margin-bottom: var(--space-5);
-  border-radius: var(--radius-pill);      /* their chip: 30px radius, 4/12 padding */
-  background: var(--bg-chip);
-  font-size: var(--text-2xs);
-  font-weight: 500;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-}
-.step__title {
-  font-size: var(--text-lg);
-  font-weight: 400;
-  letter-spacing: -.02em;
-  margin-bottom: var(--space-2);
-}
-.step__text { font-size: var(--text-xs); line-height: var(--leading-body); color: var(--text-secondary); }
 
 /* ── Testimonials ─────────────────────────────────────────
    A marquee rather than the concept carousel's snap track. Reviews are
@@ -1814,14 +1824,19 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   transition: opacity var(--dur-slow) var(--ease-out),
               transform var(--dur-slow) var(--ease-out);
 }
-.js .reveal.is-in { opacity: 1; transform: none; }
+/* Not `transform: none`. This selector is (0,3,0) and every hover lift on
+   the page is (0,2,0), so a settled reveal silently pinned them all — the
+   service cards were setting translateY(-6px) that never rendered. Routing
+   the settled transform through a variable lets a component set --lift
+   without having to out-specify the reveal system. */
+.js .reveal.is-in { opacity: 1; transform: translateY(var(--lift, 0px)); }
 
 .js .reveal:nth-child(2) { transition-delay: calc(var(--stagger) * 1); }
 .js .reveal:nth-child(3) { transition-delay: calc(var(--stagger) * 2); }
 .js .reveal:nth-child(4) { transition-delay: calc(var(--stagger) * 3); }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal { opacity: 1; transform: translateY(var(--lift, 0px)); }
 }
 
 /* ── Responsive ─────────────────────────────────────────── */
@@ -1833,7 +1848,6 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   }
 
   .cards { grid-template-columns: repeat(2, 1fr); }
-  .steps { grid-template-columns: repeat(2, 1fr); gap: var(--space-8) var(--space-6); }
   .about, .contact { gap: var(--space-12); }
   .quotes { gap: var(--space-10); }
   .section__head { margin-bottom: var(--space-16); }
@@ -1883,9 +1897,8 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   .hero__cta { width: 100%; }
   .hero__cta .btn { flex: 1 1 auto; }
 
-  .cards, .steps { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }
   .work { grid-template-columns: 1fr; gap: var(--space-10); }
-  .steps { gap: var(--space-7); }
 
   .newsletter__form input { width: 100%; }
   .newsletter__form .btn { width: 100%; }
