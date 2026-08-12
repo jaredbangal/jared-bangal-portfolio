@@ -935,6 +935,11 @@ body::after {
 
 .band { background: var(--bg-band); padding: var(--section-y) var(--gutter); }
 .band--tight { padding-block: var(--space-24); }
+/* Lets a child run the full width of the band — the testimonial marquee
+   has to reach both edges for its fade to read as off-screen rather than
+   as a border. Children that should stay in the grid re-add the gutter
+   with .shell. */
+.band--flush { padding-inline: 0; }
 
 /* ── What I do ──────────────────────────────────────────────
    The page's plain-language opener: one statement, then how I work — kept
@@ -969,7 +974,14 @@ body::after {
 .intro__point {
   border-top: 1px solid var(--border-strong);
   padding-top: var(--space-6);
+  transition: border-color var(--dur-fast) var(--ease-in-out);
 }
+/* Third of the set — Process steps, service cards, these. No numeral to
+   pick out here, so the rule and the heading carry it alone. */
+.intro__point h3 { transition: color var(--dur-fast) var(--ease-in-out); }
+.intro__point:hover { border-top-color: var(--accent); }
+.intro__point:hover h3 { color: var(--accent-hover); }
+
 .intro__point h3 {
   font-size: var(--text-lg);
   font-weight: 400;
@@ -996,10 +1008,7 @@ body::after {
   display: grid;
   grid-template-columns: .7fr 1.3fr;
   gap: var(--space-16);
-  /* start, not center: the copy column runs much taller than the portrait
-     now that the credentials sit under it, and centring the photo against
-     it leaves a hole above the frame. */
-  align-items: start;
+  align-items: center;
   overflow: hidden;
 }
 
@@ -1032,49 +1041,6 @@ body::after {
 
 .about__copy { position: relative; z-index: var(--z-raised); }
 
-/* Credentials. Same three-part row as .panel__facts in the nav — name,
-   value, note — because they are the same kind of thing: information, not
-   a destination. Kept as its own block rather than reusing that class so
-   the nav can restyle without dragging this along. */
-.about__creds {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-  max-width: 52ch;              /* the copy above sits at 46ch — the rules
-                                   have to stop near it, not run the full
-                                   column, or the block reads as detached */
-  margin-top: var(--space-10);
-  padding-top: var(--space-8);
-  border-top: 1px solid var(--border-strong);
-  list-style: none;
-}
-.about__creds > li {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0 var(--space-4);
-  padding-bottom: var(--space-5);
-  border-bottom: 1px solid var(--border-subtle);
-}
-.about__creds > li:last-child { border-bottom: 0; padding-bottom: 0; }
-.about__creds b {
-  font-size: var(--text-lg);
-  font-weight: 400;
-  letter-spacing: -.01em;
-}
-.about__creds u {
-  text-decoration: none;
-  font-size: var(--text-md);
-  color: var(--ink-85);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.about__creds span {
-  grid-column: 1 / -1;
-  margin-top: var(--space-1);
-  font-size: var(--text-2xs);
-  line-height: var(--leading-body);
-  color: var(--text-muted);
-}
 
 /* ── Service cards ──────────────────────────────────────── */
 .cards {
@@ -1092,11 +1058,19 @@ body::after {
               border-color var(--dur-base) var(--ease-in-out),
               transform var(--dur-base) var(--ease-out);
 }
+/* Same accent hover as a Process step — see the note there for why these
+   carry no pointer cursor. The card keeps its own lift and fill on top;
+   the accent is what makes the three hover states on this page read as
+   one behaviour rather than three. */
 .card:hover {
   background: var(--bg-raised-h);
-  border-color: var(--border-strong);
+  border-color: var(--accent);
   transform: translateY(-4px);
 }
+.card__num,
+.card__title { transition: color var(--dur-fast) var(--ease-in-out); }
+.card:hover .card__num,
+.card:hover .card__title { color: var(--accent-hover); }
 
 .card__num {
   /* 22px at weight 500 does not qualify for the large-text 3:1 exemption
@@ -1349,18 +1323,111 @@ body::after {
 }
 .step__text { font-size: var(--text-xs); line-height: var(--leading-body); color: var(--text-secondary); }
 
-/* ── Testimonials ───────────────────────────────────────── */
-.quotes {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-14);
+/* ── Testimonials ─────────────────────────────────────────
+   A marquee rather than the concept carousel's snap track. Reviews are
+   short and there are many, so the interesting thing is the wall of them
+   moving, not landing on one — there is nothing here to pick.
+
+   The track holds the set twice and animates to exactly -50%, so the
+   moment it lands there the second set is sitting where the first began
+   and the reset is invisible. The duplicate is inserted by main.js and
+   marked aria-hidden; without the script there is no duplicate, no
+   animation, and the viewport is simply a scrollable row.
+
+   Transform only — never scrollLeft — so this stays off the main thread.  */
+.marquee {
+  --marquee-dur: 80s;
+  --marquee-gap: var(--space-6);
+  position: relative;
+  margin-top: var(--space-16);
 }
 
+/* Fades the row into the band at both ends so cards enter and leave
+   rather than being clipped. mask, not a gradient overlay: the band sits
+   on --bg-band and an overlay would have to hard-code that colour. */
+.marquee__viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee__viewport::-webkit-scrollbar { display: none; }
+
+.marquee__track {
+  display: flex;
+  gap: var(--marquee-gap);
+  width: max-content;
+  padding-inline: var(--gutter);
+  list-style: none;
+}
+
+/* Only once main.js has doubled the set — a half-width translate on a
+   single set would walk the whole row off the screen. */
+.marquee[data-marquee-ready] .marquee__track {
+  padding-inline: 0;
+  animation: marquee-drift var(--marquee-dur) linear infinite;
+}
+
+/* Not a plain -50%. The track is 16 cards with 15 gaps between them, so
+   half its width is 8 cards + 7.5 gaps — but landing the second set where
+   the first started needs 8 cards + 8 gaps. That missing half-gap is a
+   12px jolt once every cycle, which is exactly the artefact the duplicate
+   set exists to prevent. Hence the correction. */
+@keyframes marquee-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(calc(-50% - var(--marquee-gap) / 2), 0, 0); }
+}
+
+/* Three ways to stop it, because hover alone reaches only a mouse.
+   WCAG 2.2.2 wants a mechanism for motion that runs past five seconds:
+   the toggle is that mechanism, and hover and focus are the conveniences
+   on top of it. */
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track,
+.marquee[data-paused] .marquee__track { animation-play-state: paused; }
+
+.marquee__toggle {
+  position: absolute;
+  right: var(--gutter);
+  bottom: calc(var(--space-10) * -1);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-in-out),
+              border-color var(--dur-fast) var(--ease-in-out);
+}
+.marquee__toggle:hover { color: var(--text-primary); border-color: var(--accent); }
+
+.quote {
+  flex: none;
+  width: 34ch;
+  padding: var(--space-8);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+}
+
+/* Smaller than the old two-up pull quotes ran. At --text-2xl in a 34ch
+   card these were six lines deep and the card stopped being scannable
+   while it drifted. */
 .quote blockquote {
-  font-size: var(--text-2xl);
-  font-weight: var(--weight-display);
-  line-height: 1.3;
-  letter-spacing: -.03em;
+  font-size: var(--text-xl);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  letter-spacing: -.02em;
   text-wrap: pretty;
   margin-bottom: var(--space-6);
 }

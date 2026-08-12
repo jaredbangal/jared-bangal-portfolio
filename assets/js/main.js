@@ -310,6 +310,65 @@
     });
   }
 
+  /* ── Testimonial marquee ────────────────────────────────
+     The CSS animation runs to exactly -50%, so the track has to hold the
+     set twice for the wrap to land invisibly. Doubling it here rather
+     than in the markup keeps one copy in the source, and means that with
+     this file removed there is no half-set to animate off the screen —
+     the viewport is just a scrollable row of reviews.
+
+     Also builds the pause control. It only exists when the motion does,
+     which is why it is not in the HTML: a pause button for an animation
+     that never starts is a dead control. */
+  var marquee = document.querySelector("[data-marquee]");
+
+  if (marquee) {
+    var mTrack = marquee.querySelector("[data-marquee-track]");
+    var originals = [].slice.call(mTrack.children);
+
+    if (originals.length) {
+      var dup = document.createDocumentFragment();
+      originals.forEach(function (item) {
+        var copy = item.cloneNode(true);
+        copy.setAttribute("aria-hidden", "true");
+        // The second set is the same reviews. It must not be read out
+        // twice, nor collect tab stops.
+        copy.querySelectorAll("a, button, [tabindex]").forEach(function (el) {
+          el.setAttribute("tabindex", "-1");
+        });
+        dup.appendChild(copy);
+      });
+      mTrack.appendChild(dup);
+
+      var toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "marquee__toggle";
+      toggle.setAttribute("aria-pressed", "false");
+      toggle.textContent = "Pause";
+
+      toggle.addEventListener("click", function () {
+        var paused = marquee.toggleAttribute("data-paused");
+        toggle.setAttribute("aria-pressed", String(paused));
+        toggle.textContent = paused ? "Play" : "Pause";
+      });
+
+      marquee.appendChild(toggle);
+      marquee.setAttribute("data-marquee-ready", "");
+
+      // Reduced motion gets the row without the drift. Live, not read
+      // once — a preference toggled mid-session takes effect here.
+      var applyMotion = function () {
+        if (reducedMotion.matches) marquee.removeAttribute("data-marquee-ready");
+        else marquee.setAttribute("data-marquee-ready", "");
+        toggle.hidden = reducedMotion.matches;
+      };
+      applyMotion();
+      if (reducedMotion.addEventListener) {
+        reducedMotion.addEventListener("change", applyMotion);
+      }
+    }
+  }
+
   /* ── Current-section indicator ──────────────────────────
      Marks the nav link whose section is nearest the top of the
      viewport, so the nav reflects where you actually are. */

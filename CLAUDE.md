@@ -351,6 +351,45 @@ Anything short of 1 leaves a visible step. Verify by sampling a pixel
 column across the join — adjacent rows should differ by ≤1/255 (they
 currently differ by 1, at every width).
 
+## Testimonial marquee
+
+A marquee, not the concept carousel's snap track. Reviews are short and
+there are many, so the interesting thing is the wall of them moving — there
+is nothing here to land on, and no tabs, because there is nothing to pick.
+
+The track holds the set **twice** and drifts left. The duplicate is inserted
+by `main.js`, marked `aria-hidden` with `tabindex="-1"` descendants, exactly
+like the carousel clones — the same reviews must not be announced twice or
+collect tab stops.
+
+**The travel is not `-50%`.** Sixteen cards have fifteen gaps between them,
+so half the track width is 8 cards + 7.5 gaps, while landing the second set
+where the first began needs 8 cards + 8 gaps. The missing half-gap is a 12px
+jolt once per cycle — precisely the artefact the duplicate exists to
+prevent. Hence `translate3d(calc(-50% - var(--marquee-gap) / 2), 0, 0)`, and
+hence the gap lives in a token: change one and the other must follow.
+Verify by measuring, not by watching — the distance travelled has to equal
+`children[N].offsetLeft - children[0].offsetLeft`.
+
+Transform only, never `scrollLeft`, so it stays off the main thread.
+
+**Three ways to stop it, and the button is the one that counts.** WCAG 2.2.2
+wants a pause mechanism for motion running past five seconds; hover and
+`:focus-within` are conveniences that only reach a mouse and a keyboard, and
+a touch device has neither. The button is built by `main.js`, not the HTML —
+a pause control for an animation that never starts is a dead control.
+
+Degradation is layered, and each layer still shows every review:
+
+- **Reduced motion** — `data-marquee-ready` is removed and the toggle
+  hidden, so the row is static and scrollable. Bound to a `change` listener,
+  so toggling the OS setting mid-session takes effect.
+- **No JS** — no duplicate set, no animation, and `.marquee__viewport`
+  is an ordinary horizontally scrollable row.
+
+The end fades are a `mask-image`, not a gradient overlay: the band sits on
+`--bg-band` and an overlay would have to hard-code that colour.
+
 ## Page order
 
 Hero → **What I do** → Services → Selected Work → Process → **About** →
@@ -366,24 +405,24 @@ four lines, so if the copy grows, the measures are what hold — not the
 alignment.
 
 About sits directly above the testimonials so the portrait introduces the
-person right before other people vouch for him. **Its copy is sourced from
-Jared's résumé, and every claim in it is checkable** — the security
-background is the section's whole argument, so an overstatement there costs
-more than it buys. Three things are easy to get wrong and must stay right:
+person right before other people vouch for him.
 
-- The master's is **Information Systems**, weighted toward security. It is
-  not a master's in cybersecurity. Write it the long way.
-- **CompTIA Security+ is not held** — it is scheduled for December 2026.
-  Anywhere it appears it must be marked as upcoming.
+**It is two paragraphs and nothing else.** A credentials list — degrees,
+role, certificates — was built here and cut: Jared wants the security
+background as an argument, not a CV. Don't reintroduce one.
+
+The security claim is the section's whole point, so the wording is load-
+bearing:
+
+- The page says **"a master's in cybersecurity management."** The résumé
+  says MS, Information Systems, with Cybersecurity Management among the
+  coursework. Jared asked for it this way and that is his call — but know
+  that the two differ, and don't "fix" one against the other.
+- Jared's bachelor's is **Information Technology** at BYU–Hawaii (the
+  résumé says Information Systems). It appears nowhere on the page now;
+  if it ever does, that is the correction to apply.
 - Figures come from the résumé: 2,500+ students and staff at BYU–Hawaii,
   350+ machines at the Polynesian Cultural Center. Don't round them up.
-
-The `.about__creds` rows carry degree, role and certificate. They use the
-same name / value / note shape as `.panel__facts` in the nav, deliberately
-— both are information rather than destinations — but are their own block
-so the nav can restyle without dragging this along. Their measure is capped
-at 52ch against the copy's 46ch: at full column width the rules ran far
-past the paragraphs and the block read as detached.
 
 The nav's About panel carries the same line. If one changes, change both.
 
@@ -395,12 +434,21 @@ on the `<img>` are a presentational hint that otherwise wins. On mobile it
 is capped by `max-width`, never by height — cropping is the thing that was
 removed.
 
-**Process steps light up on hover** the way nav links do: numeral and title
-to `--accent-hover`, the rule above them to `--accent`. This is decoration,
-not an affordance — a step is not a destination and nothing is reachable
-only by hovering — which is why there is no pointer cursor and no focus
-equivalent. Don't add one; promising an interaction that does not exist is
-worse than no hover at all.
+## The accent hover
+
+Three sections share one hover behaviour — **What I do** points, **Services**
+cards, **Process** steps. In each: the heading (and the numeral where there
+is one) goes `--accent-hover`, and the rule or border goes `--accent`. The
+service cards keep their own lift and fill underneath it.
+
+Treat this as one pattern, not three rules. It is what makes the page feel
+like a single system rather than a set of separately-styled blocks, so a
+new block of the same kind should join it rather than invent its own.
+
+**None of them carry a pointer cursor or a focus equivalent, deliberately.**
+These are decoration — a step is not a destination, and nothing anywhere is
+reachable only by hovering. Don't add a cursor to "finish" it; promising an
+interaction that does not exist is worse than no hover at all.
 
 Two joins are tighter than the 128/128 default. Services and Selected Work
 are one thought and close from both sides with `.section--tight-bottom` /
@@ -417,5 +465,15 @@ not quoted rates. They were written to match the range already implied by
 the contact form's "e.g. New site, $1k–3k". Set real numbers before this
 goes anywhere public; published prices are a commitment.
 
-Two testimonial avatars and both quotes. Forms post to `action="#"` — point
-them at a real handler and delete the placeholder branch in `main.js`.
+**All eight testimonials are invented, and this is the one that can't
+ship.** They were written so the marquee could be designed and reviewed —
+every quote, every "Placeholder Name", every role. Publishing invented
+reviews as genuine is deceptive, and in the US it is unlawful under the
+FTC's rule on consumer reviews (16 CFR Part 465), which reaches fabricated
+testimonials on a business's own site. Before this page goes public,
+replace them with real quotes or delete the section. Anything that cannot
+be attributed to a named, consenting client comes out. The avatars are
+still empty `.slot` tiles.
+
+Forms post to `action="#"` — point them at a real handler and delete the
+placeholder branch in `main.js`.
