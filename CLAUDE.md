@@ -704,6 +704,26 @@ the viewport, so pulling it back half a slide centres slide 0 and every
 further index is one slide-plus-gap. `--i` is the only thing script ever
 sets — no per-slide maths in JS, and the two halves cannot drift.
 
+**Source order is the running order, and index 1 is the slide that
+leads.** The opening slide is the *second* in source, not the first, so
+both its neighbours exist without needing clones and the no-JS composition
+is symmetric. `--i: 1` in the stylesheet and `START = 1` in `main.js` name
+the same slide — change one alone and the page opens on a different
+concept depending on whether the script loaded.
+
+The opening trio is a colour decision, not an arbitrary order: it currently
+runs **botanica / sunday / kettle**, all three warm and light. It opened on
+northline / botanica / borough before, and two dark concepts either side of
+a cream one read as a black-and-white page at first glance. The three light
+concepts sitting together at the front does mean the three dark ones meet
+later in the loop — that is the trade, and it is the right way round, since
+only the opening is seen by everyone.
+
+Loading hints follow from this: the opening three are eager, the other
+three are `loading="lazy"`. Watch this when reordering — sunday carried
+`lazy` from when it sat fourth, and moving it to the centre of the opening
+frame would have lazy-loaded the largest thing above the fold.
+
 **The loop clones, exactly like Selected Work.** Last two slides before the
 first, first two after the last, so a neighbour always peeks on both sides
 and the set is never rewound across. When the index lands on a clone the

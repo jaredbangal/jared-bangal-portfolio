@@ -477,7 +477,15 @@
     if (track && n > 1) {
       var CLONES = 2;
       var STEP   = 2000;
-      var idx = CLONES, timer = null, taken = false;
+
+      // The opening slide is the *second* in source order, so that both
+      // neighbours exist without clones and the no-JS composition is
+      // symmetric. That is the same slide the stylesheet's `--i: 1`
+      // default centres — change one and the page opens on a different
+      // concept depending on whether this file loaded. Source order is
+      // therefore also the running order; see the hero stage in index.html.
+      var START = 1;
+      var idx = CLONES + START, timer = null, taken = false;
 
       for (var c = 0; c < CLONES; c++) {
         var head = real[n - 1 - c].cloneNode(true);
