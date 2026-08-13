@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Northline Cycles — concept</title>
+<meta name="description" content="Northline Cycles — a concept site design for a bike shop, by Jared Bangal.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Archivo:wght@400;500;600&display=swap">
@@ -174,6 +175,47 @@
   .closing { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 28px; }
   .closing h2 { margin-bottom: 10px; }
   .closing p { font-family: "IBM Plex Mono", monospace; font-size: 13px; opacity: .6; }
+
+
+
+
+  /* ── Small screens ─────────────────────────────────────
+     These pages are rendered at a 900px viewport for the portfolio
+     tiles and were built to that width only, so every one of them
+     scrolled sideways on a phone. Concept or not, they are linked
+     from the nav and a visitor can open one.
+     Generated from the page's own rules — regenerate rather than
+     hand-edit if the layout changes. */
+  @media (max-width: 760px) {
+  /* Desktop gutters of 44–56px leave a phone nothing to work
+     with — these blocks were pinned wide by padding, not by
+     content, including ones nested inside other padded blocks. */
+  header,
+  main,
+  section { padding-left: 20px; padding-right: 20px; }
+  /* Every flex row the page declares: a mockup built at one
+     width was never told it could wrap. */
+  .closing,
+  .lineup a,
+  body,
+  header,
+  main,
+  nav { flex-wrap: wrap; }
+  nav { gap: 18px; }
+  .bays,
+  .readout { grid-template-columns: 1fr; }
+  img, svg, canvas { max-width: 100%; height: auto; }
+  }
+
+
+
+  /* Below ~360px the 20px gutter is still more than the content can
+     give back — only 8px of sideways scroll, but it is scroll. */
+  @media (max-width: 380px) {
+  header,
+  main,
+  section { padding-left: 12px; padding-right: 12px; }
+  }
 </style>
 </head>
 <body>
