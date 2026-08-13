@@ -711,13 +711,9 @@ is symmetric. `--i: 1` in the stylesheet and `START = 1` in `main.js` name
 the same slide — change one alone and the page opens on a different
 concept depending on whether the script loaded.
 
-The opening trio is a colour decision, not an arbitrary order: it currently
-runs **botanica / sunday / kettle**, all three warm and light. It opened on
-northline / botanica / borough before, and two dark concepts either side of
-a cream one read as a black-and-white page at first glance. The three light
-concepts sitting together at the front does mean the three dark ones meet
-later in the loop — that is the trade, and it is the right way round, since
-only the opening is seen by everyone.
+The opening trio is a chosen composition, not an arbitrary order: it runs
+**meridian / sunday / northline** — Sunday's butter and terracotta in the
+centre, flanked by the two cool, structural concepts.
 
 Loading hints follow from this: the opening three are eager, the other
 three are `loading="lazy"`. Watch this when reordering — sunday carried
@@ -777,6 +773,63 @@ master if a concept is re-shot.
 360px viewport and the default `flex-shrink: 1` silently traded the touch
 target down to 43px to fit. `flex: 0 0 44px` pins them and the gap gives
 way instead.
+
+## The ink blocks
+
+Two sections are black: **What I do** (`#intro`) and **Client feedback**
+(`#feedback`). Both carry `.on-dark block--dark` — the first flips the
+tokens, the second paints the surface.
+
+`.on-dark` had been **dead code** since the hero photo came out, and it had
+rotted quietly while nobody used it. Two things were wrong the moment it was
+switched back on:
+
+- Its accent was still `#F25939`/`#F57052`, the *old orange brand*, left
+  behind when the page went maroon. Replaced with the maroon hue (12.5°)
+  lifted to L .64/.72 — `#ED785A`/`#F2907A`, which measure 6.6 / 6.4 / 5.9 /
+  5.5 on shade-900…600. The maroon itself is a **1.9:1** colour on
+  shade-900 and simply disappears, so a lighter pair is not optional here.
+- `--accent` was not redefined at all, so the *fill* stayed maroon while
+  `--text-on-accent` went near-black: a 1.9:1 button waiting for the first
+  `.btn--primary` to be dropped into a dark section.
+
+**The cream texture cannot be reused, and it is not a tuning problem.**
+`luminosity` *replaces* the backdrop's luminance with the source's, and on
+near-black there is nothing below to vary into. Measured across eight
+centres and three slopes, **every** combination lifted a mean of 18 to
+between 63 and 180; even a pure-black noise tile lands at ~50. The surface
+always washes to grey. Same shape of failure `multiply` had on cream,
+mirrored.
+
+`lighten` is the one that works, for the same reason `multiply` works on
+paper — it can only move in the direction the surface has room for. Specks
+of light in ink.
+
+**`color-interpolation-filters='sRGB'` is required on the dark tile.** SVG
+filters run in **linearRGB** by default, which is why the cream tile's
+numbers look arbitrary; at the dark end that conversion balloons small
+values, and slope .05 was still lifting the mean by 38. In sRGB the slope
+means what it says.
+
+Result: `--shade-950` `#070A0E` under slope `.16`, giving stdev **3.2** at a
+mean of 19.9 against the flat 18.3 — so the apparent surface is still
+`--shade-900`. That is well under cream's 8.2 and it is the honest ceiling:
+black has no downside headroom. Re-measure rather than recompute if
+`--shade-950` moves.
+
+**The field does not show through**, exactly like `.band`. Deliberate:
+alternating textured cream with solid ink gives the page a rhythm, and the
+ink blocks read as the quiet ones.
+
+Contrast, on rendered pixels with the texture live: worst **5.85:1** across
+twelve runs (labels, statement, body, point headings and copy, quote, name,
+role, marquee toggle); the hovered point heading measures 8.51:1.
+
+**`#intro` had to be restructured to run full-bleed.** It carried `.shell`
+on the section itself, which would have made the ink a centred 80rem card.
+`.shell` moved to a wrapper inside. Do not reach for a `100vw`
+pseudo-element instead — that is the trap that put a horizontal scrollbar on
+every breakpoint once already.
 
 ## Testimonial marquee
 

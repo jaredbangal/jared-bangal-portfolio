@@ -14,6 +14,7 @@
 /* ── 1. Primitives ──────────────────────────────────────── */
 :root {
   /* Surface ramp */
+  --shade-950: #070A0E;   /* under the dark tooth; see --tex-dark */
   --shade-900: #0F1216;
   --shade-800: #14171C;
   --shade-700: #1B1F26;
@@ -231,17 +232,28 @@
   --text-secondary: var(--ink-65);
   --text-muted:     var(--ink-60);
   --text-strong:    var(--ink-85);
-  --text-on-accent: var(--shade-800);
+  --text-on-accent: var(--shade-900);
 
   --border-subtle: var(--ink-10);
   --border-field:  var(--ink-20);
   --border-strong: var(--ink-20);
 
-  /* On dark the ink half goes lighter, not darker: #F57052 reaches
-     6.6 / 6.3 / 5.8 / 5.4 on shade-900…600. */
-  --accent-hover:    #F57052;
-  --accent-ink:      #F25939;
-  --accent-ink-hover:#F57052;
+  --bg-ink: var(--shade-950);
+
+  /* On dark the accent goes lighter, not darker — the maroon is a 1.9:1
+     colour on shade-900 and simply disappears. These are the brand hue
+     (12.5°) lifted to L .64/.72, which lands in terracotta: 6.6 / 6.4 /
+     5.9 / 5.5 on shade-900…600.
+
+     They replaced #F25939/#F57052, which were the *old* orange brand and
+     had been left behind when the accent went maroon — harmless only
+     because nothing carried .on-dark at the time. `--accent` has to be
+     redefined here too: it is the fill, and the maroon fill under this
+     scope's dark --text-on-accent was a 1.9:1 button waiting to happen. */
+  --accent:          #ED785A;
+  --accent-hover:    #F2907A;
+  --accent-ink:      #ED785A;
+  --accent-ink-hover:#F2907A;
 
   --focus-ring: var(--ink);
 
@@ -369,6 +381,50 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
    the ground at +1.5 levels of untextured, which is nothing. If you change
    --cream-200, re-measure rather than recompute. */
 :root { --tex: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='t' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncR type='linear' slope='0.380' intercept='0.572'/><feFuncG type='linear' slope='0.380' intercept='0.572'/><feFuncB type='linear' slope='0.380' intercept='0.572'/><feFuncA type='linear' slope='0' intercept='1'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23t)'/></svg>"); }
+
+/* ── The dark tooth ─────────────────────────────────────────
+   The cream tile cannot be reused on a black surface, and the reason is
+   worth writing down because it looks like a tuning problem and is not.
+
+   `luminosity` *replaces* the backdrop's luminance with the source's. On
+   cream that is exactly what you want — the noise carries the variation
+   and the cream keeps its hue. On near-black there is nothing below to
+   vary into: measured across eight centres and three slopes, every single
+   combination lifted a mean of 18 to somewhere between 63 and 180. Even a
+   pure-black noise tile lands at ~50. The surface always washes to grey.
+   It is the same shape of failure `multiply` had on cream, mirrored.
+
+   `lighten` is the one that works, for the same reason `multiply` works on
+   paper: it can only move away from the surface in the one direction the
+   surface has room for. Specks of light in ink.
+
+   `color-interpolation-filters='sRGB'` is not optional here. SVG filters
+   run in **linearRGB** by default, which is why the cream tile's numbers
+   look arbitrary — at the dark end that conversion balloons small values,
+   and slope .05 was still lifting the mean by 38. In sRGB the slope means
+   what it says.
+
+   Measured: stdev **3.2** at a mean of 19.9 against the flat 18.3, so the
+   apparent surface is still --shade-900. That is well under the cream's
+   8.2, and it is the honest ceiling — black has no downside headroom.
+   Re-measure rather than recompute if --shade-950 moves. */
+:root { --tex-dark: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='d' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncR type='linear' slope='0.160' intercept='0'/><feFuncG type='linear' slope='0.160' intercept='0'/><feFuncB type='linear' slope='0.160' intercept='0'/><feFuncA type='linear' slope='0' intercept='1'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23d)'/></svg>"); }
+
+/* An ink block. Carries .on-dark alongside it — that flips the tokens,
+   this paints the surface — and the pair is written as one compound
+   selector so it also out-specifies `.band`'s own cream background and
+   luminosity tile, which would otherwise win by source order.
+
+   The field does not show through: these are opaque, exactly like .band.
+   That is deliberate rather than a limitation. Alternating textured cream
+   with solid ink gives the page a rhythm, and the black sections read as
+   the quiet ones. */
+.on-dark.block--dark {
+  background-color: var(--bg-ink);
+  background-image: var(--tex-dark);
+  background-blend-mode: lighten;
+  background-repeat: repeat;
+}
 
 body,
 .band,
