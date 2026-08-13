@@ -1204,7 +1204,19 @@ body  { background-color: var(--bg-page); }
 .stage__slide {
   flex: 0 0 var(--slide-w);
   transition: transform var(--dur-slow) var(--ease-out);
+  /* Painting order has to be set explicitly, not left to the DOM.
+     Pushing a neighbour back on Z also slides it toward the vanishing
+     point, so each one laps about 19px over the centre — and in source
+     order that meant the *right* neighbour painted over the centre while
+     the left went under it. The middle has to be over both, or the raised
+     card is the one being covered. z-index applies to flex items without
+     `position`, and the track is `transform-style: flat`, so the browser
+     stacks by this rather than by 3D depth. */
+  z-index: 0;
 }
+.stage__slide[data-pos="-1"],
+.stage__slide[data-pos="1"]  { z-index: 1; }
+.stage__slide[data-pos="0"]  { z-index: 2; }
 
 .stage__slide img {
   display: block;
