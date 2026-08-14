@@ -358,10 +358,24 @@
   rendered.set(basePos);
   morphTo(sphere(), 2400);
 
+  /* Cursor repulsion is scoped to the hero. It used to run wherever the
+     pointer was, so moving the mouse while *reading* pushed the field
+     around behind the paragraph — measured at up to 105 levels of pixel
+     change under body copy. In the hero the field is the showpiece and
+     there is nothing behind it to disturb; below the hero it is wallpaper
+     and should hold still. */
+  var heroInView = true;
+  var heroEl = document.querySelector(".hero");
+  if (heroEl && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      heroInView = entries[0].isIntersecting;
+    }, { threshold: 0 }).observe(heroEl);
+  }
+
   var cursorWorld = new THREE.Vector3();
   var ndc = new THREE.Vector3();
   var localCursor = new THREE.Vector3();
-  var visible = true;
+  var visible = true, drifting = false;
   document.addEventListener("visibilitychange", function () { visible = !document.hidden; });
 
   function frame(now) {
@@ -403,31 +417,42 @@
       swarm.rotation.y += mode.spin[1];
     }
 
-    if (!reduce.matches && fine.matches) {
+    var repel = !reduce.matches && fine.matches && heroInView;
+
+    if (repel) {
       ndc.set(mnx, mny, 0.5).unproject(camera);
       cursorWorld.copy(camera.position)
         .add(ndc.sub(camera.position).normalize().multiplyScalar(camera.position.length()));
       swarm.updateMatrixWorld();
       localCursor.copy(cursorWorld);
       swarm.worldToLocal(localCursor);
+    }
 
-      var R = 90, R2 = R * R;
+    // `drifting` keeps the decay running for a few frames after the hero
+    // leaves, so the field eases back instead of snapping flat — and lets
+    // everything below fall through to the cheap path once it has.
+    if (repel || drifting) {
+      var R = 90, R2 = R * R, live = false;
       for (var j = 0; j < COUNT; j++) {
         var k = j * 3;
-        var dx = basePos[k] - localCursor.x,
-            dy = basePos[k+1] - localCursor.y,
-            dz = basePos[k+2] - localCursor.z;
-        var d2 = dx*dx + dy*dy + dz*dz;
-        if (d2 < R2) {
-          var d = Math.sqrt(d2) || 0.001;
-          var f = (1 - d / R) * 55 * 0.35;
-          offset[k] += (dx / d) * f; offset[k+1] += (dy / d) * f; offset[k+2] += (dz / d) * f;
+        if (repel) {
+          var dx = basePos[k] - localCursor.x,
+              dy = basePos[k+1] - localCursor.y,
+              dz = basePos[k+2] - localCursor.z;
+          var d2 = dx*dx + dy*dy + dz*dz;
+          if (d2 < R2) {
+            var d = Math.sqrt(d2) || 0.001;
+            var f = (1 - d / R) * 55 * 0.35;
+            offset[k] += (dx / d) * f; offset[k+1] += (dy / d) * f; offset[k+2] += (dz / d) * f;
+          }
         }
         offset[k] *= 0.90; offset[k+1] *= 0.90; offset[k+2] *= 0.90;
+        if (!live && (offset[k] > .01 || offset[k] < -.01)) live = true;
         rendered[k]   = basePos[k]   + offset[k];
         rendered[k+1] = basePos[k+1] + offset[k+1];
         rendered[k+2] = basePos[k+2] + offset[k+2];
       }
+      drifting = repel || live;
     } else {
       rendered.set(basePos);
     }

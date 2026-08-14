@@ -231,6 +231,17 @@ fold. Mechanics: **`carousel-craft` skill.** Project specifics:
 - Loading hints follow the order: opening three eager, rest `lazy`.
 - `stage-<slug>.webp` is the top 800×620 of each full-page render (~16KB vs
   ~45KB). Re-crop from the master if a concept is re-shot.
+- **The cards are whole, not cropped.** They were tall crops cut off by the
+  stage, which left square bottom corners under rounded top ones — a card
+  complete on all four corners cannot be produced by clipping, so the
+  artwork has to fit. `--card-h` is 16:9 (a screen ratio, for screenshots)
+  and `object-position: top` keeps each concept's masthead in frame.
+- **The card is bounded by viewport *height*, not just width.**
+  `--stage-max-h: max(120px, calc(100svh - 36rem))` — what is left after the
+  copy block, which measures 514–558px across breakpoints and is near
+  constant. A proportional budget (34svh) overshot on short screens and put
+  the card 23px below the fold at 1280×800: whole, but cut by the window,
+  which looks identical to the clipping this replaced.
 - **Portrait viewports of any width** stop claiming `100svh` and take the stage
   height from the slide's aspect. The condition is the aspect ratio, not a
   width: a slide's height is fixed by the viewport *width*, so on anything

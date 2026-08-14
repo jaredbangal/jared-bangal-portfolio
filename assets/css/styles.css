@@ -420,11 +420,70 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
    with solid ink gives the page a rhythm, and the black sections read as
    the quiet ones. */
 .on-dark.block--dark {
+  position: relative;
   background-color: var(--bg-ink);
   background-image: var(--tex-dark);
   background-blend-mode: lighten;
   background-repeat: repeat;
 }
+
+/* Cinematic edges: the ink does not start at a hard line, it rises out of
+   the cream and sinks back into it.
+
+   The fade is the *same surface* under a mask, not a colour gradient to
+   `--bg-ink`. A gradient would have to end on a flat ink value while the
+   block itself is textured — the block's apparent mean is 19.9 against the
+   flat 18.3, and that 1.6-level step shows as a seam right where the eye
+   is already looking. Masking the real surface cannot band, because there
+   is only one surface.
+
+   `--ink-fade` is opt-in per block so a section can still take a hard edge
+   where that is the intent. */
+.on-dark.block--dark::before,
+.on-dark.block--dark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  background-color: var(--bg-ink);
+  background-image: var(--tex-dark);
+  background-blend-mode: lighten;
+  background-repeat: repeat;
+}
+.on-dark.block--dark::before {
+  height: var(--ink-fade-top, var(--ink-fade, 0px));
+  top: calc(var(--ink-fade-top, var(--ink-fade, 0px)) * -1);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000);
+          mask-image: linear-gradient(to bottom, transparent, #000);
+}
+.on-dark.block--dark::after {
+  height: var(--ink-fade-bottom, var(--ink-fade, 0px));
+  bottom: calc(var(--ink-fade-bottom, var(--ink-fade, 0px)) * -1);
+  -webkit-mask-image: linear-gradient(to top, transparent, #000);
+          mask-image: linear-gradient(to top, transparent, #000);
+}
+
+/* Client feedback carries the fade: it follows the cream About section and
+   is followed by cream again, so both edges are transitions. */
+/* The height is derived, not chosen. #feedback is a later sibling, so its
+   ::before paints *over* #about — including over content #about raised
+   with --z-raised — so the fade has to stay inside the About section's
+   bottom padding, which is --section-y-lg. That token is itself
+   responsive (160 → 112 → 96px), and a fixed clamp overlapped the last
+   line of the About copy by ~40px at tablet and phone widths. Tying the
+   two together keeps 20% clearance at every breakpoint without a single
+   extra media query. */
+#feedback { --ink-fade: min(16vh, calc(var(--section-y-lg) * 0.8)); }
+
+/* Newsletter and footer are one continuous black foot to the page, so only
+   the newsletter's top edge is a transition — a fade between them would be
+   a seam inside a single mass, and the footer ends the document. */
+#newsletter {
+  --ink-fade-top: min(16vh, calc(var(--section-y) * 0.8));
+  --ink-fade-bottom: 0px;
+}
+.footer.block--dark { border-top-color: var(--border-subtle); }
 
 body,
 .band,
@@ -1143,6 +1202,10 @@ body  { background-color: var(--bg-page); }
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* With the stage sized to its card the column no longer fills the
+     viewport by itself, so spare height is shared above and below rather
+     than pooling under the artwork. */
+  justify-content: center;
 }
 
 /* ── The particle field ─────────────────────────────────────
@@ -1210,12 +1273,33 @@ body  { background-color: var(--bg-page); }
    main thread and does not fight a user's own scrolling the way a
    programmatic `scrollLeft` every two seconds would. */
 .hero__stage {
-  --slide-w: min(44rem, 50vw);
+  /* Bounded by the *viewport height* as well as its width. Sizing from
+     width alone made the card 396px tall at 1440, which pushed the hero to
+     989px — the card was whole but the fold cut it anyway, which looks
+     identical to the clipping this was meant to remove. Deriving the width
+     back from the height budget keeps the ratio at 16:9 and the whole card
+     on screen. */
+  /* What is *left* after the copy, not a fraction of the viewport. The
+     hero's headline/CTA/note/controls block measures 514–558px across
+     breakpoints — near-constant, because the display clamp only moves it a
+     little — so a proportional budget overshot on short screens (a 1280×800
+     window put the card 23px below the fold). 36rem is that block plus
+     margin; the floor stops it collapsing on unusually short portraits. */
+  --stage-max-h: max(120px, calc(100svh - 36rem));
+  --slide-w: min(44rem, 50vw, calc(var(--stage-max-h) * 16 / 9));
   --slide-gap: var(--space-6);
+  /* 16:9 — these are website mockups, so a screen ratio reads correctly,
+     and it is what lets the card be *whole*. The slides used to be tall
+     crops cut off by the stage, which left their bottom corners square
+     while the top two were rounded. A card that is complete on all four
+     corners cannot be produced by clipping; the artwork has to fit. */
+  --card-h: calc(var(--slide-w) * 9 / 16);
   position: relative;
   z-index: var(--z-raised);
-  flex: 1 1 auto;
-  min-height: clamp(160px, 26svh, 320px);
+  /* Sized to the card plus room for the neighbours' drop and the shadow —
+     no vertical clipping at all now, at any breakpoint. */
+  flex: 0 0 auto;
+  height: calc(var(--card-h) + var(--space-10));
   overflow: hidden;
 }
 
@@ -1288,7 +1372,12 @@ body  { background-color: var(--bg-page); }
 .stage__slide img {
   display: block;
   width: 100%;
-  height: auto;
+  height: var(--card-h);
+  /* The crop is 800x620; at 16:9 the bottom is trimmed rather than the
+     card, and `top` keeps each concept's masthead — the part that
+     identifies it — in frame. */
+  object-fit: cover;
+  object-position: top center;
   border-radius: var(--radius-sm);        /* 8px — the media/card step */
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-2);            /* slides rest at 2, as elsewhere */
@@ -2335,12 +2424,7 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   .stage__controls { gap: 0; }
 
   .hero { min-height: 0; }
-  .hero__stage {
-    --slide-w: min(40rem, 62vw);
-    flex: 0 0 auto;
-    min-height: 0;
-    height: calc(var(--slide-w) * 0.62);
-  }
+  .hero__stage { --slide-w: min(40rem, 62vw, calc(var(--stage-max-h) * 16 / 9)); }
 
   .cards { grid-template-columns: 1fr; }
   .work { grid-template-columns: 1fr; gap: var(--space-10); }
@@ -2365,12 +2449,11 @@ input[aria-invalid="true"] { border-color: var(--danger); }
    as phones already did — the next section peeking under the fold is a
    better scroll affordance than blank ground. */
 @media (max-aspect-ratio: 1/1) {
+  /* Portrait screens still give up the full-height hero — the copy plus a
+     16:9 card cannot fill 100svh on a phone without the card becoming
+     unreadably small — but the stage height is now the same derived value
+     everywhere, so there is nothing to override here but the hero. */
   .hero { min-height: 0; }
-  .hero__stage {
-    flex: 0 0 auto;
-    min-height: 0;
-    height: calc(var(--slide-w) * 0.62);
-  }
 }
 
 /* Landscape phones: the hero can't claim a whole 400px-tall viewport, and
