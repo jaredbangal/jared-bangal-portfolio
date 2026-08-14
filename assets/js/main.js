@@ -100,6 +100,35 @@
     });
   }
 
+  /* ── Accordions ─────────────────────────────────────────
+     Services and the FAQ. The rows ship **open**; this collapses them,
+     which is the only order that is safe — a hidden start state may only
+     exist once something is present to undo it. Without this file the
+     sections read as prose with headings.
+
+     The first row of each group is left open so the pattern is obvious
+     without anyone having to click to discover it. */
+  [].slice.call(document.querySelectorAll("[data-acc]")).forEach(function (group) {
+    var items = [].slice.call(group.querySelectorAll(".acc__item"));
+
+    items.forEach(function (item, i) {
+      var head = item.querySelector(".acc__head");
+      if (!head) return;
+
+      if (i > 0) {
+        item.setAttribute("data-collapsed", "");
+        head.setAttribute("aria-expanded", "false");
+      }
+
+      head.addEventListener("click", function () {
+        var open = head.getAttribute("aria-expanded") === "true";
+        head.setAttribute("aria-expanded", open ? "false" : "true");
+        if (open) item.setAttribute("data-collapsed", "");
+        else item.removeAttribute("data-collapsed");
+      });
+    });
+  });
+
   /* ── Nav state ──────────────────────────────────────────
      Transparent over the hero, blurred bar once past it. A
      sentinel element beats a scroll listener — no per-frame work. */

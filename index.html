@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css?v=c9639239">
+<link rel="stylesheet" href="assets/css/styles.css?v=ec6e9aba">
 </head>
 <body>
 
@@ -326,47 +326,7 @@
   </section>
 
   <!-- ── Services ───────────────────────────────────────────────────── -->
-  <section class="section section--tight-bottom shell services" id="services" data-formation="polaris">
-    <header class="section__head reveal">
-      <p class="label">Services</p>
-      <h2 class="h2">What I can build for you.</h2>
-      <p class="section__sub">Everything you need to get online, in one place.</p>
-    </header>
-
-    <ul class="cards" data-tilt>
-      <li class="card reveal" id="web-design">
-        <span class="card__glare" aria-hidden="true"></span>
-        <p class="card__num">01</p>
-        <h3 class="card__title">Web Design</h3>
-        <p class="card__text">Custom, responsive site design built around your content and goals.</p>
-      </li>
-      <li class="card reveal" id="brand-identity">
-        <span class="card__glare" aria-hidden="true"></span>
-        <p class="card__num">02</p>
-        <h3 class="card__title">Brand Identity</h3>
-        <p class="card__text">Logo, color, and type systems that carry across your whole site.</p>
-      </li>
-      <li class="card reveal" id="portfolio-sites">
-        <span class="card__glare" aria-hidden="true"></span>
-        <p class="card__num">03</p>
-        <h3 class="card__title">Portfolio Sites</h3>
-        <p class="card__text">Clean, focused sites for showing off your own work.</p>
-      </li>
-      <li class="card reveal" id="site-care">
-        <span class="card__glare" aria-hidden="true"></span>
-        <p class="card__num">04</p>
-        <h3 class="card__title">Site Care &amp; SEO</h3>
-        <p class="card__text">Ongoing updates, fixes, and search-visibility basics.</p>
-      </li>
-    </ul>
-
-    <p class="section__foot reveal">
-      <a class="link-underline" href="#contact">Ask about a project <span aria-hidden="true">&#8594;</span></a>
-    </p>
-  </section>
-
-  <!-- ── Selected work ─────────────────────────────────────────────── -->
-  <section class="section section--tight-top" id="work" data-showcase data-formation="polaris">
+  <section class="section" id="work" data-showcase data-formation="polaris">
     <div class="shell">
       <header class="section__head reveal">
         <p class="label">Selected Work</p>
@@ -618,6 +578,156 @@
   </section>
 
   <!-- ── Contact ────────────────────────────────────────────────────── -->
+  <!-- ── Services ─────────────────────────────────────────────────────
+       An accordion, not the card grid it used to be, and it sits down here
+       by the contact form on purpose: by this point a visitor has seen the
+       work and the person, and this is the "what can I actually buy"
+       moment. Every row is open in the markup — JS collapses them, so with
+       the script gone the whole thing reads as plain prose. -->
+  <section class="section shell services" id="services" data-formation="polaris">
+    <header class="section__head reveal">
+      <p class="label">Services</p>
+      <h2 class="h2">What I can build for you.</h2>
+      <p class="section__sub">Everything you need to get online, in one place.</p>
+    </header>
+
+    <div class="acc" data-acc>
+      <div class="acc__item reveal" id="web-design">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="panel-web-design">
+            <span class="acc__num">01</span>
+          <span class="acc__title">Web Design</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="panel-web-design">
+          <div class="acc__inner"><p class="body">A site designed around your content and what it needs to do, not dropped into a template. Responsive from the start, so it reads the same on a phone as on a laptop. You see the layout and the visual direction before anything gets built.</p></div>
+        </div>
+      </div>
+      <div class="acc__item reveal" id="brand-identity">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="panel-brand-identity">
+            <span class="acc__num">02</span>
+          <span class="acc__title">Brand Identity</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="panel-brand-identity">
+          <div class="acc__inner"><p class="body">Logo, colour and type worked out together, so they hold up across the whole site and everything else you put your name on. If you already have a mark you like, I build the system around it rather than replace it.</p></div>
+        </div>
+      </div>
+      <div class="acc__item reveal" id="portfolio-sites">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="panel-portfolio-sites">
+            <span class="acc__num">03</span>
+          <span class="acc__title">Portfolio Sites</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="panel-portfolio-sites">
+          <div class="acc__inner"><p class="body">Focused sites for showing work: photographers, designers, makers, studios. The work leads and everything else stays out of its way. Built so that adding a new project later takes minutes, not a rebuild.</p></div>
+        </div>
+      </div>
+      <div class="acc__item reveal" id="site-care">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="panel-site-care">
+            <span class="acc__num">04</span>
+          <span class="acc__title">Site Care &amp; SEO</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="panel-site-care">
+          <div class="acc__inner"><p class="body">Ongoing updates, fixes, and the search-visibility basics: titles, descriptions, structure, speed. Month to month, with no lock-in. You can also take the site and run it yourself, and the handoff notes cover how.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section__foot reveal">
+      <a class="link-underline" href="#contact">Ask about a project <span aria-hidden="true">&#8594;</span></a>
+    </p>
+  </section>
+
+  <!-- ── FAQ ──────────────────────────────────────────────────────────
+       Answers only to things that are true elsewhere on this page or in
+       the process panel. Nothing here quotes a price, because the pricing
+       figures are still drafts. -->
+  <section class="section section--tight-top shell faq" id="faq" data-formation="polaris">
+    <header class="section__head reveal">
+      <p class="label">FAQ</p>
+      <h2 class="h2">Questions people ask.</h2>
+      <p class="section__sub">If yours is not here, the form below reaches me directly.</p>
+    </header>
+
+    <div class="acc" data-acc>
+      <div class="acc__item reveal">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="faq-0">
+            <span class="acc__title">How long does a project take?</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="faq-0">
+          <div class="acc__inner"><p class="body">About four weeks for a full site: a week to scope and design, a week or two to build, then launch. A single landing page is quicker. If you have a date you need to hit, say so on the first call and I will tell you honestly whether it is possible.</p></div>
+        </div>
+      </div>
+      <div class="acc__item reveal">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="faq-1">
+            <span class="acc__title">What does it cost?</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="faq-1">
+          <div class="acc__inner"><p class="body">Every project is quoted as a fixed price after the consult call, so there are no hourly surprises. The quote covers design, build and handoff. Tell me roughly what you have in mind in the form below and I will tell you what is realistic for it.</p></div>
+        </div>
+      </div>
+      <div class="acc__item reveal">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="faq-2">
+            <span class="acc__title">Do I own the site when it is done?</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="faq-2">
+          <div class="acc__inner"><p class="body">Yes. The site, the files and the domain are yours. You get handoff notes explaining how everything is put together, so you are never locked into working with me to keep it running.</p></div>
+        </div>
+      </div>
+      <div class="acc__item reveal">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="faq-3">
+            <span class="acc__title">Can I update it myself afterwards?</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="faq-3">
+          <div class="acc__inner"><p class="body">Yes. The handoff covers the parts you will want to change most: text, images, adding a project. If you would rather not touch it, site care covers updates month to month.</p></div>
+        </div>
+      </div>
+      <div class="acc__item reveal">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="faq-4">
+            <span class="acc__title">Do you build on WordPress or Squarespace?</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="faq-4">
+          <div class="acc__inner"><p class="body">No. Sites are hand-written HTML, CSS and JavaScript. That means no plugin stack to keep patched, nothing to renew, and pages that load quickly because there is very little to load.</p></div>
+        </div>
+      </div>
+      <div class="acc__item reveal">
+        <h3 class="acc__h">
+          <button class="acc__head" type="button" aria-expanded="true" aria-controls="faq-5">
+            <span class="acc__title">What do you need from me to start?</span>
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="acc__panel" id="faq-5">
+          <div class="acc__inner"><p class="body">A conversation, and whatever content you already have: text, photos, a logo. If the content is the thing holding you up, that is normal, and we can shape it together as the design comes along.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="contact shell" id="contact" data-formation="sphere">
     <div class="contact__copy reveal">
       <p class="label">Contact</p>
@@ -696,7 +806,7 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-<script src="assets/js/particles.js?v=b625e3f8" defer></script>
-<script src="assets/js/main.js?v=74274997" defer></script>
+<script src="assets/js/particles.js?v=06582a7f" defer></script>
+<script src="assets/js/main.js?v=92973ec4" defer></script>
 </body>
 </html>

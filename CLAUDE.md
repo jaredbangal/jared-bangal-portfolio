@@ -523,8 +523,8 @@ The end fades are a `mask-image`, not a gradient overlay: the band sits on
 
 ## Page order
 
-Hero → **The case** → **What I do** → Services → Selected Work → **About** →
-Testimonials → Contact → Newsletter.
+Hero → **The case** → **What I do** → Selected Work → **About** →
+Testimonials → **Services** → **FAQ** → Contact → Newsletter.
 
 "The case" states the problem, "What I do" answers it — that order is the point,
 and the two only work in sequence. Don't move the stats below Services; a figure
@@ -543,10 +543,33 @@ are what hold, not the alignment.**
 hovered point heading measures 8.51:1. Alternating textured cream with solid ink
 gives the page a rhythm and the ink blocks read as the quiet ones.
 
-Two joins are tighter than the 128/128 default. Services and Selected Work are
-one thought and close from both sides (256 → 144) via `.section--tight-bottom` /
-`.section--tight-top`. "What I do" closes only from below (256 → 208) — it
-introduces Services rather than belonging to it.
+**Services now sits down by the contact form**, with the FAQ under it. By
+that point a visitor has seen the work and the person, and this is the
+"what can I actually buy" moment. It used to follow "What I do", and that
+pairing is gone: `#work` lost its `.section--tight-top` because the section
+it was tightening against has moved away. "What I do" keeps its
+`.section--tight-bottom` (256 → 208) and now introduces Selected Work.
+
+**Services and the FAQ are accordions**, not the card grid Services used to
+be. Rows are written **open** in the HTML and collapsed by `main.js` — the
+same contract as everything else here, so with the script gone both
+sections read as headed prose rather than as dead buttons hiding their own
+content. The first row of each group stays open so the pattern is legible
+without a click.
+
+The panel animates on `grid-template-rows: 1fr → 0fr`, not `max-height`.
+A max-height needs a magic number larger than any answer will ever be,
+which makes the close start late and the open finish early; `fr` measures
+the content, so the easing is honest at any length. `visibility` drops
+after the collapse so a zero-height row leaves the tab order.
+
+**The `#web-design` / `#brand-identity` / `#portfolio-sites` / `#site-care`
+anchors moved with it** — the nav Services panel links to them.
+
+**Nothing in the FAQ quotes a price.** The pricing figures are still
+drafts, so the cost answer describes *how* quoting works and points at the
+form. Every other answer restates something already true elsewhere on the
+page or in the Process panel. Keep it that way.
 
 ## About
 

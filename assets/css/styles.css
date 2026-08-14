@@ -1720,6 +1720,101 @@ body  { background-color: var(--bg-page); }
 .about__copy { position: relative; z-index: var(--z-raised); }
 
 
+/* ── Accordion ──────────────────────────────────────────────
+   Used by Services and the FAQ. Rows are written **open** in the HTML and
+   collapsed by main.js, which is the same contract as the rest of the
+   page: with the script gone this is a headed list of prose, not a set of
+   dead buttons hiding their own content.
+
+   The panel animates on `grid-template-rows: 1fr → 0fr` rather than
+   max-height. max-height needs a magic number larger than any answer will
+   ever be, which makes the close start late and the open finish early;
+   `fr` measures the content itself, so the easing is honest at any length. */
+.acc { border-top: 1px solid var(--border-subtle); }
+.acc__item { border-bottom: 1px solid var(--border-subtle); }
+.acc__h { margin: 0; font: inherit; }
+
+.acc__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-6) 0;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-primary);
+  transition: color var(--dur-fast) var(--ease-in-out);
+}
+.acc__head:hover { color: var(--accent-ink-hover); }
+.acc__head:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+
+.acc__num {
+  flex: none;
+  width: 2.5ch;
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  color: var(--text-muted);
+}
+.acc__title {
+  flex: 1;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+}
+
+/* The plus. Two bars; the upright one scales away on open, so the sign
+   reads as + → − and the affordance is legible before anyone clicks. */
+.acc__sign {
+  position: relative;
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+.acc__sign::before,
+.acc__sign::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: currentColor;
+}
+.acc__sign::before { width: 100%; height: 1.5px; }
+.acc__sign::after  { width: 1.5px; height: 100%; transition: transform var(--dur-base) var(--ease-out); }
+.acc__head[aria-expanded="true"] .acc__sign::after { transform: scaleY(0); }
+
+.acc__panel {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--dur-base) var(--ease-out);
+}
+.acc__inner {
+  overflow: hidden;
+  visibility: visible;
+}
+.acc__inner .body { padding-bottom: var(--space-8); max-width: 62ch; }
+
+.acc__item[data-collapsed] .acc__panel { grid-template-rows: 0fr; }
+/* Leaves the tab order and the accessibility tree once it has finished
+   closing — a zero-height row is still focusable without this. */
+.acc__item[data-collapsed] .acc__inner {
+  visibility: hidden;
+  transition: visibility 0s linear var(--dur-base);
+}
+
+@media (max-width: 620px) {
+  .acc__title { font-size: var(--text-xl); }
+  .acc__head { gap: var(--space-4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acc__panel, .acc__sign::after { transition-duration: .01ms; }
+}
+
 /* ── Service cards ──────────────────────────────────────── */
 /* A soft wash behind the cards. It exists so the frosted glass has
    something to refract: backdrop-filter over a flat colour is just a
