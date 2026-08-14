@@ -1721,25 +1721,29 @@ body  { background-color: var(--bg-page); }
 
 
 /* ── Accordion ──────────────────────────────────────────────
-   Used by Services and the FAQ. Rows are written **open** in the HTML and
-   collapsed by main.js, which is the same contract as the rest of the
-   page: with the script gone this is a headed list of prose, not a set of
-   dead buttons hiding their own content.
+   Two of them on the page, and each is a *single* disclosure holding a
+   whole list — Services and the FAQ. Ten separate rows read as a wall;
+   two closed doors read as a choice.
+
+   Rows are written **open** in the HTML and closed by main.js, the same
+   contract as the rest of the page: with the script gone these are two
+   headed lists of prose, not dead buttons hiding their own content.
 
    The panel animates on `grid-template-rows: 1fr → 0fr` rather than
-   max-height. max-height needs a magic number larger than any answer will
+   max-height. max-height needs a magic number larger than the content will
    ever be, which makes the close start late and the open finish early;
    `fr` measures the content itself, so the easing is honest at any length. */
-.acc { border-top: 1px solid var(--border-subtle); }
-.acc__item { border-bottom: 1px solid var(--border-subtle); }
+.acc--solo { border-top: 1px solid var(--border-strong); }
+.acc--solo .acc__item { border-bottom: 1px solid var(--border-strong); }
 .acc__h { margin: 0; font: inherit; }
+.acc__label { padding-top: var(--space-8); color: var(--text-muted); }
 
 .acc__head {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: var(--space-5);
-  padding: var(--space-6) 0;
+  gap: var(--space-6);
+  padding: var(--space-3) 0 var(--space-8);
   min-height: 44px;
   border: 0;
   background: none;
@@ -1751,30 +1755,19 @@ body  { background-color: var(--bg-page); }
 .acc__head:hover { color: var(--accent-ink-hover); }
 .acc__head:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 
-.acc__num {
-  flex: none;
-  width: 2.5ch;
-  font-size: var(--text-2xs);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  color: var(--text-muted);
-}
+/* The tab title *is* the section heading, so it takes the display setting
+   rather than a control's. */
 .acc__title {
   flex: 1;
-  font-size: var(--text-2xl);
+  font-size: var(--text-4xl);
   font-weight: var(--weight-display);
   line-height: var(--leading-display);
   letter-spacing: var(--track-display);
 }
 
 /* The plus. Two bars; the upright one scales away on open, so the sign
-   reads as + → − and the affordance is legible before anyone clicks. */
-.acc__sign {
-  position: relative;
-  flex: none;
-  width: 18px;
-  height: 18px;
-}
+   reads + → − and the affordance is legible before anyone clicks. */
+.acc__sign { position: relative; flex: none; width: 30px; height: 30px; }
 .acc__sign::before,
 .acc__sign::after {
   content: "";
@@ -1783,32 +1776,62 @@ body  { background-color: var(--bg-page); }
   margin: auto;
   background: currentColor;
 }
-.acc__sign::before { width: 100%; height: 1.5px; }
-.acc__sign::after  { width: 1.5px; height: 100%; transition: transform var(--dur-base) var(--ease-out); }
+.acc__sign::before { width: 100%; height: 2px; }
+.acc__sign::after  { width: 2px; height: 100%; transition: transform var(--dur-base) var(--ease-out); }
 .acc__head[aria-expanded="true"] .acc__sign::after { transform: scaleY(0); }
 
 .acc__panel {
   display: grid;
   grid-template-rows: 1fr;
-  transition: grid-template-rows var(--dur-base) var(--ease-out);
+  transition: grid-template-rows var(--dur-slow) var(--ease-out);
 }
-.acc__inner {
-  overflow: hidden;
-  visibility: visible;
-}
-.acc__inner .body { padding-bottom: var(--space-8); max-width: 62ch; }
+.acc__inner { overflow: hidden; visibility: visible; }
+.acc__sub { margin: 0 0 var(--space-10); text-align: left; max-width: 46ch; }
 
 .acc__item[data-collapsed] .acc__panel { grid-template-rows: 0fr; }
 /* Leaves the tab order and the accessibility tree once it has finished
    closing — a zero-height row is still focusable without this. */
 .acc__item[data-collapsed] .acc__inner {
   visibility: hidden;
-  transition: visibility 0s linear var(--dur-base);
+  transition: visibility 0s linear var(--dur-slow);
 }
 
+/* Two columns so an opened tab stays a panel rather than a page. */
+.svc, .qa {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-10) var(--space-16);
+  margin: 0 0 var(--space-12);
+  padding: 0;
+  list-style: none;
+}
+.svc__num {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  color: var(--text-muted);
+}
+.svc__title, .qa__q {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  letter-spacing: -.01em;
+}
+.svc__text, .qa__a {
+  margin: 0;
+  font-size: var(--text-md);
+  line-height: 1.65;
+  color: var(--text-body);
+}
+
+@media (max-width: 860px) {
+  .svc, .qa { grid-template-columns: 1fr; gap: var(--space-8); }
+}
 @media (max-width: 620px) {
-  .acc__title { font-size: var(--text-xl); }
-  .acc__head { gap: var(--space-4); }
+  .acc__head { gap: var(--space-4); padding-bottom: var(--space-6); }
+  .acc__sign { width: 24px; height: 24px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

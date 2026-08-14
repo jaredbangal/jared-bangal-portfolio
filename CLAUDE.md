@@ -550,12 +550,17 @@ pairing is gone: `#work` lost its `.section--tight-top` because the section
 it was tightening against has moved away. "What I do" keeps its
 `.section--tight-bottom` (256 → 208) and now introduces Selected Work.
 
-**Services and the FAQ are accordions**, not the card grid Services used to
-be. Rows are written **open** in the HTML and collapsed by `main.js` — the
-same contract as everything else here, so with the script gone both
-sections read as headed prose rather than as dead buttons hiding their own
-content. The first row of each group stays open so the pattern is legible
-without a click.
+**Services and the FAQ are one tab each, not ten rows.** Each section is a
+single disclosure whose body carries the whole list — four services in a
+2×2 grid, six questions in the same grid. Ten separate rows read as a wall;
+two closed doors read as a choice, and the tab title *is* the section
+heading, so nothing is said twice.
+
+Rows are written **open** in the HTML and closed by `main.js`
+(`data-acc="closed"`) — the same contract as everything else here, so with
+the script gone both sections are headed prose rather than dead buttons
+hiding their own content. Verified: 2 tabs, both open, every service and
+question rendered.
 
 The panel animates on `grid-template-rows: 1fr → 0fr`, not `max-height`.
 A max-height needs a magic number larger than any answer will ever be,

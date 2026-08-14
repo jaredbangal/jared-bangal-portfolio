@@ -115,7 +115,9 @@
       var head = item.querySelector(".acc__head");
       if (!head) return;
 
-      if (i > 0) {
+      // `data-acc="closed"` shuts every row; otherwise the first stays open
+      // so a multi-row group shows the pattern without a click.
+      if (group.getAttribute("data-acc") === "closed" || i > 0) {
         item.setAttribute("data-collapsed", "");
         head.setAttribute("aria-expanded", "false");
       }
