@@ -174,6 +174,15 @@ morphing between four formations (`sphere`, `vortex`, `polaris`, `waves`) as
 sections scroll past. Architecture and every general rule: **`particle-field`
 skill.** Project specifics:
 
+- **The running order is `sphere → vortex → polaris → waves → sphere`**, set by
+  `data-formation` on each section: hero sphere, stats and What I do vortex,
+  Selected Work polaris, About and Testimonials waves, then Services, FAQ and
+  Contact all back to sphere. The closing three share one formation on
+  purpose — the field settles and holds while the page asks for the enquiry,
+  rather than morphing under the form. It also returns the page to the shape
+  it opened on. Worst text contrast with the sphere behind that run:
+  **6.62:1** at 1440, **6.93:1** at 390.
+
 - **Palette is blue** — five stops from luminance .03 to .50. Cool field on a
   warm ground; the one thing on the page allowed to be cold. It is **not** on
   the `--accent` token and must never be promoted into the token layer, or the
