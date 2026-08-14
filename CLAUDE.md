@@ -69,7 +69,12 @@ guess. What was adopted:
   headings.**
 - **Labels** 12px/500 uppercase, `+.08em` tracking.
 - **Buttons** 4px radius, uppercase 14px/500, solid fill, colour-and-background
-  transition (no opacity fades, no lift).
+  transition (no opacity fades, no lift). The **nav CTA** is the only user of
+  `.btn--sm` and is proportioned from the scraped values, not guessed: theirs
+  is `padding: 23px 28px`, 60px tall in an 80px bar. At 44px ours read as a
+  long thin slab. Now 56px with `--text-2xs`, which also matches the Log In
+  link beside it — the two are a set, and 14px next to 12px made the button
+  shout.
 - **Radii** 4px controls, 8px media/cards, 30px chips. There is no `--radius-md`.
 - **Easings**, all lifted from their computed styles: `--ease-out` easeOutQuart
   (entering), `--ease-in-out` easeInOutCubic (buttons), `--ease-in-out-q`
@@ -87,11 +92,20 @@ grotesque with a true 300 weight.
 bands, `--cream-100` `#F4F2EC` raised cards, `--ink-dk` `#16171A` ink. All four
 come from the Meridian concept, which is where the colour entered this project.
 
-**Accent is a deep premium blue**: `--accent` / `--accent-ink` `#0F4C81`,
-`--accent-hover` / `--accent-ink-hover` `#0B3A63`, `--text-on-accent` **white**.
-Chosen to match the particle field, and it sits inside that palette's own
-range. Deep enough that one value does both jobs — 8.9:1 carrying white as a
-fill, 6.2 / 6.8 / 7.9 as ink on cream-300/200/100. The fill/draw token split is kept because the *rules*
+**Accent is pure black**: `--accent` / `--accent-ink` `#000000`,
+`--accent-hover` `#2B2B2B` (the only direction black can move),
+`--accent-ink-hover` `#000000`, `--text-on-accent` **white**. 21:1 as a fill,
+21:1 as ink on every cream.
+
+**A monochrome accent has one real cost, and it is measured.** Two hover
+patterns changed *colour* from `--text-primary` (`#16171A`) to the accent —
+the stats label/percentage and the service card title. Against pure black that
+is a **1.15:1** change: imperceptible. Both interactions still read through
+their other cues (the card lifts, gains a shadow and wipes a rule; the figure
+lifts), and the numeral, which rests at 70% ink, still darkens visibly. But if
+those colour cues are wanted back, the fix is to soften the *rest* state, not
+to move the accent — a heading resting at `--text-body` would give black
+something to travel from. Flagged rather than done: it changes resting design. The fill/draw token split is kept because the *rules*
 still distinguish a background from a draw, but on this palette both halves
 resolve to the same pair. **Restore two distinct pairs if the accent ever goes
 light again** — a light accent cannot be ink on paper, and that is the trap the
@@ -113,12 +127,11 @@ nominal value. `--ink-60` on dark.
 `.on-dark` redefines every semantic token for the ink blocks. It was **dead
 code** for a while and rotted; both of these were live bugs when it came back:
 
-- Its accent lagged the brand twice — first the old orange, then the
-  terracotta derived from maroon. Now `#529EE0` / `#7FB8E9`: the brand hue
-  (208°) lifted to L .60/.70, measuring 6.6 / 6.3 / 5.8 / 5.4 on
-  shade-900…600. The brand blue itself is **2.1:1** on shade-900 and simply
-  disappears, so a lighter pair is not optional. **Check this block whenever
-  the brand colour moves** — it has now been stale twice.
+- Its accent lagged the brand twice (old orange, then a maroon-derived
+  terracotta) before this. A monochrome brand cannot shift hue here, so it
+  **inverts**: `#FFFFFF`, which measures 18.4 / 17.6 / 16.2 / 15.1 on
+  shade-900…600. Pure black on shade-900 is **1.06:1** — invisible. **Check
+  this block whenever the brand colour moves**; it has been stale twice.
 - `--accent` (the fill) was not redefined at all, so it stayed maroon while
   `--text-on-accent` went near-black — a ~2:1 button waiting for the first
   `.btn--primary` dropped into a dark section.

@@ -177,10 +177,10 @@
      distinguish fill from draw, but on this palette both halves resolve to
      the same pair. Restore two distinct pairs if the accent ever goes light
      again — a light accent cannot be ink on paper. */
-  --accent:          #0F4C81;
-  --accent-hover:    #0B3A63;
-  --accent-ink:      #0F4C81;
-  --accent-ink-hover:#0B3A63;
+  --accent:          #000000;
+  --accent-hover:    #2B2B2B;
+  --accent-ink:      #000000;
+  --accent-ink-hover:#000000;
 
   /* White, not dark ink: the fill is dark now. */
   --text-on-accent: #FFFFFF;
@@ -240,19 +240,20 @@
 
   --bg-ink: var(--shade-950);
 
-  /* On dark the accent goes lighter, not darker — the brand blue is a
-     2.12:1 colour on shade-900 and simply disappears. Same hue (208°)
-     lifted to L .60/.70: 6.6 / 6.3 / 5.8 / 5.4 on shade-900…600.
+  /* The brand is pure black, which on a near-black section is 1.06:1 —
+     invisible. A monochrome brand therefore has to invert here rather than
+     shift hue: white is the same statement on the opposite ground, and it
+     measures 18.4 / 17.6 / 16.2 / 15.1 on shade-900…600.
 
      `--accent` has to be redefined here too, not just the ink pair: it is
      the fill, and a dark fill under this scope's dark --text-on-accent is
      a ~2:1 button waiting for the first .btn--primary in a dark section.
      This block has been wrong twice that way — check it whenever the
      brand colour moves. */
-  --accent:          #529EE0;
-  --accent-hover:    #7FB8E9;
-  --accent-ink:      #529EE0;
-  --accent-ink-hover:#7FB8E9;
+  --accent:          #FFFFFF;
+  --accent-hover:    #DEDAD2;
+  --accent-ink:      #FFFFFF;
+  --accent-ink-hover:#FFFFFF;
 
   --focus-ring: var(--ink);
 
@@ -566,7 +567,18 @@ body  { background-color: var(--bg-page); }
 }
 .btn--ghost:hover { background: var(--bg-chip); border-color: var(--accent-ink); }
 
-.btn--sm { min-height: 44px; padding: var(--space-3) var(--space-6); }
+/* The nav CTA, and the only user of --sm. Proportioned from the scraped
+   Squarespace values (padding 23/28, 60px tall in an 80px bar) rather than
+   guessed: at 44px tall it read as a long thin slab, where theirs is a
+   chunky block. Type drops to --text-2xs so it matches the Log In link
+   beside it — the pair is a set, and 14px next to 12px made the button
+   shout. */
+.btn--sm {
+  min-height: 56px;
+  padding: var(--space-5) var(--space-7);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+}
 .btn--lg { min-height: 60px; padding: var(--space-5) var(--space-8); }
 
 .btn[disabled],
