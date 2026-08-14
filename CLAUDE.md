@@ -556,6 +556,13 @@ single disclosure whose body carries the whole list — four services in a
 two closed doors read as a choice, and the tab title *is* the section
 heading, so nothing is said twice.
 
+**The two are joined, not spaced.** `.services` drops its bottom padding,
+`.faq` its top padding *and* its `border-top` — otherwise the Services
+item's bottom rule and the FAQ's top rule stack into a 2px line. They read
+as two rows of one list. Each row still breathes from `.acc__label`'s 64px
+top padding, which is *inside* the rule, so closing the outer gap tightens
+the pair without cramping it.
+
 **Both grids use `subgrid`, and that is what keeps the columns level.**
 Each entry spans the grid's own rows, so every question sits in one row
 band and every answer in the next. Without it each cell is an independent

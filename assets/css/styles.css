@@ -1735,6 +1735,15 @@ body  { background-color: var(--bg-page); }
    `fr` measures the content itself, so the easing is honest at any length. */
 .acc--solo { border-top: 1px solid var(--border-strong); }
 .acc--solo .acc__item { border-bottom: 1px solid var(--border-strong); }
+
+/* Services and the FAQ are two rows of one list, not two sections. They
+   close right up against each other: no padding between them, and the FAQ
+   drops its own border-top or the shared rule doubles to 2px. Each row still
+   breathes internally — .acc__label carries 64px above the label, inside the
+   rule — so closing the outer gap tightens the list without cramping it. */
+.services { padding-bottom: 0; }
+.faq { padding-top: 0; }
+.faq .acc--solo { border-top: 0; }
 .acc__h { margin: 0; font: inherit; }
 .acc__label { padding-top: var(--space-8); color: var(--text-muted); }
 
