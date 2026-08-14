@@ -87,10 +87,11 @@ grotesque with a true 300 weight.
 bands, `--cream-100` `#F4F2EC` raised cards, `--ink-dk` `#16171A` ink. All four
 come from the Meridian concept, which is where the colour entered this project.
 
-**Accent is maroon**: `--accent` / `--accent-ink` `#7F2007`, `--accent-hover` /
-`--accent-ink-hover` `#5E1704`, `--text-on-accent` **white**. Deep enough that
-one value does both jobs — 9.9:1 carrying white as a fill, 6.9 / 7.7 / 8.9 as
-ink on cream-300/200/100. The fill/draw token split is kept because the *rules*
+**Accent is a deep premium blue**: `--accent` / `--accent-ink` `#0F4C81`,
+`--accent-hover` / `--accent-ink-hover` `#0B3A63`, `--text-on-accent` **white**.
+Chosen to match the particle field, and it sits inside that palette's own
+range. Deep enough that one value does both jobs — 8.9:1 carrying white as a
+fill, 6.2 / 6.8 / 7.9 as ink on cream-300/200/100. The fill/draw token split is kept because the *rules*
 still distinguish a background from a draw, but on this palette both halves
 resolve to the same pair. **Restore two distinct pairs if the accent ever goes
 light again** — a light accent cannot be ink on paper, and that is the trap the
@@ -112,13 +113,14 @@ nominal value. `--ink-60` on dark.
 `.on-dark` redefines every semantic token for the ink blocks. It was **dead
 code** for a while and rotted; both of these were live bugs when it came back:
 
-- Its accent was still the *old orange* brand (`#F25939` / `#F57052`), left
-  behind when the page went maroon. Now `#ED785A` / `#F2907A` — the maroon hue
-  (12.5°) lifted to L .64/.72, measuring 6.6 / 6.4 / 5.9 / 5.5 on
-  shade-900…600. The maroon itself is **1.9:1** on shade-900 and simply
-  disappears, so a lighter pair is not optional here.
+- Its accent lagged the brand twice — first the old orange, then the
+  terracotta derived from maroon. Now `#529EE0` / `#7FB8E9`: the brand hue
+  (208°) lifted to L .60/.70, measuring 6.6 / 6.3 / 5.8 / 5.4 on
+  shade-900…600. The brand blue itself is **2.1:1** on shade-900 and simply
+  disappears, so a lighter pair is not optional. **Check this block whenever
+  the brand colour moves** — it has now been stale twice.
 - `--accent` (the fill) was not redefined at all, so it stayed maroon while
-  `--text-on-accent` went near-black — a 1.9:1 button waiting for the first
+  `--text-on-accent` went near-black — a ~2:1 button waiting for the first
   `.btn--primary` dropped into a dark section.
 
 **`color` must be re-resolved wherever the scope changes.** It inherits as the
@@ -208,13 +210,20 @@ fold. Mechanics: **`carousel-craft` skill.** Project specifics:
   stylesheet and `START = 1` in `main.js` name the same slide — change one alone
   and the page opens on a different concept depending on whether JS loaded.
 - Advances every **2s**; hover suspends, an arrow or dot stops it for good.
+  Below 620px the centre is 62vw, not 78 — at 78 the neighbours peeked by 14%
+  of the slide against ~52% on desktop, and the row read as one screen with
+  slivers beside it.
   **There is no pause button** — the arrows are the WCAG 2.2.2 stop mechanism.
   If they are ever removed, the pause control has to come back.
 - Loading hints follow the order: opening three eager, rest `lazy`.
 - `stage-<slug>.webp` is the top 800×620 of each full-page render (~16KB vs
   ~45KB). Re-crop from the master if a concept is re-shot.
-- Below 620px the hero stops claiming `100svh` and the stage height comes off
-  the slide's aspect — a phone cannot fit a screen tall enough to reach the fold
+- **Portrait viewports of any width** stop claiming `100svh` and take the stage
+  height from the slide's aspect. The condition is the aspect ratio, not a
+  width: a slide's height is fixed by the viewport *width*, so on anything
+  portrait it cannot reach the fold and the stage grew past the artwork —
+  216px of dead cream at 768×1024. 1024×768 clips correctly at the same width
+  that fails at 768×1024. Below 620px the stage height also comes off — a phone cannot fit a screen tall enough to reach the fold
   *and* keep the neighbours in frame. Landscape phones drop the stage entirely.
 - `#intro` and the stage both gave up `.shell` on the section to run full-bleed.
   **Do not reach for a `100vw` pseudo-element** — that already put a horizontal
@@ -349,6 +358,17 @@ range, so keep new ones distinct from all six.
 **A tab-driven scroll-snap carousel** with a clone loop; see `carousel-craft`.
 Native scroll-snap does the moving, so the track still works with `main.js`
 removed — without JS there are no clones and it simply does not wrap.
+
+**It auto-advances every 4s**, on the same contract as the hero stage: hover
+suspends, and taking hold of a tab — or scrolling the track yourself — stops it
+for good, which makes the tabs the WCAG 2.2.2 stop mechanism. It only runs
+while the section is on screen. Slower than the hero's 2s because these cards
+carry copy you are meant to read.
+
+**Hover-to-suspend is bound to the track and the tab row, never the section.**
+`#work` is full-bleed and taller than the viewport, so a `pointerenter` on it
+fires the moment the cursor is anywhere on screen and never leaves — the
+carousel sits permanently suspended and reads as simply not auto-advancing.
 
 **The cards carry a shadow and it is load-bearing.** On the dark page they
 separated by luminance alone; on cream they do not — Meridian's `#E4E2DC` card
@@ -501,6 +521,12 @@ introduces Services rather than belonging to it.
 Sits directly above the testimonials so the portrait introduces the person right
 before other people vouch for him.
 
+**The two columns are sized to their content and the pair is centred**, not
+split as fractions of the shell. At `.7fr / 1.3fr` the copy column came out
+738px while the text inside is capped at its measure (395px body, 476px
+heading), so 343px of the column was empty and the section hugged the left
+edge. Fractions balance the *columns*; what has to balance is the ink.
+
 **It is two paragraphs and nothing else.** A credentials list — degrees, role,
 certificates — was built here and cut: Jared wants the security background as an
 argument, not a CV. Don't reintroduce one.
@@ -526,6 +552,14 @@ on the `<img>` are a presentational hint that otherwise wins. On mobile it is
 capped by `max-width`, never by height.
 
 ## Conventions
+
+**Every block in `main.js` gets its own IIFE.** `var` is function-scoped, so
+without one they all share a single scope. The hero stage block declares
+`track`, `real`, `all` and `CLONES` — the exact names the Selected Work
+carousel uses — and because it runs later it silently reassigned all four out
+from under that block's closures. Selected Work's tabs stopped scrolling the
+track and its current-tab marker cleared itself, with **no error anywhere**.
+Scan for duplicate top-level `var` names when adding a block.
 
 **Tokens are three-layer and one-directional.** Primitives (`--ink-60`,
 `--space-6`) → semantic (`--text-muted`, `--border-subtle`) → component
@@ -618,6 +652,5 @@ library. Jared supplied it, but a commercial site needs the licences on record
 before launch, and the masters in `assets/img/_source/` are what a takedown
 request would be measured against.
 
-**The `og:description` and the footer wordmark still say "A website makes it
-real"**, two mottos out of date — the hero now reads "A website you can feel".
-Jared has been told; it is his call.
+The `og:description` and the footer wordmark now both read "A website you can
+feel", matching the hero.

@@ -398,6 +398,60 @@
       });
     });
 
+    /* Auto-advance. Same contract as the hero stage: hover suspends,
+       and taking hold of a tab — or scrolling the track yourself — stops
+       it for good. The tabs are therefore the WCAG 2.2.2 stop mechanism,
+       and unlike hover they are reachable by touch and keyboard.
+
+       Slower than the hero's 2s because these cards carry copy you are
+       meant to read, and it only runs while the section is actually on
+       screen — a carousel cycling three viewports away is pure battery. */
+    var autoTimer = null, autoStopped = false, inView = false;
+
+    function autoStop() { if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
+    function autoStart() {
+      autoStop();
+      if (autoStopped || !inView || reducedMotion.matches) return;
+      autoTimer = setInterval(function () {
+        var here = ((centredIndex() - CLONES) % N + N) % N;
+        show(real[(here + 1) % N].dataset.slide);
+      }, 4000);
+    }
+    function autoTake() { autoStopped = true; autoStop(); }
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", autoTake);
+      tab.addEventListener("keydown", autoTake);
+    });
+    // A real drag or wheel is the user taking over; our own scrollTo also
+    // fires `scroll`, so that event cannot be the signal.
+    ["wheel", "touchstart", "pointerdown"].forEach(function (evt) {
+      track.addEventListener(evt, autoTake, { passive: true });
+    });
+    /* Hover-to-suspend is bound to the track and the tab row, NOT the
+       section. The section is full-bleed and taller than the viewport, so
+       a pointerenter on it fires the moment the cursor is anywhere on
+       screen and never leaves — the carousel would sit permanently
+       suspended and look like it simply does not auto-advance. */
+    [track, showcase.querySelector(".showcase__tabs")].forEach(function (el) {
+      if (!el) return;
+      el.addEventListener("pointerenter", autoStop);
+      el.addEventListener("pointerleave", autoStart);
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) autoStop(); else autoStart();
+    });
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        inView = entries[0].isIntersecting;
+        if (inView) autoStart(); else autoStop();
+      }, { threshold: 0.25 }).observe(showcase);
+    } else {
+      inView = true;
+      autoStart();
+    }
+
     // Start on the first real slide, with its neighbours already flanking it.
     requestAnimationFrame(function () { goTo(CLONES, false); });
     window.addEventListener("resize", function () {
@@ -467,155 +521,165 @@
      auto-advance for good, which is the stop mechanism WCAG 2.2.2 wants
      and, unlike hover, is reachable by touch and by keyboard. Hover only
      suspends it. */
-  var stage = document.querySelector("[data-hero-stage]");
+  /* Scoped in its own IIFE, and that is not stylistic. `var` is
+     function-scoped, so every `var` in this file shares one scope — and
+     this block declares `track`, `real`, `all` and `CLONES`, which are the
+     exact names the Selected Work carousel above uses. Because this runs
+     later, it silently reassigned all four out from under that block's
+     closures: its tabs stopped scrolling the track and its current-tab
+     marker cleared itself, with no error anywhere. Keep new blocks
+     isolated the same way. */
+  (function () {
+    var stage = document.querySelector("[data-hero-stage]");
 
-  if (stage) {
-    var track = stage.querySelector(".stage__track");
-    var real  = track ? Array.prototype.slice.call(track.children) : [];
-    var n     = real.length;
+    if (stage) {
+      var track = stage.querySelector(".stage__track");
+      var real  = track ? Array.prototype.slice.call(track.children) : [];
+      var n     = real.length;
 
-    if (track && n > 1) {
-      var CLONES = 2;
-      var STEP   = 2000;
+      if (track && n > 1) {
+        var CLONES = 2;
+        var STEP   = 2000;
 
-      // The opening slide is the *second* in source order, so that both
-      // neighbours exist without clones and the no-JS composition is
-      // symmetric. That is the same slide the stylesheet's `--i: 1`
-      // default centres — change one and the page opens on a different
-      // concept depending on whether this file loaded. Source order is
-      // therefore also the running order; see the hero stage in index.html.
-      var START = 1;
-      var idx = CLONES + START, timer = null, taken = false;
+        // The opening slide is the *second* in source order, so that both
+        // neighbours exist without clones and the no-JS composition is
+        // symmetric. That is the same slide the stylesheet's `--i: 1`
+        // default centres — change one and the page opens on a different
+        // concept depending on whether this file loaded. Source order is
+        // therefore also the running order; see the hero stage in index.html.
+        var START = 1;
+        var idx = CLONES + START, timer = null, taken = false;
 
-      for (var c = 0; c < CLONES; c++) {
-        var head = real[n - 1 - c].cloneNode(true);
-        head.setAttribute("aria-hidden", "true");
-        track.insertBefore(head, track.firstChild);
-        var tail = real[c].cloneNode(true);
-        tail.setAttribute("aria-hidden", "true");
-        track.appendChild(tail);
-      }
+        for (var c = 0; c < CLONES; c++) {
+          var head = real[n - 1 - c].cloneNode(true);
+          head.setAttribute("aria-hidden", "true");
+          track.insertBefore(head, track.firstChild);
+          var tail = real[c].cloneNode(true);
+          tail.setAttribute("aria-hidden", "true");
+          track.appendChild(tail);
+        }
 
-      // Re-read after cloning: `real` is the six concepts, `all` is the ten
-      // elements actually in the track, and depth is assigned over `all`.
-      var all = Array.prototype.slice.call(track.children);
+        // Re-read after cloning: `real` is the six concepts, `all` is the ten
+        // elements actually in the track, and depth is assigned over `all`.
+        var all = Array.prototype.slice.call(track.children);
 
-      function realIndex() { return ((idx - CLONES) % n + n) % n; }
+        function realIndex() { return ((idx - CLONES) % n + n) % n; }
 
-      /* Order matters here, and getting it wrong is invisible in a
-         screenshot: *every* state change has to land inside the silenced
-         window, not just --i. The depth attributes were being written
-         after `data-jump` came off, so at each wrap the whole set
-         re-stacked with transitions live and eased for 600ms on top of a
-         correction that is supposed to be instantaneous. It only showed up
-         by tracing the centre slide's rendered height frame by frame. */
-      function paint(animate) {
-        if (!animate) track.setAttribute("data-jump", "");
+        /* Order matters here, and getting it wrong is invisible in a
+           screenshot: *every* state change has to land inside the silenced
+           window, not just --i. The depth attributes were being written
+           after `data-jump` came off, so at each wrap the whole set
+           re-stacked with transitions live and eased for 600ms on top of a
+           correction that is supposed to be instantaneous. It only showed up
+           by tracing the centre slide's rendered height frame by frame. */
+        function paint(animate) {
+          if (!animate) track.setAttribute("data-jump", "");
 
-        track.style.setProperty("--i", String(idx));
+          track.style.setProperty("--i", String(idx));
 
-        // Position in the run, clamped: the stylesheet turns it into depth,
-        // so the centre stands proud of its neighbours. Clamped at ±2
-        // because anything further is off the edge at every breakpoint and
-        // only needs to be already turned when it enters the frame.
-        all.forEach(function (el, k) {
-          var d = Math.max(-2, Math.min(2, k - idx));
-          var pos = String(d);
-          if (el.getAttribute("data-pos") !== pos) el.setAttribute("data-pos", pos);
+          // Position in the run, clamped: the stylesheet turns it into depth,
+          // so the centre stands proud of its neighbours. Clamped at ±2
+          // because anything further is off the edge at every breakpoint and
+          // only needs to be already turned when it enters the frame.
+          all.forEach(function (el, k) {
+            var d = Math.max(-2, Math.min(2, k - idx));
+            var pos = String(d);
+            if (el.getAttribute("data-pos") !== pos) el.setAttribute("data-pos", pos);
+          });
+
+          if (!animate) {
+            void track.offsetWidth;              // flush every one of the above,
+            track.removeAttribute("data-jump");  // or lifting the silence lets
+          }                                      // them transition after all
+
+          // Written only when it actually changes. The loop correction lands
+          // on a clone of the slide already showing, so both paints resolve
+          // to the same dot — and re-setting aria-current to the value it
+          // already holds still fires a mutation, which a screen reader can
+          // announce a second time.
+          var r = realIndex();
+          dots.forEach(function (d, k) {
+            var want = k === r ? "true" : "false";
+            if (d.getAttribute("aria-current") !== want) d.setAttribute("aria-current", want);
+          });
+        }
+
+        function step(dir) { idx += dir; paint(true); }
+
+        // The correction happens after the move lands, not during it, so the
+        // travel a viewer sees is always exactly one slide.
+        track.addEventListener("transitionend", function (e) {
+          if (e.propertyName !== "transform") return;
+          if (idx >= CLONES + n) { idx -= n; paint(false); }
+          else if (idx < CLONES) { idx += n; paint(false); }
         });
 
-        if (!animate) {
-          void track.offsetWidth;              // flush every one of the above,
-          track.removeAttribute("data-jump");  // or lifting the silence lets
-        }                                      // them transition after all
+        function stop()  { if (timer) { clearInterval(timer); timer = null; } }
+        function start() {
+          stop();
+          if (taken || reducedMotion.matches) return;
+          timer = setInterval(function () { step(1); }, STEP);
+        }
+        function take() { taken = true; stop(); }
 
-        // Written only when it actually changes. The loop correction lands
-        // on a clone of the slide already showing, so both paints resolve
-        // to the same dot — and re-setting aria-current to the value it
-        // already holds still fires a mutation, which a screen reader can
-        // announce a second time.
-        var r = realIndex();
-        dots.forEach(function (d, k) {
-          var want = k === r ? "true" : "false";
-          if (d.getAttribute("aria-current") !== want) d.setAttribute("aria-current", want);
+        var controls = document.createElement("div");
+        controls.className = "stage__controls";
+
+        function arrow(dir, label, d) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "stage__arrow stage__arrow--" + (dir < 0 ? "prev" : "next");
+          b.setAttribute("aria-label", label);
+          b.innerHTML = '<svg viewBox="0 0 6 10" aria-hidden="true"><path d="' + d +
+                        '" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          b.addEventListener("click", function () { take(); step(dir); });
+          return b;
+        }
+
+        controls.appendChild(arrow(-1, "Previous concept", "M5 1L1 5l4 4"));
+
+        var dots = real.map(function (el, i) {
+          var img  = el.querySelector("img");
+          var name = img ? (img.getAttribute("alt") || "").split(",")[0] : "Slide " + (i + 1);
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "stage__dot";
+          b.setAttribute("aria-label", "Show " + name);
+          b.addEventListener("click", function () {
+            take();
+            // Travel to whichever copy of the target is nearer, so jumping
+            // from the last concept to the first goes forward rather than
+            // rewinding the whole set.
+            var want = CLONES + i, here = idx;
+            if (Math.abs(want + n - here) < Math.abs(want - here)) want += n;
+            else if (Math.abs(want - n - here) < Math.abs(want - here)) want -= n;
+            idx = want;
+            paint(true);
+          });
+          controls.appendChild(b);
+          return b;
         });
-      }
 
-      function step(dir) { idx += dir; paint(true); }
+        controls.appendChild(arrow(1, "Next concept", "M1 1l4 4-4 4"));
+        stage.parentNode.insertBefore(controls, stage);
 
-      // The correction happens after the move lands, not during it, so the
-      // travel a viewer sees is always exactly one slide.
-      track.addEventListener("transitionend", function (e) {
-        if (e.propertyName !== "transform") return;
-        if (idx >= CLONES + n) { idx -= n; paint(false); }
-        else if (idx < CLONES) { idx += n; paint(false); }
-      });
-
-      function stop()  { if (timer) { clearInterval(timer); timer = null; } }
-      function start() {
-        stop();
-        if (taken || reducedMotion.matches) return;
-        timer = setInterval(function () { step(1); }, STEP);
-      }
-      function take() { taken = true; stop(); }
-
-      var controls = document.createElement("div");
-      controls.className = "stage__controls";
-
-      function arrow(dir, label, d) {
-        var b = document.createElement("button");
-        b.type = "button";
-        b.className = "stage__arrow stage__arrow--" + (dir < 0 ? "prev" : "next");
-        b.setAttribute("aria-label", label);
-        b.innerHTML = '<svg viewBox="0 0 6 10" aria-hidden="true"><path d="' + d +
-                      '" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        b.addEventListener("click", function () { take(); step(dir); });
-        return b;
-      }
-
-      controls.appendChild(arrow(-1, "Previous concept", "M5 1L1 5l4 4"));
-
-      var dots = real.map(function (el, i) {
-        var img  = el.querySelector("img");
-        var name = img ? (img.getAttribute("alt") || "").split(",")[0] : "Slide " + (i + 1);
-        var b = document.createElement("button");
-        b.type = "button";
-        b.className = "stage__dot";
-        b.setAttribute("aria-label", "Show " + name);
-        b.addEventListener("click", function () {
-          take();
-          // Travel to whichever copy of the target is nearer, so jumping
-          // from the last concept to the first goes forward rather than
-          // rewinding the whole set.
-          var want = CLONES + i, here = idx;
-          if (Math.abs(want + n - here) < Math.abs(want - here)) want += n;
-          else if (Math.abs(want - n - here) < Math.abs(want - here)) want -= n;
-          idx = want;
-          paint(true);
+        // Hover suspends; it does not count as taking control, so the
+        // carousel picks up again when the pointer leaves.
+        stage.addEventListener("pointerenter", stop);
+        stage.addEventListener("pointerleave", start);
+        controls.addEventListener("pointerenter", stop);
+        controls.addEventListener("pointerleave", start);
+        controls.addEventListener("focusin", stop);
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) stop(); else start();
         });
-        controls.appendChild(b);
-        return b;
-      });
+        reducedMotion.addEventListener("change", start);
 
-      controls.appendChild(arrow(1, "Next concept", "M1 1l4 4-4 4"));
-      stage.parentNode.insertBefore(controls, stage);
-
-      // Hover suspends; it does not count as taking control, so the
-      // carousel picks up again when the pointer leaves.
-      stage.addEventListener("pointerenter", stop);
-      stage.addEventListener("pointerleave", start);
-      controls.addEventListener("pointerenter", stop);
-      controls.addEventListener("pointerleave", start);
-      controls.addEventListener("focusin", stop);
-      document.addEventListener("visibilitychange", function () {
-        if (document.hidden) stop(); else start();
-      });
-      reducedMotion.addEventListener("change", start);
-
-      paint(false);
-      start();
+        paint(false);
+        start();
+      }
     }
-  }
+  })();
 
   /* ── Testimonial marquee ────────────────────────────────
      The CSS animation runs to exactly -50%, so the track has to hold the

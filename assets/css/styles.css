@@ -177,10 +177,10 @@
      distinguish fill from draw, but on this palette both halves resolve to
      the same pair. Restore two distinct pairs if the accent ever goes light
      again — a light accent cannot be ink on paper. */
-  --accent:          #7F2007;
-  --accent-hover:    #5E1704;
-  --accent-ink:      #7F2007;
-  --accent-ink-hover:#5E1704;
+  --accent:          #0F4C81;
+  --accent-hover:    #0B3A63;
+  --accent-ink:      #0F4C81;
+  --accent-ink-hover:#0B3A63;
 
   /* White, not dark ink: the fill is dark now. */
   --text-on-accent: #FFFFFF;
@@ -240,20 +240,19 @@
 
   --bg-ink: var(--shade-950);
 
-  /* On dark the accent goes lighter, not darker — the maroon is a 1.9:1
-     colour on shade-900 and simply disappears. These are the brand hue
-     (12.5°) lifted to L .64/.72, which lands in terracotta: 6.6 / 6.4 /
-     5.9 / 5.5 on shade-900…600.
+  /* On dark the accent goes lighter, not darker — the brand blue is a
+     2.12:1 colour on shade-900 and simply disappears. Same hue (208°)
+     lifted to L .60/.70: 6.6 / 6.3 / 5.8 / 5.4 on shade-900…600.
 
-     They replaced #F25939/#F57052, which were the *old* orange brand and
-     had been left behind when the accent went maroon — harmless only
-     because nothing carried .on-dark at the time. `--accent` has to be
-     redefined here too: it is the fill, and the maroon fill under this
-     scope's dark --text-on-accent was a 1.9:1 button waiting to happen. */
-  --accent:          #ED785A;
-  --accent-hover:    #F2907A;
-  --accent-ink:      #ED785A;
-  --accent-ink-hover:#F2907A;
+     `--accent` has to be redefined here too, not just the ink pair: it is
+     the fill, and a dark fill under this scope's dark --text-on-accent is
+     a ~2:1 button waiting for the first .btn--primary in a dark section.
+     This block has been wrong twice that way — check it whenever the
+     brand colour moves. */
+  --accent:          #529EE0;
+  --accent-hover:    #7FB8E9;
+  --accent-ink:      #529EE0;
+  --accent-ink-hover:#7FB8E9;
 
   --focus-ring: var(--ink);
 
@@ -1546,11 +1545,18 @@ body  { background-color: var(--bg-page); }
 }
 
 /* ── About ──────────────────────────────────────────────── */
+/* Tracks sized to their content and the pair centred, not fractions of
+   the shell. At .7fr/1.3fr the copy column came out 738px wide while the
+   text inside it is capped at its measure (395px for body, 476px for the
+   heading) — so 343px of the column was empty and the whole section
+   visually hugged the left edge with a hole beside it. Fractions balance
+   the *columns*; what has to balance is the ink. */
 .about {
   position: relative;
   padding-block: var(--section-y-lg);
   display: grid;
-  grid-template-columns: .7fr 1.3fr;
+  grid-template-columns: minmax(0, 24rem) minmax(0, 30rem);
+  justify-content: center;
   gap: var(--space-16);
   align-items: center;
   overflow: hidden;
@@ -2301,9 +2307,11 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   /* 56vw of a phone is a 220px screen — too small to read as a website at
      all. The centre slide takes most of the width here and the neighbours
      simply run further off both edges, which is the same composition. */
-  /* 47vw of a phone is a 180px screen — too small to read as a website at
-     all. The centre slide takes most of the width and the neighbours run
-     further off both edges, which is the same composition, tighter.
+  /* The centre slide is narrower here than the raw viewport fraction would
+     suggest, and that is the point: at 78vw the neighbours peeked by 43px
+     of a 304px slide — 14%, against ~52% on desktop — so the row read as
+     one screen with slivers beside it rather than as a carousel. 62vw
+     restores the desktop proportion at phone scale.
 
      The hero also stops claiming 100svh here. A phone cannot fit a screen
      tall enough to reach the fold *and* keep the neighbours in frame — the
@@ -2316,7 +2324,7 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 
   .hero { min-height: 0; }
   .hero__stage {
-    --slide-w: min(40rem, 78vw);
+    --slide-w: min(40rem, 62vw);
     flex: 0 0 auto;
     min-height: 0;
     height: calc(var(--slide-w) * 0.62);
@@ -2331,6 +2339,26 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   .footer { padding-block: var(--space-16) var(--space-10); }
   .footer__inner { align-items: flex-start; gap: var(--space-8); }
   .footer__meta { gap: var(--space-3) var(--space-6); }
+}
+
+/* Portrait viewports of any width. The stage takes the height left over
+   under the copy, but a slide's height is fixed by the *viewport width*
+   (slide-w × 620/800) — so on anything portrait the artwork cannot reach
+   the fold and the stage grew past it, leaving dead cream underneath. At
+   768×1024 that was 216px of nothing.
+
+   The condition is the aspect ratio, not a width: 1024×768 clips correctly
+   at the same width that fails at 768×1024. Portrait screens therefore
+   size the stage from the slide and give up the full-height hero, exactly
+   as phones already did — the next section peeking under the fold is a
+   better scroll affordance than blank ground. */
+@media (max-aspect-ratio: 1/1) {
+  .hero { min-height: 0; }
+  .hero__stage {
+    flex: 0 0 auto;
+    min-height: 0;
+    height: calc(var(--slide-w) * 0.62);
+  }
 }
 
 /* Landscape phones: the hero can't claim a whole 400px-tall viewport, and
