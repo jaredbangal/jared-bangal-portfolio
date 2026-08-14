@@ -229,6 +229,9 @@ fold. Mechanics: **`carousel-craft` skill.** Project specifics:
   **There is no pause button** — the arrows are the WCAG 2.2.2 stop mechanism.
   If they are ever removed, the pause control has to come back.
 - Loading hints follow the order: opening three eager, rest `lazy`.
+- **No border on the cards.** These are full-bleed screenshots, so a 1px
+  light edge reads as a white hairline drawn *on* the artwork rather than
+  as a frame — most obvious on the dark concepts. The shadow separates them.
 - `stage-<slug>.webp` is the top 800×620 of each full-page render (~16KB vs
   ~45KB). Re-crop from the master if a concept is re-shot.
 - **The cards are whole, not cropped.** They were tall crops cut off by the

@@ -454,8 +454,22 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
 .on-dark.block--dark::before {
   height: var(--ink-fade-top, var(--ink-fade, 0px));
   top: calc(var(--ink-fade-top, var(--ink-fade, 0px)) * -1);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000);
-          mask-image: linear-gradient(to bottom, transparent, #000);
+  /* Eased, not linear, and this is the whole trick.
+     A linear ramp does two bad things: it starts with a visible edge (a
+     Mach band where the gradient meets flat cream), and it darkens evenly,
+     so a fade long enough to look cinematic puts the tail of the About
+     copy on a mid-grey ground — measured at ~3.6:1.
+     These stops stay under 15% for the first three-fifths and then
+     accelerate, so the fade *reads* as starting high up near the middle of
+     the portrait while the real darkening happens below the text. */
+  -webkit-mask-image: linear-gradient(to bottom,
+      transparent 0%, rgba(0,0,0,.02) 35%, rgba(0,0,0,.07) 50%,
+      rgba(0,0,0,.15) 62%, rgba(0,0,0,.28) 72%, rgba(0,0,0,.42) 80%,
+      rgba(0,0,0,.62) 88%, rgba(0,0,0,.82) 94%, #000 100%);
+          mask-image: linear-gradient(to bottom,
+      transparent 0%, rgba(0,0,0,.02) 35%, rgba(0,0,0,.07) 50%,
+      rgba(0,0,0,.15) 62%, rgba(0,0,0,.28) 72%, rgba(0,0,0,.42) 80%,
+      rgba(0,0,0,.62) 88%, rgba(0,0,0,.82) 94%, #000 100%);
 }
 .on-dark.block--dark::after {
   height: var(--ink-fade-bottom, var(--ink-fade, 0px));
@@ -474,15 +488,22 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
    line of the About copy by ~40px at tablet and phone widths. Tying the
    two together keeps 20% clearance at every breakpoint without a single
    extra media query. */
-#feedback { --ink-fade: min(16vh, calc(var(--section-y-lg) * 0.8)); }
+/* The page has exactly one vignette: About into Client feedback. It is the
+   junction that carries the most weight — a portrait, then the wall of
+   reviews — so it gets the cinematic entrance and every other ink edge is
+   a clean line. Deliberate asymmetry, not an oversight: a page where every
+   boundary dissolves has no structure left.
 
-/* Newsletter and footer are one continuous black foot to the page, so only
-   the newsletter's top edge is a transition — a fade between them would be
-   a seam inside a single mass, and the footer ends the document. */
-#newsletter {
-  --ink-fade-top: min(16vh, calc(var(--section-y) * 0.8));
+   Tall enough to read as beginning around the middle of the portrait. The
+   ramp above is what keeps that safe for the copy. */
+#feedback {
+  --ink-fade-top: min(28rem, 50vh);
   --ink-fade-bottom: 0px;
 }
+
+/* Newsletter and footer are one continuous black foot, and both edges are
+   straight. */
+#newsletter { --ink-fade: 0px; }
 .footer.block--dark { border-top-color: var(--border-subtle); }
 
 body,
@@ -1379,7 +1400,9 @@ body  { background-color: var(--bg-page); }
   object-fit: cover;
   object-position: top center;
   border-radius: var(--radius-sm);        /* 8px — the media/card step */
-  border: 1px solid var(--border-subtle);
+  /* No border. These are full-bleed screenshots, so a 1px light edge reads
+     as a white hairline drawn on the artwork rather than as a frame — most
+     obvious on the dark concepts. The shadow does the separating. */
   box-shadow: var(--shadow-2);            /* slides rest at 2, as elsewhere */
   background: var(--cream-100);
   transition: box-shadow var(--dur-slow) var(--ease-out);
