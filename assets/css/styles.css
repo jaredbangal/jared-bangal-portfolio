@@ -1755,11 +1755,12 @@ body  { background-color: var(--bg-page); }
 .acc__head:hover { color: var(--accent-ink-hover); }
 .acc__head:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 
-/* The tab title *is* the section heading, so it takes the display setting
-   rather than a control's. */
+/* The tab title *is* the section heading, so it takes a display setting
+   rather than a control's — one step down from a full section head, since
+   it sits on a row with a control rather than centred in open space. */
 .acc__title {
   flex: 1;
-  font-size: var(--text-4xl);
+  font-size: var(--text-3xl);
   font-weight: var(--weight-display);
   line-height: var(--leading-display);
   letter-spacing: var(--track-display);
@@ -1788,6 +1789,22 @@ body  { background-color: var(--bg-page); }
 .acc__inner { overflow: hidden; visibility: visible; }
 .acc__sub { margin: 0 0 var(--space-10); text-align: left; max-width: 46ch; }
 
+/* An inline link, not `.link-underline` — that one is a standalone CTA
+   (uppercase, 12px, tracked) and reads as a caption dropped into the
+   middle of a sentence. Inside prose a link should keep the sentence's
+   size and weight and only carry a rule. */
+.acc__sub a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+  text-decoration-color: var(--border-strong);
+  transition: color var(--dur-fast) var(--ease-in-out),
+              text-decoration-color var(--dur-fast) var(--ease-in-out);
+}
+.acc__sub a:hover { color: var(--accent-ink-hover); text-decoration-color: currentColor; }
+.acc__sub a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
 .acc__item[data-collapsed] .acc__panel { grid-template-rows: 0fr; }
 /* Leaves the tab order and the accessibility tree once it has finished
    closing — a zero-height row is still focusable without this. */
@@ -1796,7 +1813,14 @@ body  { background-color: var(--bg-page); }
   transition: visibility 0s linear var(--dur-slow);
 }
 
-/* Two columns so an opened tab stays a panel rather than a page. */
+/* Two columns so an opened tab stays a panel rather than a page.
+
+   Each entry spans the grid's own rows via `subgrid`, which is what keeps
+   the columns level. Without it every cell is an independent block, so a
+   question that wraps to two lines in one column pushes its answer down
+   while the neighbour's answer stays put — the pair still *starts* level
+   but nothing inside them lines up. Subgrid puts every question in one row
+   band and every answer in the next, whatever the wrapping does. */
 .svc, .qa {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1804,6 +1828,18 @@ body  { background-color: var(--bg-page); }
   margin: 0 0 var(--space-12);
   padding: 0;
   list-style: none;
+}
+
+@supports (grid-template-rows: subgrid) {
+  .svc__item, .qa__item {
+    display: grid;
+    grid-template-rows: subgrid;
+    row-gap: var(--space-2);
+  }
+  .svc__item { grid-row: span 3; }   /* number, title, text  */
+  .qa__item  { grid-row: span 2; }   /* question, answer     */
+  /* The row gap owns the spacing now; leftover margins would double it. */
+  .svc__num, .svc__title, .qa__q { margin-bottom: 0; }
 }
 .svc__num {
   display: block;

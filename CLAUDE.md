@@ -556,6 +556,14 @@ single disclosure whose body carries the whole list — four services in a
 two closed doors read as a choice, and the tab title *is* the section
 heading, so nothing is said twice.
 
+**Both grids use `subgrid`, and that is what keeps the columns level.**
+Each entry spans the grid's own rows, so every question sits in one row
+band and every answer in the next. Without it each cell is an independent
+block: a question that wraps to two lines in one column pushes its answer
+down while its neighbour's stays put, so the pair starts level but nothing
+inside them lines up. `@supports` guards it; without subgrid the entries
+are ordinary blocks and only lose the internal alignment.
+
 Rows are written **open** in the HTML and closed by `main.js`
 (`data-acc="closed"`) — the same contract as everything else here, so with
 the script gone both sections are headed prose rather than dead buttons
