@@ -741,10 +741,13 @@ site. **Replace them with real, attributable quotes or delete the section**
 before this is promoted anywhere. Anything that cannot be attributed to a named,
 consenting client comes out. The avatars are still empty `.slot` tiles.
 
-**Pricing is placeholder.** $1,200 landing page, $3,200 full site, $120/month
-care are drafts to argue with, not quoted rates — written to match the range
-implied by the contact form's "e.g. New site, $1k–3k". Published prices are a
-commitment.
+**Pricing is Jared's, set 2026-08-14**: from $300 landing page, from $1,200
+full site, $120/month care. These are no longer drafts — he named them. They
+live in the nav Pricing panel only; the FAQ still quotes no price and should
+stay that way, so the panel is the single source. **The contact form's budget
+placeholder tracks the range** and now reads "e.g. New site, $300–1,200" —
+move it whenever the figures move, or the form implies a bracket the panel
+does not offer.
 
 **Forms post to `action="#"`.** `main.js` refuses that honestly rather than
 faking success, so nobody is misled — but the form cannot work until it has a
