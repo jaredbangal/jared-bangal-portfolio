@@ -611,6 +611,26 @@ frame needs. `height: auto` has to be explicit: the `width`/`height` attributes
 on the `<img>` are a presentational hint that otherwise wins. On mobile it is
 capped by `max-width`, never by height.
 
+## Editing index.html with a script
+
+**Slice on unique markers, and verify the section list afterwards.** Moving
+the Services block once cut from its `<section>` tag and left the
+`<!-- ── Services ── -->` comment orphaned near the top of the document. A
+later edit searched for that comment to find the block, matched the orphan,
+and deleted **Selected Work, About and Testimonials** — three sections,
+silently, with no error. It shipped.
+
+Two rules that would each have caught it:
+
+- Cut from the comment, not the tag, and never leave a marker behind.
+- After any structural edit, print
+  `re.findall(r'<section[^>]*id="([a-z]+)"', html)` and read it. The
+  expected list is stats, intro, work, about, feedback, services, faq,
+  contact, newsletter.
+
+`frontend-bug-sweep` catches it too, via dead anchors — but only if it is
+run *before* pushing, not after.
+
 ## Conventions
 
 **Every block in `main.js` gets its own IIFE.** `var` is function-scoped, so
