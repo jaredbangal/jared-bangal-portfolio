@@ -45,61 +45,6 @@
     });
   }
 
-  /* ── Card tilt ──────────────────────────────────────────
-     Leans the service cards toward the pointer and moves a glare with it.
-     Everything here is decoration: without this file the cards are still
-     frosted, still lift, still take the accent — only the lean is missing.
-
-     Gated on a fine pointer. A touch device has no hover to reverse the
-     tilt out of, and would be left holding a card at an angle. */
-  var tiltHost = document.querySelector("[data-tilt]");
-
-  if (tiltHost && !reducedMotion.matches &&
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-
-    var MAX = 5;   // degrees. Restrained on purpose — this page is quiet,
-                   // and a card that swings reads as a gimmick.
-
-    [].slice.call(tiltHost.querySelectorAll(".card")).forEach(function (card) {
-      var frame = null, rect = null;
-
-      function apply(e) {
-        frame = null;
-        if (!rect) return;
-        var px = (e.clientX - rect.left) / rect.width;    // 0…1
-        var py = (e.clientY - rect.top) / rect.height;
-        // Away from the pointer on X, toward it on Y — that pairing is what
-        // reads as a surface being pushed rather than a box being spun.
-        card.style.setProperty("--ry", ((px - 0.5) * 2 * MAX).toFixed(2) + "deg");
-        card.style.setProperty("--rx", ((0.5 - py) * 2 * MAX).toFixed(2) + "deg");
-        card.style.setProperty("--gx", (px * 100).toFixed(1) + "%");
-        card.style.setProperty("--gy", (py * 100).toFixed(1) + "%");
-      }
-
-      card.addEventListener("pointerenter", function () {
-        // Measured once per entry, not per move: getBoundingClientRect in a
-        // pointermove handler forces layout on every frame.
-        rect = card.getBoundingClientRect();
-        card.setAttribute("data-tracking", "");
-      });
-
-      card.addEventListener("pointermove", function (e) {
-        if (frame) return;                    // one update per frame, no more
-        frame = requestAnimationFrame(function () { apply(e); });
-      }, { passive: true });
-
-      card.addEventListener("pointerleave", function () {
-        if (frame) { cancelAnimationFrame(frame); frame = null; }
-        rect = null;
-        // Drop the flag first so the transition is back in play and the card
-        // eases home instead of snapping.
-        card.removeAttribute("data-tracking");
-        card.style.setProperty("--rx", "0deg");
-        card.style.setProperty("--ry", "0deg");
-      });
-    });
-  }
-
   /* ── Accordions ─────────────────────────────────────────
      Services and the FAQ. The rows ship **open**; this collapses them,
      which is the only order that is safe — a hidden start state may only
