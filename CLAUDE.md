@@ -269,6 +269,11 @@ information that has no destination. Column one is links where real destinations
 exist and data rows where they do not; chips are `.panel__pills` links or
 `.panel__pills--static` facts.
 
+**The panel is the page colour, not `--bg-band`.** It is not a different
+surface from the page, it is the page lifted off it, so the shadow and
+border do all the separating. The caret carries the same value — it paints
+the panel's own surface, so a mismatch shows as a chip.
+
 **Each panel points at its own trigger** via an 8px gap and a caret at
 `--caret-x`, which `main.js` sets from the trigger's centre. Panels are
 positioned against the **bar**, not the trigger, so a wide one can centre

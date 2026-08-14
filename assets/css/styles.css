@@ -874,7 +874,11 @@ body  { background-color: var(--bg-page); }
   padding: var(--space-10);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  background: var(--bg-band);
+  /* The page colour, not --bg-band. The panel is not a different surface
+     from the page, it is the page lifted off it, so the shadow does all
+     the separating — which is also why the border and the shadow both
+     stay. */
+  background: var(--bg-page);
   box-shadow: var(--shadow-4);
   opacity: 0;
   visibility: hidden;
@@ -919,7 +923,7 @@ body  { background-color: var(--bg-page); }
      nothing to separate it — the two visible border faces are what draw
      the arrow, and at 10% ink they were invisible. */
   border: 1px solid var(--border-strong);
-  background: var(--bg-band);
+  background: var(--bg-page);
   transform: rotate(45deg);
   clip-path: polygon(-40% -40%, 140% -40%, -40% 140%);
   pointer-events: none;

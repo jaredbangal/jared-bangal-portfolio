@@ -304,10 +304,26 @@
   }
 
   var MODES = {
-    sphere:   { cam: [0, 0, 520],   mx: 120, my: 80,  lerp: .035, spin: [.00012, .00055] },
-    vortex:   { cam: [0, 380, 380], mx: 60,  my: 35,  lerp: .040, spin: [0, .0018] },
-    polaris:  { cam: [0, 380, 380], mx: 60,  my: 40,  lerp: .040, spin: [0, .0060] },
-    waves:    { cam: [0, 0, 600],   mx: 30,  my: 20,  lerp: .030, spin: [0, 0] }
+    /* `rep` is the cursor's reach, in world units, and it has to differ per
+       formation, and so does `push`, the strength. Both were fixed values
+       tuned on the sphere, whose points sit on a ~250-unit shell — but the
+       wave sheets span the whole viewport in world units, where the same
+       19-unit shove is a 2.7% nudge instead of a 7% one and reads as
+       nothing. Scale both with the formation's own spread.
+
+       Tune these against the *whole viewport*, not a strip. Sampling a
+       narrow band read vortex as inert and polaris as violent when the
+       truth was the opposite — the formations occupy very different parts
+       of the frame, and the work section hides most of the field behind
+       opaque cards. */
+    sphere:   { cam: [0, 0, 520],   mx: 120, my: 80,  lerp: .035, spin: [.00012, .00055], rep: 110, push: 19, plane: 'z' },
+    // One rotation rate for every formation, taken from the sphere. Vortex
+    // ran 3.3x and polaris 11x faster, which read as three different pieces
+    // of software rather than one field changing shape. At a single slow
+    // rate the morphs carry the change and the spin just breathes.
+    vortex:   { cam: [0, 380, 380], mx: 60,  my: 35,  lerp: .040, spin: [0, .00055], rep: 140, push: 22, plane: 'y' },
+    polaris:  { cam: [0, 380, 380], mx: 60,  my: 40,  lerp: .040, spin: [0, .00055], rep: 150, push: 20, plane: 'y' },
+    waves:    { cam: [0, 0, 600],   mx: 30,  my: 20,  lerp: .030, spin: [0, 0], rep: 300, push: 55, plane: 'z' }
   };
   var mode = MODES.sphere, current = "sphere";
 
@@ -358,20 +374,6 @@
   rendered.set(basePos);
   morphTo(sphere(), 2400);
 
-  /* Cursor repulsion is scoped to the hero. It used to run wherever the
-     pointer was, so moving the mouse while *reading* pushed the field
-     around behind the paragraph — measured at up to 105 levels of pixel
-     change under body copy. In the hero the field is the showpiece and
-     there is nothing behind it to disturb; below the hero it is wallpaper
-     and should hold still. */
-  var heroInView = true;
-  var heroEl = document.querySelector(".hero");
-  if (heroEl && "IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      heroInView = entries[0].isIntersecting;
-    }, { threshold: 0 }).observe(heroEl);
-  }
-
   var cursorWorld = new THREE.Vector3();
   var ndc = new THREE.Vector3();
   var localCursor = new THREE.Vector3();
@@ -417,12 +419,34 @@
       swarm.rotation.y += mode.spin[1];
     }
 
-    var repel = !reduce.matches && fine.matches && heroInView;
+    // Repulsion runs the whole page, not just the hero. It was scoped to
+    // the hero for a while and the field went inert everywhere below it,
+    // which is the more obvious loss: the cursor interaction is most of
+    // what makes the background feel alive rather than printed.
+    var repel = !reduce.matches && fine.matches;
 
     if (repel) {
-      ndc.set(mnx, mny, 0.5).unproject(camera);
-      cursorWorld.copy(camera.position)
-        .add(ndc.sub(camera.position).normalize().multiplyScalar(camera.position.length()));
+      /* Put the cursor on the formation's OWN plane, not on a sphere around
+         the camera.
+
+         The old version pushed it a fixed |camera| along the view ray,
+         which lands on a spherical cap facing the viewer. That is fine for
+         the sphere, whose points sit on a shell — but vortex and polaris
+         are flat discs in the XZ plane, so the cursor point only ever came
+         near them along a single line and the field read as inert. Raising
+         the repulsion radius did nothing, because reach was never the
+         problem: the cursor was in the wrong place.
+
+         Intersecting the ray with y=0 (discs) or z=0 (shell and sheets)
+         puts it where the particles actually are. */
+      ndc.set(mnx, mny, 0.5).unproject(camera).sub(camera.position).normalize();
+      var axis = mode.plane === "y" ? "y" : "z";
+      var denom = ndc[axis];
+      var t = Math.abs(denom) < 1e-4
+        ? camera.position.length()                    // ray parallel to the plane
+        : -camera.position[axis] / denom;
+      if (t < 0) t = camera.position.length();
+      cursorWorld.copy(camera.position).add(ndc.multiplyScalar(t));
       swarm.updateMatrixWorld();
       localCursor.copy(cursorWorld);
       swarm.worldToLocal(localCursor);
@@ -432,7 +456,7 @@
     // leaves, so the field eases back instead of snapping flat — and lets
     // everything below fall through to the cheap path once it has.
     if (repel || drifting) {
-      var R = 90, R2 = R * R, live = false;
+      var R = mode.rep || 90, R2 = R * R, live = false;
       for (var j = 0; j < COUNT; j++) {
         var k = j * 3;
         if (repel) {
@@ -442,7 +466,7 @@
           var d2 = dx*dx + dy*dy + dz*dz;
           if (d2 < R2) {
             var d = Math.sqrt(d2) || 0.001;
-            var f = (1 - d / R) * 55 * 0.35;
+            var f = (1 - d / R) * (mode.push || 19);
             offset[k] += (dx / d) * f; offset[k+1] += (dy / d) * f; offset[k+2] += (dz / d) * f;
           }
         }
