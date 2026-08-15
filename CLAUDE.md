@@ -143,6 +143,15 @@ formations as sections scroll past. Architecture: `particle-field`.
   promoted into the token layer, or the page has two accents.
 - **`CORE_ALPHA` `.34` is a contrast budget, not taste.** Re-solve against
   rendered pixels if the palette moves. Worst with the field live: 6.14:1 / 6.29:1.
+- **Cursor strength is per formation and they were never equally loud.** Measured
+  as the share of *canvas* pixels the cursor moves beyond the field's own drift:
+  polaris **0.73pp**, vortex 0.41, sphere 0.11, waves 0.04. Polaris carried nearly
+  all of what read as too much interaction and took nearly all of the cut
+  (push 20 → 9). **Two ways this measurement lies, both hit:** probing viewport
+  centre reports the sphere as inert, because it is a shell and no points sit
+  within `rep` of the origin — probe a ring; and moving the pointer also fires DOM
+  hover states, which swamp every dot on screen — hide `.nav`, `main` and `footer`
+  and measure the canvas against a parked-pointer control.
 - Sphere fits **0.52** of the smaller viewport half-extent; camera orbit runs at
   **45%** of `motion/`'s.
 - `#field` is fixed at `z-index: 0`; `.nav`, `main`, `footer` at 1. The field does
@@ -343,6 +352,17 @@ lines of markup: eleven hand-maintained copies would be eleven copies to forget.
   Defining `.h1` at all is the point: a bare `<h1>` takes the browser's bold 2em
   default, which is exactly what this site's type direction is against — and it
   shipped that way for one build before being caught.
+- **`.prose a` must stay `:not(.btn)`.** It is (0,1,1) against `.btn--primary`'s
+  (0,1,0), so without the exclusion it repaints every CTA inside a prose block as
+  near-black ink on a black fill — **1.06:1**, an invisible button, and it shipped
+  on four pages.
+- **`.svc-row__title` is the one deliberate bold heading on the site**, at 600 and
+  `--text-3xl`, with tracking relaxed to `-.02em` because `--track-display`'s
+  `-.055em` is drawn for weight 300 and closes bold counters into a smudge. The
+  four service names are what visitors scan for; everywhere else, don't bold.
+- **Pricing card heads are centred, bodies are left.** The name, figure and unit
+  are compared across three cards so they share one axis; the feature lists stay
+  left because a centred list cannot be scanned.
 
 **The case studies are concepts and say so three times** — the eyebrow, the meta
 row, and a standing note above the pager. There is no client work here yet, and a

@@ -2510,8 +2510,12 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 .prose p { margin-bottom: var(--space-4); }
 .prose ul { margin: 0 0 var(--space-4) var(--space-5); }
 .prose li { margin-bottom: var(--space-2); }
-.prose a { color: var(--text-primary); text-underline-offset: 3px; }
-.prose a:hover { color: var(--accent-ink-hover); }
+/* :not(.btn) is load-bearing. `.prose a` is (0,1,1) and `.btn--primary` is
+   (0,1,0), so without it the prose link colour out-specifies the button's
+   own and every CTA inside a .prose block rendered near-black ink on a
+   black fill — 1.06:1, an invisible button on four pages. */
+.prose a:not(.btn) { color: var(--text-primary); text-underline-offset: 3px; }
+.prose a:not(.btn):hover { color: var(--accent-ink-hover); }
 .prose code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: .92em;
@@ -2550,12 +2554,17 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
+/* The one deliberate exception to "don't bold headings". These four names
+   are what a visitor scans the page for, and at the display weight they sat
+   level with the body copy beside them. Tracking is relaxed from
+   --track-display: -.055em is drawn for thin type, and at 600 it closes the
+   counters up into a smudge. */
 .svc-row__title {
-  font-size: var(--text-2xl);
-  font-weight: var(--weight-display);
+  font-size: var(--text-3xl);
+  font-weight: 600;
   line-height: var(--leading-display);
-  letter-spacing: var(--track-display);
-  margin-bottom: var(--space-3);
+  letter-spacing: -.02em;
+  margin-bottom: var(--space-4);
 }
 .svc-row__text {
   font-size: var(--text-xs);
@@ -2604,11 +2613,21 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   flex-direction: column;
   height: 100%;
 }
+/* Head centred, body left. The name, figure and unit are the thing being
+   compared across three cards, so centring them puts all three on one axis
+   the eye can run down; the feature list stays left because a centred list
+   cannot be scanned. */
+.price-card__head {
+  text-align: center;
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+}
 .price-card__name {
-  font-size: var(--text-lg);
-  font-weight: 400;
+  font-size: var(--text-2xl);
+  font-weight: 600;
   letter-spacing: -.02em;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 .price-card__fig {
   font-size: var(--text-3xl);
@@ -2621,7 +2640,6 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 .price-card__unit {
   font-size: var(--text-2xs);
   color: var(--text-muted);
-  margin-bottom: var(--space-6);
 }
 .price-card__text {
   font-size: var(--text-xs);

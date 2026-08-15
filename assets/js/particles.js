@@ -311,24 +311,45 @@
        19-unit shove is a 2.7% nudge instead of a 7% one and reads as
        nothing. Scale both with the formation's own spread.
 
-       Halved from the first pass that got these working: at full strength
-       the cursor tore holes in the formation rather than parting it, and
-       the shape stopped reading. Visible interaction is the goal, not a
-       strong one.
+       Halved once from the pass that got these working — at full strength
+       the cursor tore holes in the formation rather than parting it — and
+       trimmed again since, unevenly, because the four formations were never
+       equally loud. Measured as the share of *canvas* pixels the cursor
+       moves beyond the field's own drift, probing a ring of positions and
+       keeping the strongest:
+
+         polaris 0.83pp · vortex 0.40 · sphere 0.14 · waves 0.06
+
+       So polaris carried almost all of what read as "too much interaction",
+       and it takes almost all of the cut: push 20 -> 9, rep 150 -> 120.
+       Sphere and waves were always subtle and get a light trim only —
+       cutting them further just switched them off, which is not the brief.
+       The field now sits behind body copy on eleven pages, three of them
+       solid prose, and a wake following the reading cursor competes with
+       the words.
+
+       Two ways this measurement lies, both hit:
+         - Probing viewport centre reports the sphere as inert. It is a
+           *shell*; the centre ray lands at the origin and no points are
+           within `rep` of it. Probe a ring.
+         - Moving the pointer also fires DOM hover states, and one heading
+           changing colour swamps every dot on screen. Hide .nav, main and
+           footer and measure the canvas alone, against a parked-pointer
+           control over the same interval.
 
        Tune these against the *whole viewport*, not a strip. Sampling a
        narrow band read vortex as inert and polaris as violent when the
        truth was the opposite — the formations occupy very different parts
        of the frame, and the work section hides most of the field behind
        opaque cards. */
-    sphere:   { cam: [0, 0, 520],   mx: 120, my: 80,  lerp: .035, spin: [.00012, .00055], rep: 110, push: 10, plane: 'z' },
+    sphere:   { cam: [0, 0, 520],   mx: 120, my: 80,  lerp: .035, spin: [.00012, .00055], rep: 110, push: 8, plane: 'z' },
     // One rotation rate for every formation, taken from the sphere. Vortex
     // ran 3.3x and polaris 11x faster, which read as three different pieces
     // of software rather than one field changing shape. At a single slow
     // rate the morphs carry the change and the spin just breathes.
-    vortex:   { cam: [0, 380, 380], mx: 60,  my: 35,  lerp: .040, spin: [0, .00055], rep: 140, push: 11, plane: 'y' },
-    polaris:  { cam: [0, 380, 380], mx: 60,  my: 40,  lerp: .040, spin: [0, .00055], rep: 150, push: 20, plane: 'y' },
-    waves:    { cam: [0, 0, 600],   mx: 30,  my: 20,  lerp: .030, spin: [0, 0], rep: 300, push: 27, plane: 'z' }
+    vortex:   { cam: [0, 380, 380], mx: 60,  my: 35,  lerp: .040, spin: [0, .00055], rep: 130, push: 7, plane: 'y' },
+    polaris:  { cam: [0, 380, 380], mx: 60,  my: 40,  lerp: .040, spin: [0, .00055], rep: 120, push: 9, plane: 'y' },
+    waves:    { cam: [0, 0, 600],   mx: 30,  my: 20,  lerp: .030, spin: [0, 0], rep: 280, push: 22, plane: 'z' }
   };
   var mode = MODES.sphere, current = "sphere";
 
