@@ -463,6 +463,73 @@ setting mid-session takes effect); without JS there is no duplicate and the
 viewport is an ordinary scrollable row. The end fades are a `mask-image`, not an
 overlay, which would have to hard-code `--bg-band`.
 
+## Pages
+
+**Why there is a generator when the project rule is "no build step".** The rule is
+about *serving*: this site has no framework, no bundler, and nothing that has to
+run before a browser can read it. That is still true — `tools/build_pages.py`
+writes plain HTML, the output is committed, and Vercel serves the files
+untouched.
+
+What changed is arithmetic. The nav is 180 lines and the footer 15. Eleven
+secondary pages meant eleven copies of both, and the first time a panel link
+changed, ten of them would silently disagree with the eleventh. The existing
+precedent is the concept pages' responsive patch, which is generated for exactly
+the same reason and carries the same warning: **regenerate, never hand-edit.**
+
+`retarget()` is where the subtlety is. A copy of the nav needs three corrections
+before it is correct on another page:
+
+1. **Depth.** `assets/…`, `concepts/…`, `work/…` and the root pages get `../` per
+   level. Straightforward, but it has to run before the anchor rewrite or the
+   anchor rewrite writes the wrong prefix.
+2. **Anchors.** A bare `#contact` in the nav means *the home page's* contact
+   section. On a subpage it has to become `index.html#contact` — except for
+   `#main`, which every page has, and except for any id the page declares itself.
+   That exception is what lets `services.html` keep `#web-design` as a same-page
+   jump while every other hash link leaves for home.
+3. **`aria-current`.** Stripped from the inherited copy and re-applied to whichever
+   link is this page, so the footer marks Services on Services rather than
+   permanently marking Home.
+
+**`.h1` did not exist, and that shipped for one build.** Every secondary page
+opened with `class="h1"` on an element the stylesheet had never heard of, so the
+browser's default `<h1>` — bold, 2em — applied. It is the single most visible way
+to break this site's type direction, and it took a screenshot to notice, because
+the markup looked right. `.h1` and `.h2` now share one rule at `--text-4xl`: the
+distinction between them is semantic, and giving the page title its own larger
+size would have made every secondary page shout at the home page.
+
+**The case studies are concepts, stated three times.** The eyebrow reads
+`Concept · <sector>`, the meta row's first cell reads `Concept — self-directed`,
+and a note above the pager says the business is not real. That is not
+over-caution: these are full site designs for plausible-sounding businesses, and
+a visitor skimming a page headed "Precision grooming" with a barber shop's
+branding on it will assume a client unless told otherwise. `build_cases.py`
+derives each pager from `ORDER`, so the six cannot fall out of sequence when one
+is added or renamed.
+
+**The privacy page describes today, not the intention.** Its opening note says the
+forms are not connected and that submitting one sends nothing anywhere, because
+that is currently true and a policy describing collection that does not happen is
+just a different kind of inaccuracy. The Google Fonts and Cloudflare cdnjs entries
+are there for the same reason — both genuinely receive the visitor's IP address,
+and a policy claiming "no third parties" while loading two would be wrong. The
+fragment carries a `NOTE FOR JARED` comment naming the two paragraphs that must
+change the day an endpoint exists.
+
+**The terms page invents nothing.** Every clause restates something the site
+already claims: the four chips in the Pricing panel (fixed quote, 2 design rounds,
+you own everything, 50% to start), the four Process steps, and the FAQ answers. It
+opens by saying it is a summary rather than a contract and that the written quote
+governs. If any of those source claims change, this changes with them.
+
+**The sweep's nameless-control check had a false positive** and it was the case
+studies that exposed it: a link wrapping only an image takes its accessible name
+from the image's `alt`, which the check did not consider, so every case study
+reported its own render as a nameless link. Fixed in the `frontend-bug-sweep`
+skill rather than worked around here.
+
 ## Page order
 
 Hero → **The case** → **What I do** → Selected Work → **About** → Testimonials →

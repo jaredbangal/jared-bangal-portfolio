@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sunday Bakehouse — concept case study</title>
+<meta name="description" content="A concept site for a bakery that sells out by noon, built around pre-order and a daily bake schedule.">
+<meta name="theme-color" content="#E4E2DC">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jared-bangal-portfolio.vercel.app/work/sunday.html">
+<meta property="og:title" content="Sunday Bakehouse — concept case study">
+<meta property="og:description" content="A concept site for a bakery that sells out by noon, built around pre-order and a daily bake schedule.">
+<meta property="og:image" content="https://jared-bangal-portfolio.vercel.app/assets/img/portrait.webp">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="nav-sentinel" aria-hidden="true"></div>
+<canvas id="field" aria-hidden="true"></canvas>
+
+<header class="nav" data-nav>
+  <a class="nav__brand" href="../index.html">
+    <span class="nav__mark" aria-hidden="true">JB</span>
+    Jared Bangal
+  </a>
+
+  <nav class="nav__links" id="nav-links" aria-label="Primary">
+    <ul>
+      <!-- Triggers are buttons, not links: they disclose a panel rather than
+           navigate. The destination lives inside the panel. -->
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-services" data-spy="#services">
+          Services
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-services">
+          <div class="panel__col">
+            <p class="panel__label">Services</p>
+            <ul class="panel__list">
+              <li><a href="../services.html#web-design">Web Design</a></li>
+              <li><a href="../services.html#brand-identity">Brand Identity</a></li>
+              <li><a href="../services.html#portfolio-sites">Portfolio Sites</a></li>
+              <li><a href="../services.html#site-care">Site Care &amp; SEO</a></li>
+            </ul>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">Explore</p>
+            <a class="panel__headline" href="../index.html#work">Concept work <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Six self-directed site designs — a floral studio, a barber shop, a roaster, a bakery, an architecture practice, a bike shop.</p>
+            <ul class="panel__pills">
+              <li><a href="../concepts/botanica.html">Botanica</a></li>
+              <li><a href="../concepts/borough.html">Borough Barber</a></li>
+              <li><a href="../concepts/kettle.html">Kettle &amp; Co</a></li>
+              <li><a href="../concepts/sunday.html">Sunday Bakehouse</a></li>
+              <li><a href="../concepts/meridian.html">Meridian</a></li>
+              <li><a href="../concepts/northline.html">Northline Cycles</a></li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="../concepts/botanica.html">
+            <img src="../assets/img/work-botanica.webp" width="800" height="1816"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Botanica — floral studio</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-pricing">
+          Pricing
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-pricing">
+          <div class="panel__col">
+            <p class="panel__label">Packages</p>
+            <div class="panel__facts">
+              <div><b>Landing page</b><u>from $300</u><span>One page, built around a single action</span></div>
+              <div><b>Full site</b><u>from $1,200</u><span>Four to six pages, design and build</span></div>
+              <div><b>Site care</b><u>$120 / month</u><span>Updates, fixes, and SEO basics</span></div>
+            </div>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">What's included</p>
+            <a class="panel__headline" href="../pricing.html">See full pricing <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Every project includes the consult call, design rounds, the build, and handoff notes. No retainers required, no lock-in.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>Fixed quote</li>
+              <li>2 design rounds</li>
+              <li>You own everything</li>
+              <li>50% to start</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="../concepts/sunday.html">
+            <img src="../assets/img/work-sunday.webp" width="800" height="1612"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Sunday Bakehouse — bakery</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-process">
+          Process
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-process">
+          <div class="panel__col">
+            <p class="panel__label">How it works</p>
+            <div class="panel__facts">
+              <div><b>1 &middot; Discover</b><u>Week 1</u><span>A short call about your business, your audience, and what the site needs to do</span></div>
+              <div><b>2 &middot; Design</b><u>Week 1&ndash;2</u><span>Layout and visual direction, shared for feedback before anything is built</span></div>
+              <div><b>3 &middot; Build</b><u>Week 2&ndash;3</u><span>Your site gets built, tested, and refined with you along the way</span></div>
+              <div><b>4 &middot; Launch</b><u>Week 4</u><span>Site goes live, with handoff notes and optional ongoing care</span></div>
+            </div>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">What to expect</p>
+            <a class="panel__headline" href="../index.html#contact">Start with a call <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">A typical site runs two to four weeks. You see the design before anything gets built, and nothing moves forward without your sign-off.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>2&ndash;4 weeks</li>
+              <li>Weekly check-ins</li>
+              <li>Approve before build</li>
+              <li>Handoff notes</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="../concepts/meridian.html">
+            <img src="../assets/img/work-meridian.webp" width="800" height="1597"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Meridian — architecture studio</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-about" data-spy="#about">
+          About
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-about">
+          <div class="panel__col">
+            <p class="panel__label">About</p>
+            <ul class="panel__list">
+              <li><a href="../index.html#about">Who I am</a></li>
+              <li><a href="../index.html#work">Selected work</a></li>
+              <li><a href="../index.html#contact">Get in touch</a></li>
+            </ul>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">Good to know</p>
+            <a class="panel__headline" href="../index.html#contact">Book a free consult <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Freelance, not an agency — you work with me directly from the first call through to launch and after. Day job is IT support; the master's is in cybersecurity management.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>Small businesses</li>
+              <li>Startups</li>
+              <li>Security background</li>
+              <li>Direct contact</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="../index.html#about">
+            <img src="../assets/img/portrait.webp" width="801" height="1200"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Jared Bangal</span>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Narrow screens only: collapses the four disclosures into an accordion
+       rather than a row that cannot fit. -->
+  <button class="nav__burger" type="button" data-nav-toggle
+          aria-expanded="false" aria-controls="nav-links">
+    <span class="nav__burger-label">Menu</span>
+    <span class="nav__burger-bars" aria-hidden="true"><i></i><i></i></span>
+  </button>
+
+  <div class="nav__actions">
+    <a class="nav__email" href="mailto:hello@jaredbangal.com">Log In</a>
+    <a class="btn btn--primary btn--sm" href="../index.html#contact">Get Started</a>
+  </div>
+</header>
+
+<main id="main">
+<section class="page-head shell" data-formation="sphere">
+    <p class="label">Concept &middot; Bakery</p>
+    <h1 class="h1 page-head__title">Bread worth getting up for</h1>
+    <p class="page-head__lead">A bakery whose best products are gone by lunchtime. Scarcity is real here, which makes it a design opportunity rather than a marketing trick.</p>
+  </section>
+
+  <section class="section section--tight-top shell" data-formation="polaris">
+    <div class="prose">
+      <dl class="case__meta">
+        <div>
+          <dt>Type</dt>
+          <dd>Concept &mdash; self-directed</dd>
+        </div>
+        <div>
+          <dt>Sector</dt>
+          <dd>Bakery</dd>
+        </div>
+        <div>
+          <dt>Typeface</dt>
+          <dd>Bricolage Grotesque throughout</dd>
+        </div>
+        <div>
+          <dt>Palette</dt>
+          <dd>
+            <ul class="case__swatches">
+              <li style="background: #F2C14E;" title="#F2C14E"><span class="u-visually-hidden">#F2C14E</span></li>
+              <li style="background: #C8501E;" title="#C8501E"><span class="u-visually-hidden">#C8501E</span></li>
+              <li style="background: #2E1B12;" title="#2E1B12"><span class="u-visually-hidden">#2E1B12</span></li>
+              <li style="background: #F8F1E8;" title="#F8F1E8"><span class="u-visually-hidden">#F8F1E8</span></li>
+            </ul>
+            Butter yellow, terracotta, dark cocoa
+          </dd>
+        </div>
+      </dl>
+
+      <h2>The premise</h2>
+      <p>A neighbourhood bakery with a daily bake list, a Saturday pre-order, and a sideline in classes.</p>
+
+      <h2>The problem</h2>
+      <p>The frustrating experience for a customer is arriving at eleven to find the sourdough gone. The frustrating experience for the bakery is throwing away what did not sell. Both are the same information problem, and a static 'our products' page solves neither.</p>
+
+      <h2>The approach</h2>
+      <h3>A schedule, not a catalogue</h3>
+      <p>The product section is organised by when things come out of the oven and roughly when they run out. That turns browsing into planning, which is the behaviour the bakery actually wants.</p>
+      <h3>Pre-order as the primary action</h3>
+      <p>One button, repeated at each decision point, doing the same thing. Pre-order is better for the customer and better for waste, so it earns the primary position rather than sharing it with a newsletter signup.</p>
+      <h3>Blocks of colour instead of photographs</h3>
+      <p>Butter yellow and terracotta laid in large flat fields carry the warmth, so the layout does not depend on having twelve excellent food photographs — which a bakery this size will not have and cannot fake.</p>
+      <h3>One typeface, worked hard</h3>
+      <p>Bricolage Grotesque covers display and text. Its variable width lets headlines get genuinely large without a second face, which keeps the page feeling like one voice.</p>
+
+      <h2>What I would want before building it for real</h2>
+      <p>The yellow is the loudest ground of the six. Every value on it was checked against the darkest textured patch rather than the flat colour, which is a meaningfully different number.</p>
+    </div>
+  </section>
+
+  <section class="section shell" data-formation="waves">
+    <figure class="case__figure">
+      <a href="../concepts/sunday.html">
+        <img class="case__shot" src="../assets/img/work-sunday.webp" width="800" height="1612"
+             alt="Sunday Bakehouse concept site design, full page." loading="lazy" decoding="async">
+      </a>
+      <figcaption class="case__caption">
+        The full page. <a class="link-underline" href="../concepts/sunday.html">Open the live concept</a>
+      </figcaption>
+    </figure>
+
+    <div class="prose">
+      <div class="prose__note">
+        <p><strong>This is a concept, not client work.</strong> Sunday Bakehouse is not a real business.
+          The site was designed and built end to end to work through a specific problem, and it is
+          shown here as design thinking rather than as a job I was hired to do.</p>
+      </div>
+
+      <nav class="pager" aria-label="More concepts">
+        <a href="kettle.html">
+          <span class="pager__dir">Previous</span>
+          <span class="pager__name">Kettle &amp; Co</span>
+        </a>
+        <a href="meridian.html">
+          <span class="pager__dir">Next</span>
+          <span class="pager__name">Meridian</span>
+        </a>
+      </nav>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer on-dark block--dark">
+  <div class="shell shell--flush footer__inner">
+    <p class="footer__wordmark">A website you can feel</p>
+    <div class="footer__meta">
+      <nav aria-label="Footer">
+        <ul class="footer__links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../services.html">Services</a></li>
+          <li><a href="../pricing.html">Pricing</a></li>
+          <li><a href="../index.html#work">Work</a></li>
+          <li><a href="../privacy.html">Privacy</a></li>
+          <li><a href="../terms.html">Terms</a></li>
+          <li><a href="mailto:hello@jaredbangal.com">Email</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© 2026 Jared Bangal</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="../assets/js/particles.js" defer></script>
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>

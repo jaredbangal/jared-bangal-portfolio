@@ -557,6 +557,13 @@ body  { background-color: var(--bg-page); }
   margin-bottom: var(--space-5);
 }
 
+/* .h1 and .h2 are the same setting. The distinction is semantic — one per
+   document versus one per section — and giving them different sizes would
+   make the secondary pages, where the h1 *is* the only head, look like they
+   were shouting at the home page. Defining .h1 at all matters: a bare <h1>
+   takes the browser's bold 2em default, which is exactly the thing this
+   site's whole type direction is against. */
+.h1,
 .h2 {
   font-size: var(--text-4xl);
   font-weight: var(--weight-display);
@@ -1921,11 +1928,12 @@ body  { background-color: var(--bg-page); }
 .acc__head:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 
 /* The tab title *is* the section heading, so it takes a display setting
-   rather than a control's — one step down from a full section head, since
-   it sits on a row with a control rather than centred in open space. */
+   rather than a control's — but two steps down from a full section head,
+   since it sits on a row with a control rather than centred in open space,
+   and the row is the widest measure on the page. */
 .acc__title {
   flex: 1;
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   font-weight: var(--weight-display);
   line-height: var(--leading-display);
   letter-spacing: var(--track-display);
@@ -2417,19 +2425,25 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 .form__status[data-state="success"] { color: var(--success); }
 
 /* ── Newsletter ─────────────────────────────────────────── */
+/* A footnote, not a section. It is the last thing before the footer and
+   asks for one field, so it takes a slimmer band than --band-tight and
+   pulls its internal rhythm in to match — at full section height an email
+   input floated in the middle of an empty screen. */
+.band--slim { padding-block: var(--space-14); }
+
 .newsletter { text-align: center; }
 .newsletter__title {
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   font-weight: var(--weight-display);
   line-height: var(--leading-display);
   letter-spacing: var(--track-display);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
 }
 .newsletter__text {
-  font-size: var(--text-md);
+  font-size: var(--text-xs);
   color: var(--text-muted);
   max-width: 46ch;
-  margin: 0 auto var(--space-8);
+  margin: 0 auto var(--space-5);
 }
 
 .newsletter__form {
@@ -2440,6 +2454,316 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 }
 .newsletter__form input { width: 320px; }
 .newsletter__status { flex: 1 0 100%; }
+
+/* ── Secondary pages ────────────────────────────────────── */
+/* Services, Pricing, the case studies and the legal pages. They share one
+   head so a visitor always knows they have left home without the nav having
+   to say so: label, title, one line of lead, and nothing else. There is no
+   hero stage and no photograph — the particle field carries the top of the
+   page on its own. */
+.page-head {
+  padding-top: calc(var(--nav-h) + var(--space-24));
+  padding-bottom: var(--space-16);
+  text-align: center;
+}
+.page-head__title {
+  max-width: 20ch;
+  margin: var(--space-4) auto var(--space-5);
+}
+.page-head__lead {
+  max-width: 54ch;
+  margin-inline: auto;
+  font-size: var(--text-md);
+  color: var(--text-muted);
+}
+/* A page head is the first thing under a transparent nav, so it cannot rely
+   on the reveal to bring it in — it is already on screen at load. */
+.page-head .reveal { opacity: 1; }
+
+/* Long-form prose: the legal pages, and any case-study body copy. Capped at
+   a reading measure and left-aligned, which is the one place on this site
+   that centred type would actively hurt. */
+.prose {
+  max-width: 68ch;
+  margin-inline: auto;
+}
+.prose h2 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  margin: var(--space-12) 0 var(--space-4);
+}
+.prose h2:first-child { margin-top: 0; }
+.prose h3 {
+  font-size: var(--text-lg);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  margin: var(--space-8) 0 var(--space-2);
+}
+.prose p,
+.prose li {
+  font-size: var(--text-xs);
+  line-height: var(--leading-body);
+  color: var(--text-body);
+}
+.prose p { margin-bottom: var(--space-4); }
+.prose ul { margin: 0 0 var(--space-4) var(--space-5); }
+.prose li { margin-bottom: var(--space-2); }
+.prose a { color: var(--text-primary); text-underline-offset: 3px; }
+.prose a:hover { color: var(--accent-ink-hover); }
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .92em;
+  padding: .1em .35em;
+  border-radius: var(--radius-xs);
+  background: var(--bg-chip);
+}
+.prose__meta {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  margin-bottom: var(--space-10);
+}
+/* A standing note the reader should not skim past — used where a page says
+   something about itself rather than to the reader. */
+.prose__note {
+  border-left: 2px solid var(--accent-ink);
+  padding: var(--space-4) 0 var(--space-1) var(--space-5);
+  margin-bottom: var(--space-8);
+}
+.prose__note p:last-child { margin-bottom: 0; }
+
+/* ── Services page ──────────────────────────────────────── */
+/* One row per service, alternating nothing — the rule and the numeral do
+   the separating, the same language the home page's Services tab uses. */
+.svc-row {
+  display: grid;
+  grid-template-columns: 4rem 1fr 20rem;
+  gap: var(--space-10);
+  padding: var(--space-14) 0;
+  border-top: 1px solid var(--border-strong);
+  scroll-margin-top: calc(var(--nav-h) + var(--space-8));
+}
+.svc-row:last-child { border-bottom: 1px solid var(--border-strong); }
+.svc-row__num {
+  font-size: var(--text-md);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.svc-row__title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  margin-bottom: var(--space-3);
+}
+.svc-row__text {
+  font-size: var(--text-xs);
+  line-height: var(--leading-body);
+  color: var(--text-body);
+  max-width: 52ch;
+  margin-bottom: var(--space-5);
+}
+.svc-row__list { list-style: none; margin: 0; padding: 0; }
+.svc-row__list li {
+  font-size: var(--text-2xs);
+  line-height: var(--leading-body);
+  color: var(--text-muted);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.svc-row__list li:last-child { border-bottom: 0; }
+.svc-row__aside {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  line-height: var(--leading-body);
+}
+.svc-row__price {
+  display: block;
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Pricing page ───────────────────────────────────────── */
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+.price-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--space-8) var(--space-6) var(--space-8);
+  box-shadow: var(--shadow-1);
+  scroll-margin-top: calc(var(--nav-h) + var(--space-8));
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.price-card__name {
+  font-size: var(--text-lg);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  margin-bottom: var(--space-2);
+}
+.price-card__fig {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-display);
+  line-height: 1;
+  letter-spacing: var(--track-display);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--space-1);
+}
+.price-card__unit {
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  margin-bottom: var(--space-6);
+}
+.price-card__text {
+  font-size: var(--text-xs);
+  line-height: var(--leading-body);
+  color: var(--text-body);
+  margin-bottom: var(--space-6);
+}
+.price-card__list { list-style: none; margin: 0 0 var(--space-8); padding: 0; }
+.price-card__list li {
+  font-size: var(--text-2xs);
+  line-height: var(--leading-body);
+  color: var(--text-muted);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.price-card__list li:last-child { border-bottom: 0; }
+.price-card .btn { margin-top: auto; }
+
+/* ── Case studies ───────────────────────────────────────── */
+.case__meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+  padding: var(--space-8) 0;
+  border-block: 1px solid var(--border-strong);
+  margin-bottom: var(--space-16);
+}
+.case__meta dt {
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+.case__meta dd {
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: var(--leading-body);
+  color: var(--text-body);
+}
+/* The render. Shown whole rather than cropped — the point of the page is
+   the layout, so a fold across it defeats the exercise. */
+.case__shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-2);
+}
+.case__figure { margin: 0 0 var(--space-16); }
+.case__caption {
+  margin-top: var(--space-3);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  text-align: center;
+}
+.case__swatches {
+  display: flex;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+}
+.case__swatches li {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Previous / next between the six. A pager is not a nav bar — it names the
+   destination rather than pointing at an arrow and hoping. */
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  border-top: 1px solid var(--border-strong);
+  padding-top: var(--space-8);
+}
+.pager a {
+  text-decoration: none;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.pager a:last-child { text-align: right; }
+.pager__dir {
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+.pager__name {
+  font-size: var(--text-lg);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  transition: color var(--dur-fast) var(--ease-in-out);
+}
+.pager a:hover .pager__name { color: var(--accent-ink-hover); }
+
+/* ── 404 ────────────────────────────────────────────────── */
+.notfound {
+  min-height: calc(100svh - var(--nav-h));
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: var(--space-24) var(--gutter);
+}
+.notfound__code {
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+.notfound__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-8);
+}
+
+@media (max-width: 900px) {
+  .svc-row { grid-template-columns: 3rem 1fr; }
+  .svc-row__aside { grid-column: 2; }
+  .price-grid { grid-template-columns: 1fr; max-width: 30rem; margin-inline: auto; }
+  .case__meta { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 620px) {
+  .page-head { padding-top: calc(var(--nav-h) + var(--space-12)); }
+  .svc-row { grid-template-columns: 1fr; gap: var(--space-5); }
+  .svc-row__aside { grid-column: 1; }
+  .case__meta { grid-template-columns: 1fr; }
+  .pager { grid-template-columns: 1fr; }
+  .pager a:last-child { text-align: left; }
+}
 
 /* ── Footer ─────────────────────────────────────────────── */
 .footer {

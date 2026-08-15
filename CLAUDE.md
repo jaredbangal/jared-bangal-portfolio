@@ -4,7 +4,16 @@ Static site. No build step, no framework, no package manager. Plain HTML, one
 stylesheet, two progressive-enhancement scripts.
 
 ```
-index.html              Home (the only real page)
+index.html              Home
+services.html           the four services in full
+pricing.html            the three packages, and how quoting works
+privacy.html            what the site collects (and mostly does not)
+terms.html              how a project runs, in plain English
+404.html                Vercel serves this automatically
+work/<slug>.html        six concept case studies
+tools/build_pages.py    assembles every page above from index.html's nav
+tools/build_cases.py    writes the six case-study fragments
+tools/fragments/        the body of each generated page — edit these
 assets/css/styles.css   all styles
 assets/js/main.js       nav, reveals, hero stage, marquee, carousel, forms
 assets/js/particles.js  the WebGL field
@@ -308,6 +317,46 @@ descendants.
 - **The pause button is the WCAG 2.2.2 mechanism** and is built by `main.js`, not
   the HTML — a pause control for an animation that never starts is a dead control.
 - End fades are a `mask-image`, not an overlay that would hard-code `--bg-band`.
+
+## Pages
+
+Eleven pages besides the home page, and **every one of them is generated**:
+
+```bash
+python3 tools/build_cases.py   # rewrites the six case-study fragments
+python3 tools/build_pages.py   # wraps every fragment in the nav, head and footer
+```
+
+**There is still no build step to *serve* this site.** The generator's output is
+plain static HTML, committed, and served as-is. It exists because the nav is 180
+lines of markup: eleven hand-maintained copies would be eleven copies to forget.
+
+- **`index.html` is the single source for the nav and footer.** Edit them there,
+  re-run `build_pages.py`, commit the result. Never edit the generated pages —
+  same contract as the concept pages' responsive patch.
+- **Body content lives in `tools/fragments/`**, each with a `<!--meta -->` header
+  giving its path, title and description.
+- `retarget()` does three things to its copy of the nav: prefixes `../` at depth,
+  turns a bare `#anchor` into `index.html#anchor` **unless the page declares that
+  id itself**, and moves `aria-current="page"` to whichever link is this page.
+- **`.h1` and `.h2` are deliberately the same size.** The distinction is semantic.
+  Defining `.h1` at all is the point: a bare `<h1>` takes the browser's bold 2em
+  default, which is exactly what this site's type direction is against — and it
+  shipped that way for one build before being caught.
+
+**The case studies are concepts and say so three times** — the eyebrow, the meta
+row, and a standing note above the pager. There is no client work here yet, and a
+portfolio that blurs that line is lying. `build_cases.py` derives the pager from
+`ORDER`, so the six cannot drift out of sequence.
+
+**Two pages carry a `NOTE FOR JARED` comment in their fragment**, not on the page:
+`privacy.html` lists the two paragraphs that must change the day the form gets an
+endpoint, and `terms.html` records that every clause restates something the site
+already claims elsewhere. Keep both in step.
+
+**Nothing on `privacy.html` is aspirational.** It describes what the site does
+today, including the fact that the forms are not connected. The Google Fonts and
+cdnjs entries are there because both genuinely receive the visitor's IP.
 
 ## Page order
 

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms of engagement — Jared Bangal</title>
+<meta name="description" content="How a project runs: fixed quotes, two design rounds, 50% to start, and you own everything at the end.">
+<meta name="theme-color" content="#E4E2DC">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jared-bangal-portfolio.vercel.app/terms.html">
+<meta property="og:title" content="Terms of engagement — Jared Bangal">
+<meta property="og:description" content="How a project runs: fixed quotes, two design rounds, 50% to start, and you own everything at the end.">
+<meta property="og:image" content="https://jared-bangal-portfolio.vercel.app/assets/img/portrait.webp">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="nav-sentinel" aria-hidden="true"></div>
+<canvas id="field" aria-hidden="true"></canvas>
+
+<header class="nav" data-nav>
+  <a class="nav__brand" href="index.html">
+    <span class="nav__mark" aria-hidden="true">JB</span>
+    Jared Bangal
+  </a>
+
+  <nav class="nav__links" id="nav-links" aria-label="Primary">
+    <ul>
+      <!-- Triggers are buttons, not links: they disclose a panel rather than
+           navigate. The destination lives inside the panel. -->
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-services" data-spy="#services">
+          Services
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-services">
+          <div class="panel__col">
+            <p class="panel__label">Services</p>
+            <ul class="panel__list">
+              <li><a href="services.html#web-design">Web Design</a></li>
+              <li><a href="services.html#brand-identity">Brand Identity</a></li>
+              <li><a href="services.html#portfolio-sites">Portfolio Sites</a></li>
+              <li><a href="services.html#site-care">Site Care &amp; SEO</a></li>
+            </ul>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">Explore</p>
+            <a class="panel__headline" href="index.html#work">Concept work <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Six self-directed site designs — a floral studio, a barber shop, a roaster, a bakery, an architecture practice, a bike shop.</p>
+            <ul class="panel__pills">
+              <li><a href="concepts/botanica.html">Botanica</a></li>
+              <li><a href="concepts/borough.html">Borough Barber</a></li>
+              <li><a href="concepts/kettle.html">Kettle &amp; Co</a></li>
+              <li><a href="concepts/sunday.html">Sunday Bakehouse</a></li>
+              <li><a href="concepts/meridian.html">Meridian</a></li>
+              <li><a href="concepts/northline.html">Northline Cycles</a></li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/botanica.html">
+            <img src="assets/img/work-botanica.webp" width="800" height="1816"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Botanica — floral studio</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-pricing">
+          Pricing
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-pricing">
+          <div class="panel__col">
+            <p class="panel__label">Packages</p>
+            <div class="panel__facts">
+              <div><b>Landing page</b><u>from $300</u><span>One page, built around a single action</span></div>
+              <div><b>Full site</b><u>from $1,200</u><span>Four to six pages, design and build</span></div>
+              <div><b>Site care</b><u>$120 / month</u><span>Updates, fixes, and SEO basics</span></div>
+            </div>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">What's included</p>
+            <a class="panel__headline" href="pricing.html">See full pricing <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Every project includes the consult call, design rounds, the build, and handoff notes. No retainers required, no lock-in.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>Fixed quote</li>
+              <li>2 design rounds</li>
+              <li>You own everything</li>
+              <li>50% to start</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/sunday.html">
+            <img src="assets/img/work-sunday.webp" width="800" height="1612"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Sunday Bakehouse — bakery</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-process">
+          Process
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-process">
+          <div class="panel__col">
+            <p class="panel__label">How it works</p>
+            <div class="panel__facts">
+              <div><b>1 &middot; Discover</b><u>Week 1</u><span>A short call about your business, your audience, and what the site needs to do</span></div>
+              <div><b>2 &middot; Design</b><u>Week 1&ndash;2</u><span>Layout and visual direction, shared for feedback before anything is built</span></div>
+              <div><b>3 &middot; Build</b><u>Week 2&ndash;3</u><span>Your site gets built, tested, and refined with you along the way</span></div>
+              <div><b>4 &middot; Launch</b><u>Week 4</u><span>Site goes live, with handoff notes and optional ongoing care</span></div>
+            </div>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">What to expect</p>
+            <a class="panel__headline" href="index.html#contact">Start with a call <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">A typical site runs two to four weeks. You see the design before anything gets built, and nothing moves forward without your sign-off.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>2&ndash;4 weeks</li>
+              <li>Weekly check-ins</li>
+              <li>Approve before build</li>
+              <li>Handoff notes</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/meridian.html">
+            <img src="assets/img/work-meridian.webp" width="800" height="1597"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Meridian — architecture studio</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-about" data-spy="#about">
+          About
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-about">
+          <div class="panel__col">
+            <p class="panel__label">About</p>
+            <ul class="panel__list">
+              <li><a href="index.html#about">Who I am</a></li>
+              <li><a href="index.html#work">Selected work</a></li>
+              <li><a href="index.html#contact">Get in touch</a></li>
+            </ul>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">Good to know</p>
+            <a class="panel__headline" href="index.html#contact">Book a free consult <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Freelance, not an agency — you work with me directly from the first call through to launch and after. Day job is IT support; the master's is in cybersecurity management.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>Small businesses</li>
+              <li>Startups</li>
+              <li>Security background</li>
+              <li>Direct contact</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="index.html#about">
+            <img src="assets/img/portrait.webp" width="801" height="1200"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Jared Bangal</span>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Narrow screens only: collapses the four disclosures into an accordion
+       rather than a row that cannot fit. -->
+  <button class="nav__burger" type="button" data-nav-toggle
+          aria-expanded="false" aria-controls="nav-links">
+    <span class="nav__burger-label">Menu</span>
+    <span class="nav__burger-bars" aria-hidden="true"><i></i><i></i></span>
+  </button>
+
+  <div class="nav__actions">
+    <a class="nav__email" href="mailto:hello@jaredbangal.com">Log In</a>
+    <a class="btn btn--primary btn--sm" href="index.html#contact">Get Started</a>
+  </div>
+</header>
+
+<main id="main">
+<!-- NOTE FOR JARED, not shown on the page:
+     Every clause here restates something the site already promises — the
+     four chips in the Pricing panel, the four Process steps, and the FAQ.
+     If you change any of those, change this to match.
+     It is a plain-English summary of how you work, not a contract, and it
+     says so. Have it looked at before you rely on it in a dispute. -->
+  <section class="page-head shell" data-formation="sphere">
+    <p class="label">Terms</p>
+    <h1 class="h1 page-head__title">How a project runs.</h1>
+    <p class="page-head__lead">The working agreement in plain English, so nothing about it is a
+      surprise halfway through.</p>
+  </section>
+
+  <section class="section section--tight-top shell" data-formation="polaris">
+    <div class="prose">
+      <p class="prose__meta">Last updated 15 August 2026</p>
+
+      <div class="prose__note">
+        <p>This page describes how I work. It is a summary, not a contract — each project gets its
+          own written quote, and that quote is what governs the work. Where the two disagree, the
+          quote wins.</p>
+      </div>
+
+      <h2>Quotes</h2>
+      <p>Every project is quoted as a fixed number in writing before anything starts. The quote
+        says what is included and what is not. It holds for 30 days.</p>
+      <p>If the scope changes after we start — more pages, a logo that was not in the original
+        plan, content that turns out not to exist — the change is quoted before the work happens,
+        not billed afterwards.</p>
+
+      <h2>Payment</h2>
+      <ul>
+        <li>50% to start. That is what books the time.</li>
+        <li>The remaining 50% on launch, before the site goes to your domain.</li>
+        <li>Site care, if you take it, is monthly and can be cancelled at any time. Cancelling
+          stops the next month; it does not claw back the last one.</li>
+      </ul>
+      <p>Domain registration, hosting fees, stock photography and paid font licences are yours and
+        are paid to the provider directly. They are named in the quote when a project needs them.</p>
+
+      <h2>Feedback and revisions</h2>
+      <p>Two rounds of design feedback are included. A round means you look at the work, collect
+        your thoughts, and send them in one go — that is what makes two rounds enough. Further
+        rounds are possible and are quoted before they happen.</p>
+      <p>Small corrections during the build (a typo, a wrong phone number, a swapped photo) are not
+        a round and are not counted.</p>
+
+      <h2>Timelines</h2>
+      <p>A typical site runs two to four weeks: discover, design, build, launch. That assumes
+        feedback comes back within a few days and that your content — text, photos, logo — is
+        available when the build starts.</p>
+      <p>If content is late the timeline moves. I will tell you as soon as that becomes true rather
+        than at the end.</p>
+
+      <h2>What you own</h2>
+      <p>Everything, once the final payment clears: the design, the files, the domain, the hosting
+        account, and the site itself. Accounts are created in your name where possible and
+        transferred where not. Nothing is held on my side as leverage.</p>
+      <p>Two limits, and they are the normal ones. Fonts, stock photography and any third-party
+        code stay under their own licences, which are passed to you. And I keep the right to show
+        the work in my own portfolio — if a project needs to stay private, say so and it will.</p>
+
+      <h2>Cancelling</h2>
+      <p>You can stop a project at any point. The deposit covers work already done and is not
+        refundable; anything paid beyond the work completed is returned. You keep whatever has
+        been produced up to that point.</p>
+      <p>I would only stop a project in extreme circumstances — non-payment, or being asked to
+        build something I think is dishonest. In that case you get everything completed to date and
+        anything paid for work not done comes back.</p>
+
+      <h2>What I do not promise</h2>
+      <p>I cannot promise search rankings, traffic numbers or sales. Anyone who does is guessing.
+        What I will do is build the site so those things are possible: fast, structured properly,
+        readable on a phone, and described correctly to search engines.</p>
+      <p>Once a site is handed over and edited by other people, it is theirs — including whatever
+        happens to it after that.</p>
+
+      <h2>Questions</h2>
+      <p>Ask before you sign anything, not after. <a href="mailto:hello@jaredbangal.com">Email
+        me</a> and I will answer plainly.</p>
+    </div>
+  </section>
+
+  <section class="section shell" data-formation="sphere">
+    <div class="prose" style="text-align: center;">
+      <p><a class="btn btn--primary" href="index.html#contact">Start a project</a></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer on-dark block--dark">
+  <div class="shell shell--flush footer__inner">
+    <p class="footer__wordmark">A website you can feel</p>
+    <div class="footer__meta">
+      <nav aria-label="Footer">
+        <ul class="footer__links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="index.html#work">Work</a></li>
+          <li><a href="privacy.html">Privacy</a></li>
+          <li><a href="terms.html" aria-current="page">Terms</a></li>
+          <li><a href="mailto:hello@jaredbangal.com">Email</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© 2026 Jared Bangal</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="assets/js/particles.js" defer></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pricing — Jared Bangal</title>
+<meta name="description" content="Landing pages from $300, full sites from $1,200, ongoing site care at $120 a month. Fixed quotes, two design rounds, 50% to start, and you own everything.">
+<meta name="theme-color" content="#E4E2DC">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jared-bangal-portfolio.vercel.app/pricing.html">
+<meta property="og:title" content="Pricing — Jared Bangal">
+<meta property="og:description" content="Landing pages from $300, full sites from $1,200, ongoing site care at $120 a month. Fixed quotes, two design rounds, 50% to start, and you own everything.">
+<meta property="og:image" content="https://jared-bangal-portfolio.vercel.app/assets/img/portrait.webp">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="nav-sentinel" aria-hidden="true"></div>
+<canvas id="field" aria-hidden="true"></canvas>
+
+<header class="nav" data-nav>
+  <a class="nav__brand" href="index.html">
+    <span class="nav__mark" aria-hidden="true">JB</span>
+    Jared Bangal
+  </a>
+
+  <nav class="nav__links" id="nav-links" aria-label="Primary">
+    <ul>
+      <!-- Triggers are buttons, not links: they disclose a panel rather than
+           navigate. The destination lives inside the panel. -->
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-services" data-spy="#services">
+          Services
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-services">
+          <div class="panel__col">
+            <p class="panel__label">Services</p>
+            <ul class="panel__list">
+              <li><a href="services.html#web-design">Web Design</a></li>
+              <li><a href="services.html#brand-identity">Brand Identity</a></li>
+              <li><a href="services.html#portfolio-sites">Portfolio Sites</a></li>
+              <li><a href="services.html#site-care">Site Care &amp; SEO</a></li>
+            </ul>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">Explore</p>
+            <a class="panel__headline" href="index.html#work">Concept work <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Six self-directed site designs — a floral studio, a barber shop, a roaster, a bakery, an architecture practice, a bike shop.</p>
+            <ul class="panel__pills">
+              <li><a href="concepts/botanica.html">Botanica</a></li>
+              <li><a href="concepts/borough.html">Borough Barber</a></li>
+              <li><a href="concepts/kettle.html">Kettle &amp; Co</a></li>
+              <li><a href="concepts/sunday.html">Sunday Bakehouse</a></li>
+              <li><a href="concepts/meridian.html">Meridian</a></li>
+              <li><a href="concepts/northline.html">Northline Cycles</a></li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/botanica.html">
+            <img src="assets/img/work-botanica.webp" width="800" height="1816"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Botanica — floral studio</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-pricing">
+          Pricing
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-pricing">
+          <div class="panel__col">
+            <p class="panel__label">Packages</p>
+            <div class="panel__facts">
+              <div><b>Landing page</b><u>from $300</u><span>One page, built around a single action</span></div>
+              <div><b>Full site</b><u>from $1,200</u><span>Four to six pages, design and build</span></div>
+              <div><b>Site care</b><u>$120 / month</u><span>Updates, fixes, and SEO basics</span></div>
+            </div>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">What's included</p>
+            <a class="panel__headline" href="pricing.html" aria-current="page">See full pricing <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Every project includes the consult call, design rounds, the build, and handoff notes. No retainers required, no lock-in.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>Fixed quote</li>
+              <li>2 design rounds</li>
+              <li>You own everything</li>
+              <li>50% to start</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/sunday.html">
+            <img src="assets/img/work-sunday.webp" width="800" height="1612"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Sunday Bakehouse — bakery</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-process">
+          Process
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-process">
+          <div class="panel__col">
+            <p class="panel__label">How it works</p>
+            <div class="panel__facts">
+              <div><b>1 &middot; Discover</b><u>Week 1</u><span>A short call about your business, your audience, and what the site needs to do</span></div>
+              <div><b>2 &middot; Design</b><u>Week 1&ndash;2</u><span>Layout and visual direction, shared for feedback before anything is built</span></div>
+              <div><b>3 &middot; Build</b><u>Week 2&ndash;3</u><span>Your site gets built, tested, and refined with you along the way</span></div>
+              <div><b>4 &middot; Launch</b><u>Week 4</u><span>Site goes live, with handoff notes and optional ongoing care</span></div>
+            </div>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">What to expect</p>
+            <a class="panel__headline" href="index.html#contact">Start with a call <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">A typical site runs two to four weeks. You see the design before anything gets built, and nothing moves forward without your sign-off.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>2&ndash;4 weeks</li>
+              <li>Weekly check-ins</li>
+              <li>Approve before build</li>
+              <li>Handoff notes</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/meridian.html">
+            <img src="assets/img/work-meridian.webp" width="800" height="1597"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Meridian — architecture studio</span>
+          </a>
+        </div>
+      </li>
+
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-about" data-spy="#about">
+          About
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-about">
+          <div class="panel__col">
+            <p class="panel__label">About</p>
+            <ul class="panel__list">
+              <li><a href="index.html#about">Who I am</a></li>
+              <li><a href="index.html#work">Selected work</a></li>
+              <li><a href="index.html#contact">Get in touch</a></li>
+            </ul>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">Good to know</p>
+            <a class="panel__headline" href="index.html#contact">Book a free consult <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">Freelance, not an agency — you work with me directly from the first call through to launch and after. Day job is IT support; the master's is in cybersecurity management.</p>
+            <ul class="panel__pills panel__pills--static">
+              <li>Small businesses</li>
+              <li>Startups</li>
+              <li>Security background</li>
+              <li>Direct contact</li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="index.html#about">
+            <img src="assets/img/portrait.webp" width="801" height="1200"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Jared Bangal</span>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Narrow screens only: collapses the four disclosures into an accordion
+       rather than a row that cannot fit. -->
+  <button class="nav__burger" type="button" data-nav-toggle
+          aria-expanded="false" aria-controls="nav-links">
+    <span class="nav__burger-label">Menu</span>
+    <span class="nav__burger-bars" aria-hidden="true"><i></i><i></i></span>
+  </button>
+
+  <div class="nav__actions">
+    <a class="nav__email" href="mailto:hello@jaredbangal.com">Log In</a>
+    <a class="btn btn--primary btn--sm" href="index.html#contact">Get Started</a>
+  </div>
+</header>
+
+<main id="main">
+<section class="page-head shell" data-formation="sphere">
+    <p class="label">Pricing</p>
+    <h1 class="h1 page-head__title">What it costs.</h1>
+    <p class="page-head__lead">Starting figures, not a menu. Every project gets a fixed quote
+      before it begins, so the number you agree to is the number you pay.</p>
+  </section>
+
+  <section class="section section--tight-top shell" data-formation="polaris">
+    <div class="price-grid">
+      <article class="price-card reveal" id="landing-page">
+        <h2 class="price-card__name">Landing page</h2>
+        <p class="price-card__fig">from $300</p>
+        <p class="price-card__unit">one page, one job</p>
+        <p class="price-card__text">One page, built around a single action — book, call, order,
+          sign up. The right starting point if you mostly need to exist properly online and give
+          people one obvious thing to do.</p>
+        <ul class="price-card__list">
+          <li>Design and build</li>
+          <li>Contact or booking form</li>
+          <li>Mobile, tablet and desktop</li>
+          <li>Basic search setup</li>
+          <li>Handoff notes</li>
+        </ul>
+        <a class="btn btn--primary" href="index.html#contact">Ask about this</a>
+      </article>
+
+      <article class="price-card reveal" id="full-site">
+        <h2 class="price-card__name">Full site</h2>
+        <p class="price-card__fig">from $1,200</p>
+        <p class="price-card__unit">four to six pages</p>
+        <p class="price-card__text">Four to six pages, designed and built together. Home, services
+          or menu, about, contact, and whatever else your business actually needs — decided in the
+          first call rather than assumed.</p>
+        <ul class="price-card__list">
+          <li>Everything in the landing page</li>
+          <li>Page structure and content plan</li>
+          <li>Photography direction if you need it</li>
+          <li>Two rounds of design feedback</li>
+          <li>Handoff notes and a walkthrough</li>
+        </ul>
+        <a class="btn btn--primary" href="index.html#contact">Ask about this</a>
+      </article>
+
+      <article class="price-card reveal" id="site-care">
+        <h2 class="price-card__name">Site care</h2>
+        <p class="price-card__fig">$120</p>
+        <p class="price-card__unit">per month, cancel any time</p>
+        <p class="price-card__text">Updates, fixes, and the search-visibility basics, month to
+          month. Optional — plenty of sites are handed over and never need it.</p>
+        <ul class="price-card__list">
+          <li>Content and image updates</li>
+          <li>Titles, descriptions, structure</li>
+          <li>Speed and broken-link checks</li>
+          <li>A monthly note on what changed</li>
+          <li>No lock-in, no minimum term</li>
+        </ul>
+        <a class="btn btn--primary" href="index.html#contact">Ask about this</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="band on-dark block--dark" data-formation="waves">
+    <div class="shell prose">
+      <h2>How quoting works</h2>
+      <p>The figures above are starting points. What moves them is scope — how many pages, how much
+        content already exists, whether you need photography or a logo, and how much of the writing
+        falls to me.</p>
+      <p>So the first call is mostly questions. After it you get one number for the whole project,
+        in writing, before anything starts. If the scope changes later, the number is re-quoted
+        before the work happens rather than after.</p>
+
+      <h3>What every project includes</h3>
+      <ul>
+        <li><strong>A fixed quote.</strong> One number, agreed before work starts.</li>
+        <li><strong>Two rounds of design feedback.</strong> Enough to get it right; structured
+          enough that it ends.</li>
+        <li><strong>You own everything.</strong> The files, the domain, the accounts. Nothing is
+          held on my side.</li>
+        <li><strong>50% to start</strong>, the rest on launch.</li>
+      </ul>
+
+      <h3>What is not included</h3>
+      <ul>
+        <li>Domain registration and hosting fees — usually $15–30 a year for a domain, and hosting
+          that is often free at this size. Paid to the provider, not to me.</li>
+        <li>Stock photography or paid font licences, if a project needs them.</li>
+        <li>Ongoing care, unless you want it — it is the monthly figure above, not a requirement.</li>
+      </ul>
+
+      <h3>If the budget is not there yet</h3>
+      <p>Say so on the first call. A one-page site done properly beats a five-page site done
+        cheaply, and it is easy to grow later — that is most of the reason the landing page starts
+        where it does.</p>
+    </div>
+  </section>
+
+  <section class="section shell" data-formation="sphere">
+    <div class="prose" style="text-align: center;">
+      <h2>Get a real number.</h2>
+      <p>Tell me what you are building and roughly what you have in mind to spend. The consult call
+        is free and there is no obligation at the end of it.</p>
+      <p><a class="btn btn--primary" href="index.html#contact">Get started</a></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer on-dark block--dark">
+  <div class="shell shell--flush footer__inner">
+    <p class="footer__wordmark">A website you can feel</p>
+    <div class="footer__meta">
+      <nav aria-label="Footer">
+        <ul class="footer__links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pricing.html" aria-current="page">Pricing</a></li>
+          <li><a href="index.html#work">Work</a></li>
+          <li><a href="privacy.html">Privacy</a></li>
+          <li><a href="terms.html">Terms</a></li>
+          <li><a href="mailto:hello@jaredbangal.com">Email</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© 2026 Jared Bangal</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="assets/js/particles.js" defer></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
