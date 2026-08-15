@@ -7,6 +7,7 @@ stylesheet, two progressive-enhancement scripts.
 index.html              Home
 services.html           the four services in full
 pricing.html            the three packages, and how quoting works
+products.html           digital products — nothing on sale yet, and it says so
 privacy.html            what the site collects (and mostly does not)
 terms.html              how a project runs, in plain English
 404.html                Vercel serves this automatically
@@ -201,8 +202,8 @@ Six concept sites on a self-advancing track, cut off by the fold. Mechanics:
 
 ## Nav panels
 
-Four disclosures — Services, Pricing, Process, About — all one three-column shape
-(index / explore / promo). Keep new ones to that shape.
+Five disclosures — Services, Pricing, Products, Process, About — all one
+three-column shape (index / explore / promo). Keep new ones to that shape.
 
 - **Process is a panel without a page section**, deliberately. Column one is links
   where destinations exist and `.panel__facts` rows where they do not.
@@ -212,9 +213,18 @@ Four disclosures — Services, Pricing, Process, About — all one three-column 
   `visibility`, not `display`. The caret is `.nav__panel::before` at `--caret-x`,
   **not a child element** — a real element would take a column's `nth-child`
   stagger. Its border is `--border-strong`, or the arrow is invisible.
-- **Below 901px the bar becomes a drawer** and panels an accordion. The JS
+- **`.panel__cta` is a filled button to the disclosure's own page**, on Services,
+  Pricing and Products only. Column one indexes anchors *within* a page; without
+  this the page itself has no entry from the nav, which is how four pages ended
+  up reachable only from the footer. Process has no page by design and About's
+  destination is already its first link — **a button to nowhere is worse than no
+  button.**
+- **Below 1025px the bar becomes a drawer** and panels an accordion. The JS
   breakpoint (`barLayout`) must stay in step with the CSS one — hover opens
-  panels in the bar layout only.
+  panels in the bar layout only. **It moved from 901px when the fifth trigger
+  landed**: five triggers need ~1024px of bar, and between 902 and 980 the row
+  ran past the viewport edge. The row gap also drops to `--space-8` below 1180px.
+  **Re-measure the bar at every width if a sixth is ever added.**
 - Triggers are `<button aria-expanded>`, not links. Hover is never the only way
   in: click, Enter, Space, Escape, a 220ms `mouseleave` grace, focus returned to
   the trigger.
@@ -383,10 +393,11 @@ row, and a standing note above the pager. There is no client work here yet, and 
 portfolio that blurs that line is lying. `build_cases.py` derives the pager from
 `ORDER`, so the six cannot drift out of sequence.
 
-**Two pages carry a `NOTE FOR JARED` comment in their fragment**, not on the page:
-`privacy.html` lists the two paragraphs that must change the day the form gets an
-endpoint, and `terms.html` records that every clause restates something the site
-already claims elsewhere. Keep both in step.
+**Three pages carry a `NOTE FOR JARED` comment in their fragment**, not on the
+page: `privacy.html` lists the paragraphs that must change the day the form gets
+an endpoint, `terms.html` records that every clause restates something the site
+already claims elsewhere, and `products.html` says what to replace when the first
+product is real.
 
 **Nothing on `privacy.html` is aspirational.** It describes what the site does
 today, including the fact that the forms are not connected. The Google Fonts and
@@ -507,7 +518,13 @@ pages get built.
   site, $120/month care. They live in the nav Pricing panel only, and the contact
   form's budget placeholder tracks the range ("e.g. New site, $300–1,200") — move
   it whenever the figures move.
-- **Forms post to `action="#"`.** `main.js` refuses that honestly rather than
+- **Nothing is for sale on `products.html`, and the page says so.** No items, no
+prices, no checkout, because none exist — a nav entry promising a shop and
+delivering invented products is the same lie as an invented review. The Products
+panel reads "In development" for the same reason. **Do not put a price or a buy
+button there before there is something to buy.**
+
+**Forms post to `action="#"`.** `main.js` refuses that honestly rather than
   faking success, but the form cannot work until it has a real endpoint.
 - **Confirm the licence on the supplied photography.** `process-bench.webp` came
   in as `neatly-kept-jewelers-desk.jpg`; a commercial site needs licences on
