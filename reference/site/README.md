@@ -49,6 +49,11 @@ section below the fold. Both accordions are opened before capture.
   wrong in these by design; they are for structure and rhythm only.
 - `nav-<panel>-1440.webp` — the four nav panels open.
 - `concept-<slug>.webp` — the six concept pages, full-page at 1200.
+- `page-<name>.webp` — the generated pages (services, pricing, privacy, terms,
+  404, and two case studies), full-page at 1440. One width each: these are prose
+  and cards rather than layered effects, so a section-by-section sweep of them
+  would be noise. Only two of the six case studies are captured — they share one
+  template, so the other four differ in wording alone.
 - `motion-1440.webp` — the standalone particle study.
 
 ### fonts/

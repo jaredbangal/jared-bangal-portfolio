@@ -172,21 +172,21 @@
       "home-full-1440.webp",
       [
         900,
-        4261
+        4178
       ]
     ],
     [
       "home-full-860.webp",
       [
         860,
-        7635
+        7590
       ]
     ],
     [
       "home-full-390.webp",
       [
         390,
-        7353
+        7278
       ]
     ],
     [
@@ -236,6 +236,55 @@
       [
         1440,
         900
+      ]
+    ],
+    [
+      "page-services.webp",
+      [
+        900,
+        2185
+      ]
+    ],
+    [
+      "page-pricing.webp",
+      [
+        900,
+        1718
+      ]
+    ],
+    [
+      "page-privacy.webp",
+      [
+        900,
+        1879
+      ]
+    ],
+    [
+      "page-terms.webp",
+      [
+        900,
+        1765
+      ]
+    ],
+    [
+      "page-404.webp",
+      [
+        900,
+        690
+      ]
+    ],
+    [
+      "page-work-botanica.webp",
+      [
+        900,
+        3322
+      ]
+    ],
+    [
+      "page-work-northline.webp",
+      [
+        900,
+        2951
       ]
     ]
   ],

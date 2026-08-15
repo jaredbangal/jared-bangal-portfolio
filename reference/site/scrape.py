@@ -18,6 +18,10 @@ SHOT = OUT / "screens"
 SHOT.mkdir(parents=True, exist_ok=True)
 
 CONCEPTS = ["botanica", "borough", "kettle", "sunday", "meridian", "northline"]
+# The generated pages. Captured at one width each — they are prose and cards,
+# not layered effects, so a section-by-section sweep would be noise.
+PAGES = ["services.html", "pricing.html", "privacy.html", "terms.html",
+         "404.html", "work/botanica.html", "work/northline.html"]
 SECTIONS = ["stats", "intro", "work", "about", "feedback",
             "services", "faq", "contact", "newsletter"]
 
@@ -178,6 +182,17 @@ def main():
         pg.wait_for_timeout(2500)
         manifest["screens"].append(save(pg.screenshot(), SHOT / "motion-1440.webp"))
         pg.close()
+
+        # ── the generated pages ─────────────────────────────────────
+        for path in PAGES:
+            tag = path.replace("/", "-").replace(".html", "")
+            pg = b.new_page(viewport={"width": 1440, "height": 900})
+            pg.goto(f"{BASE}/{path}"); pg.wait_for_load_state("networkidle")
+            pg.wait_for_timeout(1800)
+            manifest["screens"].append(
+                save(pg.screenshot(full_page=True), SHOT / f"page-{tag}.webp",
+                     max_w=900, q=74))
+            pg.close()
 
         # ── what each concept is made of ────────────────────────────
         concept_probe = """() => {

@@ -653,10 +653,10 @@
     "accordion title": {
       "selector": ".acc__title",
       "family": "Archivo, \"Helvetica Neue\", Helvetica, Arial, sans-serif",
-      "size": "36px",
+      "size": "24px",
       "weight": "300",
-      "lineHeight": "37.44px",
-      "letterSpacing": "-1.98px",
+      "lineHeight": "24.96px",
+      "letterSpacing": "-1.32px",
       "transform": "none",
       "color": "rgb(22, 23, 26)"
     },
