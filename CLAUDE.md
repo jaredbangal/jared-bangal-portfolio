@@ -202,11 +202,14 @@ Six concept sites on a self-advancing track, cut off by the fold. Mechanics:
 
 ## Nav panels
 
-Five disclosures — Services, Pricing, Products, Process, About — all one
-three-column shape (index / explore / promo). Keep new ones to that shape.
+Four disclosures — Services, Pricing, Products, About — all one three-column
+shape (index / explore / promo). Keep new ones to that shape.
 
-- **Process is a panel without a page section**, deliberately. Column one is links
-  where destinations exist and `.panel__facts` rows where they do not.
+- **Process was a fifth and is gone.** It was a panel without a page section,
+  kept because the four steps were worth saying; `services.html` now says them
+  under "How a project runs", so removing it lost nothing. Column one is links
+  where destinations exist and `.panel__facts` rows where they do not — the
+  Products panel is the remaining example of the latter.
 - **The panel is the page colour, not `--bg-band`** — shadow and border do the
   separating, and the caret carries the same value.
 - **Panels are positioned against the bar, not the trigger**, and use
@@ -219,12 +222,14 @@ three-column shape (index / explore / promo). Keep new ones to that shape.
   up reachable only from the footer. Process has no page by design and About's
   destination is already its first link — **a button to nowhere is worse than no
   button.**
-- **Below 1025px the bar becomes a drawer** and panels an accordion. The JS
+- **Below 901px the bar becomes a drawer** and panels an accordion. The JS
   breakpoint (`barLayout`) must stay in step with the CSS one — hover opens
-  panels in the bar layout only. **It moved from 901px when the fifth trigger
-  landed**: five triggers need ~1024px of bar, and between 902 and 980 the row
-  ran past the viewport edge. The row gap also drops to `--space-8` below 1180px.
-  **Re-measure the bar at every width if a sixth is ever added.**
+  panels in the bar layout only. **Four triggers is what the bar holds**: it
+  briefly ran five, which overflowed the viewport between 902 and 980px and
+  forced the breakpoint to 1025 until Process was cut. The row gap drops to
+  `--space-8` below 1180px, kept from that episode. **Re-measure at every width
+  from 320 to 1600 if a fifth is ever added again** — at 902px the bar has 24px
+  of clearance, which is all of it.
 - Triggers are `<button aria-expanded>`, not links. Hover is never the only way
   in: click, Enter, Space, Escape, a 220ms `mouseleave` grace, focus returned to
   the trigger.

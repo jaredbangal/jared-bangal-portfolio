@@ -329,9 +329,20 @@ together: out of step, `mouseenter` opens a section in the accordion and the
 click that follows immediately closes it again.
 
 Measured after: no overflow at any width from 320 to 1600, and the bar keeps at
-least 54px of clearance either side wherever it is shown. **Re-run that sweep if
-a sixth trigger is ever added** — this is now the second time the bar has been
-outgrown, and it will not announce itself.
+least 54px of clearance either side wherever it is shown.
+
+**Then Process was cut and the bar was back to four.** The 1024 breakpoint was
+only ever compensation for the fifth trigger, so it went back to 900/901 in both
+places — restoring the full bar to every viewport between 902 and 1024, which is
+most tablets in landscape. The 32px row gap stayed: it reads no differently at
+those widths and leaves headroom. At 902px the bar now has 24px of clearance
+either side, which is the whole margin. **Re-run the sweep from 320 to 1600 if a
+fifth is ever added again** — the bar has now been outgrown once and it did not
+announce itself either time.
+
+Removing Process cost no information: `services.html` carries all four steps
+under "How a project runs", which is why it was safe to cut a panel that had
+been kept specifically to preserve them.
 
 ### Buttons into the panels
 
