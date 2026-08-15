@@ -400,6 +400,38 @@
       "declared": "var(--ink-dk-16)",
       "computed": "rgba(22, 23, 26, .16)"
     },
+    "--glass-fill": {
+      "declared": "color-mix(in srgb, var(--cream-100) 62%, transparent)",
+      "computed": "color-mix(in srgb, #F4F2EC 62%, transparent)"
+    },
+    "--glass-fill-h": {
+      "declared": "color-mix(in srgb, var(--cream-050) 76%, transparent)",
+      "computed": "color-mix(in srgb, #FBF9F3 76%, transparent)"
+    },
+    "--glass-edge": {
+      "declared": "color-mix(in srgb, #FFFFFF 55%, var(--border-subtle))",
+      "computed": "color-mix(in srgb, #FFFFFF 55%, rgba(22, 23, 26, .10))"
+    },
+    "--glass-edge-h": {
+      "declared": "color-mix(in srgb, var(--accent-ink) 45%, #FFFFFF)",
+      "computed": "color-mix(in srgb, #000000 45%, #FFFFFF)"
+    },
+    "--glass-inset": {
+      "declared": "rgba(255, 255, 255, .50)",
+      "computed": "rgba(255, 255, 255, .50)"
+    },
+    "--glass-inset-h": {
+      "declared": "rgba(255, 255, 255, .70)",
+      "computed": "rgba(255, 255, 255, .70)"
+    },
+    "--glass-glare": {
+      "declared": "rgba(255, 255, 255, .85)",
+      "computed": "rgba(255, 255, 255, .85)"
+    },
+    "--glass-blur": {
+      "declared": "blur(16px) saturate(1.5)",
+      "computed": "blur(16px) saturate(1.5)"
+    },
     "--accent": {
       "declared": "#000000",
       "computed": "#000000"
@@ -520,6 +552,38 @@
     },
     "--border-strong": {
       "declared": "var(--ink-20)",
+      "on": ".on-dark"
+    },
+    "--glass-fill": {
+      "declared": "color-mix(in srgb, #FFFFFF 6%, transparent)",
+      "on": ".on-dark"
+    },
+    "--glass-fill-h": {
+      "declared": "color-mix(in srgb, #FFFFFF 11%, transparent)",
+      "on": ".on-dark"
+    },
+    "--glass-edge": {
+      "declared": "color-mix(in srgb, #FFFFFF 14%, transparent)",
+      "on": ".on-dark"
+    },
+    "--glass-edge-h": {
+      "declared": "color-mix(in srgb, #FFFFFF 42%, transparent)",
+      "on": ".on-dark"
+    },
+    "--glass-inset": {
+      "declared": "rgba(255, 255, 255, .08)",
+      "on": ".on-dark"
+    },
+    "--glass-inset-h": {
+      "declared": "rgba(255, 255, 255, .14)",
+      "on": ".on-dark"
+    },
+    "--glass-glare": {
+      "declared": "rgba(255, 255, 255, .16)",
+      "on": ".on-dark"
+    },
+    "--glass-blur": {
+      "declared": "blur(16px) saturate(1.1)",
       "on": ".on-dark"
     },
     "--bg-ink": {
