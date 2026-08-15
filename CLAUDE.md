@@ -11,6 +11,10 @@ products.html           digital products — nothing on sale yet, and it says so
 privacy.html            what the site collects (and mostly does not)
 terms.html              how a project runs, in plain English
 404.html                Vercel serves this automatically
+robots.txt, sitemap.xml generated — tools/build_seo.py
+assets/og/              link-preview cards, one per page
+tools/siteinfo.py       CANONICAL origin + the indexable page list
+tools/parked/           markup pulled from the site but coming back
 work/<slug>.html        six concept case studies
 tools/build_pages.py    assembles every page above from index.html's nav
 tools/build_cases.py    writes the six case-study fragments
@@ -410,16 +414,22 @@ cdnjs entries are there because both genuinely receive the visitor's IP.
 
 ## Page order
 
-Hero → **The case** → **What I do** → Selected Work → **About** → Testimonials →
+Hero → **The case** → **What I do** → Selected Work → **About** →
 **Services** → **FAQ** → Contact → Newsletter.
+
+Testimonials sat between About and Services and is parked (see *Content still to
+fill*). Its removal took the page's only vignette with it: that fade existed
+because About dissolved into an ink block, and About now meets Services cream to
+cream, which needs no transition.
 
 - **"The case" states the problem and "What I do" answers it** — don't move the
   stats below Services.
 - **"What I do" stays distinct from Services** (which lists what you can buy). It
   is centred, which only holds because the statement is capped at 20ch and the
   points at 34ch — **if the copy grows, the measures hold, not the alignment.**
-- **Two sections are ink blocks** — "What I do" and Testimonials, `.on-dark
-  block--dark`. Worst contrast 5.85:1.
+- **One section is an ink block** — "What I do", `.on-dark block--dark` — plus
+  the newsletter and footer as one continuous foot. Testimonials was the second
+  and is parked. Worst contrast on the page: **5.94:1**.
 - **Services sits by the contact form** with the FAQ under it — the "what can I
   actually buy" moment, after the work and the person.
 
@@ -499,6 +509,31 @@ sections**. It shipped.
   `main.js` removed; the `.js` class is added by the script, so a hidden start
   state can only exist when something is present to undo it.
 
+## Findability
+
+**One origin, `tools/siteinfo.py`.** `CANONICAL` feeds the sitemap, every `og:`
+tag and every page's `<link rel="canonical">`. Moving to a custom domain is one
+edit there plus `build_pages.py && build_seo.py`.
+
+**It is still the vercel.app address on purpose.** `jaredbangal.com` is
+registered but parked on a lander with no records pointing here. **A canonical
+tag aimed at a parking page tells search engines to index the parking page** —
+worse than no canonical at all. Change it the day the domain is connected in
+Vercel, not before.
+
+- `robots.txt` and `sitemap.xml` are **generated** by `tools/build_seo.py` —
+  both hard-code an origin, which is what goes stale silently. 18 URLs.
+- **`404.html` is not in the sitemap**, deliberately: it is `noindex`, and
+  listing a page while telling robots to ignore it is a contradiction search
+  consoles report as an error. `motion/` and `reference/` are `Disallow`ed.
+- **OG cards are drawn, not screenshotted** (`tools/build_og.py`, 1200×630). A
+  crop of a real page is mostly nav and whitespace, because the page heads are
+  built to breathe. Each case study takes its concept's own palette, so the six
+  are distinct at thumbnail size — the only size anyone sees them at.
+- **JPEG, not WebP.** Several preview scrapers still refuse WebP, and a preview
+  that fails is worse than one 40KB larger.
+- `404.html` carries `og: home` in its fragment rather than a card of its own.
+
 ## Source of truth
 
 The design lives in Claude Design project
@@ -514,11 +549,17 @@ pages get built.
 
 ## Content still to fill
 
-- **All eight testimonials are invented, and this one cannot ship.** Publishing
-  fabricated reviews on a business's own site is unlawful in the US under the FTC
-  rule on consumer reviews (16 CFR Part 465). **Replace them with real,
-  attributable quotes or delete the section** before this is promoted anywhere.
-  The avatars are still empty `.slot` tiles.
+- **The testimonial marquee is removed, not fixed.** All eight quotes were
+  written rather than collected, and publishing fabricated reviews on a
+  business's own site is unlawful in the US under the FTC rule on consumer
+  reviews (16 CFR Part 465), so the section came out of `index.html` on
+  2026-08-15. The markup is parked verbatim in `tools/parked/testimonials.html`
+  with restore instructions. **It goes back only with real, attributable quotes
+  from named, consenting clients** — delete any row that cannot be attributed;
+  the marquee reads fine with four. Its CSS, its `main.js` block and the
+  `#feedback` vignette are all still in place and no-op without the markup.
+  **All three are now unverified — re-measure when it returns**, which is
+  exactly how `.on-dark` rotted.
 - **Pricing is Jared's, set 2026-08-14**: from $300 landing page, from $1,200 full
   site, $120/month care. They live in the nav Pricing panel only, and the contact
   form's budget placeholder tracks the range ("e.g. New site, $300–1,200") — move

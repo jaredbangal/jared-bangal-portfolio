@@ -672,6 +672,40 @@ works and points at the form; the Pricing panel is the single source for figures
 Every other answer restates something already true elsewhere on the page or in the
 Process panel. Keep it that way.
 
+## Findability, and the domain trap
+
+**The canonical tag is the dangerous one.** It is a single line that tells search
+engines "this is the real address of this page", and if it points somewhere that
+is not this site, they believe it. `jaredbangal.com` is registered, resolves, and
+returns HTTP 200 — but what it returns is a registrar lander that redirects to
+`/lander`. Writing that domain into `CANONICAL` today would hand every page's
+identity to a parking page. So `CANONICAL` stays on the vercel.app address until
+the domain is genuinely connected in Vercel, and `tools/siteinfo.py` says so at
+the top rather than leaving the next person to work out why it looks temporary.
+
+Everything derived from it — sitemap, `og:url`, `og:image`, canonical — reads
+from that one constant, so the switch is one edit and two commands.
+
+**Why the sitemap excludes 404.html.** It is served with `noindex`. A sitemap is
+a request to index; `noindex` is an instruction not to. Listing a page in both is
+a contradiction, and Search Console reports it as an error rather than silently
+picking one.
+
+**Why the OG cards are drawn rather than screenshotted.** The obvious approach is
+to render each page at 1200×630 and crop. It produces almost nothing: these page
+heads have `nav-h + --space-24` of padding above the label, so a 630px-tall crop
+is a nav bar, a lot of cream, and possibly the first line of a heading. Drawing a
+card gives the title room to be the whole image, which is what the format is for.
+
+Each case study card takes its own concept's background and ink, so the six read
+as six things in a feed. That matters more than it sounds: a link preview is
+seen at about 500px wide in a chat window, where a title is legible and nothing
+else is.
+
+**JPEG rather than WebP**, despite every image on the site proper being WebP.
+Preview scrapers are not browsers — several still reject WebP outright, and the
+failure mode is no image at all. 25KB against 15KB is not worth a blank card.
+
 ## About
 
 Sits directly above the testimonials so the portrait introduces the person right

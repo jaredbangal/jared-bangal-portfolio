@@ -25,9 +25,11 @@ import pathlib
 import re
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from siteinfo import CANONICAL as SITE      # noqa: E402  one definition, tools/siteinfo.py
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FRAGS = ROOT / "tools" / "fragments"
-SITE = "https://jared-bangal-portfolio.vercel.app"
 
 HEAD = """<!DOCTYPE html>
 <html lang="en">
@@ -42,8 +44,11 @@ HEAD = """<!DOCTYPE html>
 <meta property="og:url" content="{site}/{path}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
-<meta property="og:image" content="{site}/assets/img/portrait.webp">
+<meta property="og:image" content="{site}/assets/og/{og}.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="{site}/{path}">
 {robots}
 {favicon}
 
@@ -170,6 +175,7 @@ def main():
             site=SITE,
             path=path,
             up=up,
+            og=meta.get("og", path.replace("/", "-").replace(".html", "")),
             robots='<meta name="robots" content="noindex">\n' if meta.get("noindex") else "",
             favicon=favicon,
             nav=retarget(nav, up, (path, body)),

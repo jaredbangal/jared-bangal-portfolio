@@ -1,0 +1,10 @@
+# Everything here is public and meant to be found.
+User-agent: *
+Allow: /
+
+# Not part of the site: a standalone particle study nothing links to, and the
+# scraped reference material the design was built against.
+Disallow: /motion/
+Disallow: /reference/
+
+Sitemap: https://jared-bangal-portfolio.vercel.app/sitemap.xml

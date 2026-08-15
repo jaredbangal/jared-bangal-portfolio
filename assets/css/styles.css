@@ -516,14 +516,16 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
    line of the About copy by ~40px at tablet and phone widths. Tying the
    two together keeps 20% clearance at every breakpoint without a single
    extra media query. */
-/* The page has exactly one vignette: About into Client feedback. It is the
-   junction that carries the most weight — a portrait, then the wall of
-   reviews — so it gets the cinematic entrance and every other ink edge is
-   a clean line. Deliberate asymmetry, not an oversight: a page where every
-   boundary dissolves has no structure left.
+/* PARKED with the testimonial marquee (tools/parked/testimonials.html).
+   The page had exactly one vignette — About dissolving into Client
+   feedback — because that junction carried the most weight: a portrait,
+   then the wall of reviews. With the marquee out for having invented
+   quotes there is no ink block there to fade into, and About now meets
+   Services, cream to cream, needing no transition at all.
 
-   Tall enough to read as beginning around the middle of the portrait. The
-   ramp above is what keeps that safe for the copy. */
+   Kept rather than deleted because the section is coming back verbatim
+   once there are real quotes. It selects nothing in the meantime.
+   Tall enough to read as beginning around the middle of the portrait. */
 #feedback {
   --ink-fade-top: min(28rem, 50vh);
   --ink-fade-bottom: 0px;
