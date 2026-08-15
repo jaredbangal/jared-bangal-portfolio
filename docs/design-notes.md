@@ -384,6 +384,59 @@ its own.
 are decoration — a step is not a destination, and nothing is reachable only by
 hovering. Promising an interaction that does not exist is worse than no hover.
 
+### The "What I do" cards: glass and tilt
+
+**Glassmorphism needs something behind it.** `backdrop-filter` over a flat colour
+is just a translucent panel — the blur has nothing to work on. On the ink block
+that is doubly true: the only thing behind the cards is the paper texture, which
+runs at stdev 3.2. `.intro__points::before` is two very soft blooms (7% white, 9%
+cool blue-grey, blurred 28px) under the card row.
+
+**That wash must not use a negative horizontal inset.** The version of this that
+lived under the old service cards bled 8% past each side and made the document
+wider than the viewport at *every* breakpoint — a scrollbar traded for a gradient
+edge nobody can see. `inset: -10% 0 -14%`: vertical bleed only, and the radials
+are soft enough to reach the corners from inside.
+
+**The glass tokens invert with the scope, and the numbers are not close.** The
+light values are a *tint* pulled back from an opaque card; the dark ones are a
+*film* laid on near-black. 62% of `--cream-100` reads as frosted glass; 62% of
+white on ink reads as a grey box. Measured: at 10% edge the card stopped
+separating from the block, at 20% fill it stopped looking like glass and started
+looking like a lighter panel. Landed at 6% fill / 14% edge, 11% / 42% hovered.
+
+**The tilt lives in the reveal's transform.** `--rx` / `--ry` join `--lift` in
+`.js .reveal.is-in` — a transform on the card itself is (0,3,0) against a hover's
+(0,2,0) and loses. **Set variables, never `transform`, on anything that also
+carries `.reveal`.**
+
+**The entrance and the hover need different durations from the same property.**
+`.reveal` transitions transform at `--dur-slow` (800ms), which is right for an
+entrance and broken for a hover. `main.js` already adds `.is-settled` when the
+entrance ends, so that is the hook: `.js .intro__points .intro__point.is-settled`
+re-declares the transition at `--dur-base`. It is written at (0,4,0) on purpose —
+`.js .reveal.is-in` is (0,3,0), and matching it would make the result depend on
+which rule happens to come later in the file.
+
+`data-tracking` drops the transform transition while the pointer is being
+followed — a transition there turns the lean into elastic drag — and is removed on
+leave so the *return* still eases. Gated on `(hover: hover) and (pointer: fine)`:
+a touch device would be left holding a card at an angle. Under reduced motion the
+glare is `display: none` and the lean pinned to 0; the global reduce rule only
+shortens the transition, which would snap the card to its end position instead.
+
+**The JS binds to every direct child of `[data-tilt]`**, not to a class name, so
+the behaviour can be pointed at a different set without renaming anything. Max
+lean is 5° — restrained on purpose, since a card that swings reads as a gimmick.
+
+**Measuring text on glass: sample the glyph, not a percentile.** A 2nd/98th
+percentile over a mostly-empty box reads *antialiasing*. And check the element is
+actually revealed first: measuring these at 390 reported **1.21:1** for card three
+until it was scrolled into view — the card was at opacity 0 and the sample was of
+the block behind it, not the card. Current worst across all three cards, at rest
+and hovered, at 1440 and 390: **5.54:1**, the hovered body copy, where the glare
+lightens the ground behind it.
+
 ## Testimonial marquee
 
 A marquee, not the concept carousel's snap track: reviews are short and there are

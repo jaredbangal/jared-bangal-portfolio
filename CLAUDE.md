@@ -263,6 +263,37 @@ than invent its own.
 **No pointer cursor and no focus equivalent, deliberately** — these are
 decoration, and nothing is reachable only by hovering.
 
+### The "What I do" cards: glass and tilt
+
+The three points are glass cards on the ink block that lean toward the pointer.
+
+- **Glass is a token set, not raw rgba**: `--glass-fill`, `--glass-edge`,
+  `--glass-inset`, `--glass-glare`, `--glass-blur`, each with a hover variant.
+  **They invert under `.on-dark`, and the two scopes are an order of magnitude
+  apart** — 62% of cream is frosted glass, 62% of white on ink is a grey box.
+  Dark values: fill 6% white, hover 11%. Below 10% edge the card stopped
+  separating from the block; above 20% fill it stopped reading as glass.
+- **Glass needs something behind it.** `.intro__points::before` puts two very soft
+  blooms under the row, because the ink block otherwise offers the blur nothing
+  but its own texture. **Vertical bleed only** — a negative horizontal inset once
+  made the document wider than the viewport at every breakpoint.
+- **The card carries `.reveal`, so it must never set `transform`.** The tilt goes
+  through `--rx` / `--ry` / `--lift`, which `.js .reveal.is-in` applies.
+- **The entrance owns the transform transition at `--dur-slow`**; a hover at that
+  speed feels broken, so `.is-settled` hands the timing over at `(0,4,0)`
+  specificity, which clears `.js .reveal.is-in` wherever the two sit in the file.
+- `data-tracking` drops the transform transition while the pointer is followed —
+  a transition there turns the lean into elastic drag — and is removed on leave so
+  the *return* still eases.
+- **`main.js` tilts every direct child of `[data-tilt]`**, not a class, so it can
+  be pointed at another set without renaming anything. Max lean 5°.
+- Gated on `(hover: hover) and (pointer: fine)`: a touch device cannot reverse a
+  tilt. Under reduced motion the lean is pinned to 0 and the glare is
+  `display: none` — the global reduce rule only shortens durations, which would
+  strand the card mid-lean.
+- Worst contrast across all three cards, at rest and hovered, at 1440 and 390:
+  **5.54:1** (hovered body copy, where the glare lightens the ground behind it).
+
 ## Testimonial marquee
 
 A marquee, not a snap track: there is nothing to land on and nothing to pick.
