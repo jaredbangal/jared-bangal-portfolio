@@ -108,8 +108,9 @@ def retarget(block, up, self_path):
         return f'{m.group(1)}="{up}{m.group(2)}'
     block = re.sub(r'\b(href|src)="((?:assets|concepts|work)/)', prefix, block)
     block = re.sub(r'\b(href)="(index\.html)', prefix, block)
-    # services.html / pricing.html / privacy.html / terms.html at the root
-    block = re.sub(r'\b(href)="((?:services|pricing|privacy|terms)\.html)', prefix, block)
+    # root-level pages, which a case study reaches with ../
+    block = re.sub(
+        r'\b(href)="((?:services|pricing|products|privacy|terms)\.html)', prefix, block)
 
     own = set(re.findall(r'id="([\w-]+)"', self_path[1])) | {"main"}
     def hashes(m):

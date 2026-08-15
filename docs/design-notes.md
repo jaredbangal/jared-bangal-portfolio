@@ -313,6 +313,40 @@ not every `a[href^="#"]` in the bar, because the panels are full of hash links a
 a panel link is not a location. Panel links point at real anchors on this page —
 check with the dead-anchor query in `frontend-bug-sweep` rather than assuming.
 
+### The fifth trigger
+
+Adding Products to the bar broke it, in the exact band the old note predicted
+and nobody had re-measured: **horizontal overflow between 902px and 980px.**
+Four triggers fitted in the bar down to the 901px drawer breakpoint with room
+to spare; five need about 1024px, so for 80px of viewport the row simply ran
+off the edge.
+
+Two fixes, and the first alone was not enough. Cutting the row's gap from 40px
+to 32px saves 4 × 8 = 32px across five items — real, but the shortfall was over
+100px. So the drawer breakpoint moved from 900/901 to 1024/1025 as well, in
+**both** the CSS media queries and `main.js`'s `barLayout`. Those two must move
+together: out of step, `mouseenter` opens a section in the accordion and the
+click that follows immediately closes it again.
+
+Measured after: no overflow at any width from 320 to 1600, and the bar keeps at
+least 54px of clearance either side wherever it is shown. **Re-run that sweep if
+a sixth trigger is ever added** — this is now the second time the bar has been
+outgrown, and it will not announce itself.
+
+### Buttons into the panels
+
+Four pages had been built and were reachable only from the footer, because the
+nav's Services panel indexed *anchors within* `services.html` rather than
+offering the page itself, and Pricing's headline was one line of text among
+several. The fix is `.panel__cta`: one filled button per panel, sized like any
+other button on the site, at the foot of column one.
+
+Only three panels get one. Process deliberately has no page, and About's
+destination is a section of the home page that its own first link already names
+— adding buttons there for symmetry would have meant inventing a destination or
+duplicating one, and a button that goes nowhere useful teaches people not to
+trust the others.
+
 ## The case (stats)
 
 Their "Join millions of entrepreneurs" band, on Jared's argument. Sits on

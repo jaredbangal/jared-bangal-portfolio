@@ -808,6 +808,12 @@ body  { background-color: var(--bg-page); }
 
 
 .nav__links > ul { display: flex; align-items: center; gap: var(--space-10); }
+/* Five triggers is 160px of gap at the full step. Between the drawer
+   breakpoint and comfortable desktop widths the row needs that back — 32px
+   still separates the items but stops the bar scraping the gutters. */
+@media (max-width: 1180px) {
+  .nav__links > ul { gap: var(--space-8); }
+}
 .nav__item { display: flex; }
 
 .nav__item > a,
@@ -1017,6 +1023,19 @@ body  { background-color: var(--bg-page); }
   margin-bottom: var(--space-6);
 }
 
+/* The one filled button inside a panel, and only where the disclosure has a
+   whole page behind it — Services and Pricing. Column one is an index of
+   anchors *within* that page; without this the page itself has no entry,
+   which is how four pages ended up reachable only from the footer.
+
+   Process and About do not get one: Process has no page by design, and
+   About's destination is a section of the home page that its first link
+   already names. A button to nowhere is worse than no button. */
+.panel__cta {
+  margin-top: var(--space-6);
+  align-self: flex-start;
+}
+
 .panel__list { display: flex; flex-direction: column; }
 .panel__list a {
   display: flex;
@@ -1158,7 +1177,7 @@ body  { background-color: var(--bg-page); }
 /* Four triggers plus a brand plus actions stop fitting well before the
    panels do. Below this the row becomes a drawer and each panel becomes an
    accordion section — same markup, same triggers, same JS. */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .nav__burger { display: inline-flex; }
 
   /* No caret in the accordion — the panel sits directly under its own
@@ -2768,7 +2787,7 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   margin-top: var(--space-8);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .svc-row { grid-template-columns: 3rem 1fr; }
   .svc-row__aside { grid-column: 2; }
   .price-grid { grid-template-columns: 1fr; max-width: 30rem; margin-inline: auto; }

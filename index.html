@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css?v=552ac4c7">
+<link rel="stylesheet" href="assets/css/styles.css?v=1781ae5f">
 </head>
 <body>
 
@@ -60,6 +60,7 @@
               <li><a href="services.html#portfolio-sites">Portfolio Sites</a></li>
               <li><a href="services.html#site-care">Site Care &amp; SEO</a></li>
             </ul>
+            <a class="btn btn--primary panel__cta" href="services.html">See all services</a>
           </div>
 
           <div class="panel__col panel__col--explore">
@@ -101,6 +102,7 @@
               <div><b>Full site</b><u>from $1,200</u><span>Four to six pages, design and build</span></div>
               <div><b>Site care</b><u>$120 / month</u><span>Updates, fixes, and SEO basics</span></div>
             </div>
+            <a class="btn btn--primary panel__cta" href="pricing.html">See full pricing</a>
           </div>
 
           <div class="panel__col panel__col--explore">
@@ -119,6 +121,48 @@
             <img src="assets/img/work-sunday.webp" width="800" height="1612"
                  alt="" loading="lazy" decoding="async">
             <span class="panel__promo-cap">Sunday Bakehouse — bakery</span>
+          </a>
+        </div>
+      </li>
+
+      <!-- Products. Nothing is for sale yet and the panel says so rather than
+           listing placeholder items — a nav entry that promises a shop and
+           delivers invented products is the same lie as an invented review.
+           Fill in .panel__list and drop the notice when the first one is
+           real. -->
+      <li class="nav__item" data-menu>
+        <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="menu-products">
+          Products
+          <svg class="nav__chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="nav__panel nav__panel--wide" id="menu-products">
+          <div class="panel__col">
+            <p class="panel__label">Digital products</p>
+            <div class="panel__facts">
+              <div><b>In development</b><u>Soon</u><span>Digital products for people building their own site — nothing is on sale yet</span></div>
+              <div><b>Told first</b><u>By email</u><span>The newsletter is where the first one gets announced</span></div>
+            </div>
+            <a class="btn btn--primary panel__cta" href="products.html">What's coming</a>
+          </div>
+
+          <div class="panel__col panel__col--explore">
+            <p class="panel__label">In the meantime</p>
+            <a class="panel__headline" href="#contact">Have something in mind? <span aria-hidden="true">&#8594;</span></a>
+            <p class="panel__text">If there is something you wish existed — a template, a guide, a starting point — tell me. It is the fastest way to end up on the list of what gets built first.</p>
+            <ul class="panel__pills">
+              <li><a href="#newsletter">Get notified</a></li>
+              <li><a href="services.html">Hire me instead</a></li>
+            </ul>
+          </div>
+
+          <a class="panel__promo" href="concepts/kettle.html">
+            <img src="assets/img/work-kettle.webp" width="800" height="1708"
+                 alt="" loading="lazy" decoding="async">
+            <span class="panel__promo-cap">Kettle &amp; Co — coffee roaster</span>
           </a>
         </div>
       </li>
@@ -745,6 +789,7 @@
           <li><a href="index.html" aria-current="page">Home</a></li>
           <li><a href="services.html">Services</a></li>
           <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="products.html">Products</a></li>
           <li><a href="#work">Work</a></li>
           <li><a href="privacy.html">Privacy</a></li>
           <li><a href="terms.html">Terms</a></li>
@@ -758,6 +803,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 <script src="assets/js/particles.js?v=2693a839" defer></script>
-<script src="assets/js/main.js?v=2561d458" defer></script>
+<script src="assets/js/main.js?v=2b52c2ba" defer></script>
 </body>
 </html>

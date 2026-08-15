@@ -161,7 +161,10 @@
   if (menuItems.length && nav) {
     var canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
     // Must match the drawer breakpoint in styles.css.
-    var barLayout = window.matchMedia("(min-width: 901px)");
+    // Must match the CSS drawer breakpoint exactly (max-width: 1024px).
+    // Out of step, hover opens a section in the accordion and the click
+    // that follows immediately closes it.
+    var barLayout = window.matchMedia("(min-width: 1025px)");
     var closeTimer = null;
 
     function panelOf(item) { return item.querySelector(".nav__panel"); }
