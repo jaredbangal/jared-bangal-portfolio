@@ -61,6 +61,43 @@ Deploy: `git push origin main` — Vercel builds from GitHub, live at
 `jared-bangal-portfolio.vercel.app`. `vercel.json` sets HTML to
 `max-age=0, must-revalidate`, `/assets/*` to `immutable`.
 
+## Running it
+
+**The cache-busting story, because it cost a round trip.** `vercel.json` serves
+`/assets/*` with `Cache-Control: public, max-age=31536000, immutable`. That is
+correct and deliberate — the assets *are* immutable, provided every URL that
+points at them carries a content hash. `serve.py` has always written those
+hashes into `index.html`.
+
+The generator did not write them. Eleven new pages shipped linking bare
+`assets/css/styles.css`, and Vercel duly told every visitor's browser to keep
+that response for a year without revalidating. The consequences were precisely
+inverted from how the bug presented:
+
+- The **home page** pointed at `styles.css?v=ac59c460`, a distinct URL, so it
+  picked up each CSS change immediately and looked fine.
+- The **generated pages** pointed at `styles.css`, cached immutably from the
+  first visit, so they kept rendering the stylesheet as it was *before* the
+  `.prose a:not(.btn)` fix — the invisible-button bug, still visible, on exactly
+  the pages the fix was written for.
+- Every automated check passed, because Playwright launches with a cold cache
+  and therefore never reproduced it.
+
+So the report "you didn't fix it on those pages" was correct about the symptom
+and the fix was correct about the cause; the two were separated by a year-long
+cache entry. **Adding the `?v=` token changes the URL, which is what makes the
+stale entry unreachable** — no purge, no header change, no waiting.
+
+Two defences now, deliberately overlapping: `build_pages.py` stamps at
+generation time so committed output is already correct, and `serve.py --stamp`
+walks every page rather than only `index.html`, with patterns that capture and
+restore the `../` prefix the case studies need.
+
+**The general rule this leaves:** a bug that reproduces for the user on some
+pages but not others, immediately after a deploy that measures correct in a
+fresh browser, is a caching difference between those pages — not a CSS bug that
+half-applied.
+
 ## Visual direction
 
 squarespace.com's system on Jared's palette. `reference/squarespace-tokens.json`

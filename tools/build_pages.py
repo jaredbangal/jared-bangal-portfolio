@@ -20,6 +20,7 @@ Each fragment in tools/fragments/ starts with a front-matter comment:
     desc: One-line description for <meta name=description> and og:description.
     -->
 """
+import hashlib
 import pathlib
 import re
 import sys
@@ -49,7 +50,7 @@ HEAD = """<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="{up}assets/css/styles.css">
+<link rel="stylesheet" href="{up}assets/css/styles.css?v={css_v}">
 </head>
 <body>
 
@@ -66,11 +67,25 @@ HEAD = """<!DOCTYPE html>
 {footer}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-<script src="{up}assets/js/particles.js" defer></script>
-<script src="{up}assets/js/main.js" defer></script>
+<script src="{up}assets/js/particles.js?v={particles_v}" defer></script>
+<script src="{up}assets/js/main.js?v={main_v}" defer></script>
 </body>
 </html>
 """
+
+
+def token(rel):
+    """Content hash for an asset URL.
+
+    **Not optional.** vercel.json serves /assets/* as `immutable,
+    max-age=31536000`, so an unversioned `assets/css/styles.css` is cached by
+    every visitor's browser for a year and will not be re-checked. The first
+    build of these pages shipped without it: the home page pointed at a
+    stamped URL and refreshed correctly while every generated page kept
+    serving a year-old stylesheet from disk cache, which looked exactly like
+    a CSS bug that would not reproduce. Same 8-hex scheme as serve.py.
+    """
+    return hashlib.md5((ROOT / rel).read_bytes()).hexdigest()[:8]
 
 
 def slice_block(html, start, end):
@@ -129,6 +144,12 @@ def main():
     # re-typed — one wrong percent-escape and every tab loses its mark.
     favicon = re.search(r'<link rel="icon"[^>]*>', index).group(0)
 
+    versions = {
+        "css_v": token("assets/css/styles.css"),
+        "main_v": token("assets/js/main.js"),
+        "particles_v": token("assets/js/particles.js"),
+    }
+
     frags = sorted(FRAGS.glob("*.html"))
     if not frags:
         sys.exit(f"no fragments in {FRAGS}")
@@ -153,13 +174,15 @@ def main():
             nav=retarget(nav, up, (path, body)),
             footer=retarget(footer, up, (path, body)),
             body=body.rstrip() + "\n",
+            **versions,
         )
         out.write_text(page)
         written.append((path, len(page)))
 
     for path, size in written:
         print(f"  {path:26s} {size / 1024:5.1f} KB")
-    print(f"{len(written)} pages")
+    print(f"{len(written)} pages   css={versions['css_v']} "
+          f"main={versions['main_v']} particles={versions['particles_v']}")
 
 
 if __name__ == "__main__":

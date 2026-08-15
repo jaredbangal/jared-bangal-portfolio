@@ -63,6 +63,20 @@ Use `serve.py`, not `python3 -m http.server` — it stamps `?v=<md5>` cache-bust
 tokens and sends `no-store`. **When a bug does not reproduce, check this first**:
 `md5 assets/css/styles.css` against `curl -s .../styles.css | md5`.
 
+**Every page that links the shared assets must carry a `?v=` token, and it is
+`vercel.json` that makes this non-negotiable**: `/assets/*` is served
+`immutable, max-age=31536000`, so one unstamped page is a page whose visitors
+keep a year-old stylesheet and never re-check it. `serve.py --stamp` now walks
+*every* HTML page, not just `index.html`, and its patterns capture and restore a
+`../` prefix so the case studies work. `build_pages.py` stamps at generation
+time too, so a freshly built page is correct before `serve.py` ever runs.
+
+This shipped broken once and looked nothing like a cache: the home page was
+stamped and updated correctly while all eleven generated pages served stale CSS,
+so a fix that was verifiably live read as "you didn't fix it on those pages."
+**A bug that reproduces for the user on some pages and not others, after a
+deploy that measures correct in a fresh browser, is this.**
+
 Deploy: `git push origin main` — Vercel builds from GitHub.
 
 ## Visual direction
