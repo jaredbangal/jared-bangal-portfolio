@@ -10,20 +10,31 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Archivo:wght@400;500&display=swap">
 <style>
   /* Concept: Botanica — floral studio.
-     Direction: editorial serif on cream, one deep-green accent, generous
+     Direction: editorial serif on sage, one deep-green accent, generous
      air. Type-led rather than photo-led.
 
-     Colour note: the clay accent is 3.40:1 on cream, so it is decoration
+     **The ground was #F4F0E6, which is the portfolio's own raised-card
+     colour.** The tile dissolved into the band behind it — the same failure
+     Meridian was moved off, for the same reason. Sage keeps the studio's
+     green without borrowing the page's value.
+
+     Moss deepened from #2F4634 when the ground did: as page text it was
+     4.98:1 on sage but only 4.21:1 on the darker footer, and this palette
+     is green ink on a green ground, so the two move together.
+
+     Colour note: the clay accent is 1.74:1 on sage, so it is decoration
      only — rules, dots, the italic in the mark. Anything that has to be
-     *read* uses --clay-ink (4.94:1). That distinction is the whole reason
-     there are two clays. */
+     *read* uses --clay-ink, solved against the darker sage-dk footer at
+     4.70:1 rather than the page at 5.15:1. That distinction is the whole
+     reason there are two clays. */
   :root {
-    --cream:     #F4F0E6;
-    --cream-dk:  #EAE4D6;
+    --sage:      #A8BA9F;   /* the ground */
+    --sage-dk:   #9AAB92;   /* footer */
+    --paper:     #F4F0E6;   /* the light used ON the moss blocks */
     --ink:       #1C2A20;
-    --moss:      #2F4634;
-    --clay:      #C06B4A;   /* decoration only — 3.40:1 */
-    --clay-ink:  #A44F2E;   /* text — 4.94:1 on cream */
+    --moss:      #263A2A;   /* text 5.92:1 on sage, 5.01:1 on sage-dk */
+    --clay:      #C06B4A;   /* decoration only — 1.74:1 on sage */
+    --clay-ink:  #5F2A19;   /* text — 5.15:1 on sage, 4.70:1 on sage-dk */
     --hair:      rgba(28, 42, 32, .15);
     --hair-firm: rgba(28, 42, 32, .28);
   }
@@ -32,7 +43,7 @@
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
   body {
-    background: var(--cream);
+    background: var(--sage);
     color: var(--ink);
     font-family: "Archivo", sans-serif;
     font-size: 16px;
@@ -117,7 +128,7 @@
     margin-top: 44px;
     padding: 19px 40px;
     background: var(--moss);
-    color: var(--cream);
+    color: var(--paper);
     font-size: 12px;
     letter-spacing: .2em;
     text-transform: uppercase;
@@ -130,7 +141,7 @@
     color: var(--moss);
     border: 1px solid var(--hair-firm);
   }
-  .cta--ghost:hover { background: var(--moss); color: var(--cream); }
+  .cta--ghost:hover { background: var(--moss); color: var(--paper); }
 
   /* ── The bar under the hero ────────────────────────────── */
   .strip {
@@ -213,14 +224,14 @@
   /* Closing block */
   .closing {
     background: var(--moss);
-    color: var(--cream);
+    color: var(--paper);
     text-align: center;
     padding: 96px 56px;
     border-bottom: 0;
   }
-  .closing h2 { color: var(--cream); max-width: 18ch; margin-inline: auto; }
+  .closing h2 { color: var(--paper); max-width: 18ch; margin-inline: auto; }
   .closing p { max-width: 48ch; margin: 22px auto 38px; font-size: 17px; color: rgba(244, 240, 230, .88); }
-  .closing .cta { background: var(--cream); color: var(--moss); }
+  .closing .cta { background: var(--paper); color: var(--moss); }
   .closing .cta:hover { background: #fff; }
 
   /* Visit */
@@ -230,7 +241,7 @@
   .visit span { display: block; margin-top: 6px; font-size: 14px; color: var(--moss); }
 
   /* ── Footer ────────────────────────────────────────────── */
-  footer { background: var(--cream-dk); padding: 64px 0 40px; }
+  footer { background: var(--sage-dk); padding: 64px 0 40px; }
   .foot-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; }
   .foot-top nav ul { flex-wrap: wrap; gap: 28px; }
   .foot-note {

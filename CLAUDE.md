@@ -276,9 +276,9 @@ shipped client work yet. **Never present someone else's site as work done here.*
 
 | Slug | Business | Direction |
 |---|---|---|
-| `botanica` | Floral studio | Fraunces italic on cream, deep green |
+| `botanica` | Floral studio | Fraunces italic on sage, deep green |
 | `borough` | Barber shop | Oswald condensed on near-black, amber |
-| `kettle` | Coffee roaster | Instrument Serif on sand, rust italic |
+| `kettle` | Coffee roaster | Instrument Serif on espresso, copper italic |
 | `sunday` | Bakery | Bricolage Grotesque, butter/terracotta blocks |
 | `meridian` | Architecture studio | Archivo only, visible column grid |
 | `northline` | Bike shop | IBM Plex Mono specs, lime on slate |
@@ -291,7 +291,20 @@ from all six.
   stop mechanism.
 - **Hover-to-suspend binds to the track and the tab row, never `#work`** — the
   section is taller than the viewport, so it would suspend permanently.
-- **The card shadow is load-bearing**: Meridian's `#E4E2DC` *is* the page colour.
+- **A concept ground must clear ΔE ≈ 25 from `--cream-200`, and contrast ratio
+  cannot check this.** Botanica `#F4F0E6` and Kettle `#E7E1D6` both dissolved
+  into the page — Kettle sat at **1.00:1**, identical luminance. Ratio is blind
+  to hue, so measure ΔE in Lab: Sunday works at 60, Meridian at 27, and those
+  are the only two proven points. Botanica's first sage fix measured 12 and
+  still blended.
+- **Botanica is green ink on a green ground, so the two move together.** Darkening
+  the ground to clear ΔE pushed moss text to 4.21:1 on the footer; moss went
+  `#2F4634` → `#263A2A` with it. Re-solve both or neither.
+- **Kettle inverts rather than warming.** Every saturated *light* ground tested
+  killed the accent — rust had to reach `#632F16` to clear 4.5:1, by which point
+  it read brown. On espresso the accent stays bright as copper, the same move
+  `.on-dark` makes on this site.
+- **The card shadow is still load-bearing** for the light grounds.
 - Palettes ride inline on `--slide-bg` / `--slide-ink`; softened text uses
   `color-mix` at **88%/92%** — solved, not chosen. Re-solve if a colour changes.
 - **`tools/build_shots.py` renders both images and rewrites the `height`

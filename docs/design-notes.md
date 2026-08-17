@@ -497,6 +497,43 @@ all three warm concepts — `--clay`/`--clay-ink`, `--rust`/`--rust-ink`,
 `--crust`/`--crust-ink`, the first of each pair failing 4.5:1 *by design* and
 allowed only at 24px and up.
 
+**Two concepts blended into the page, and ratio could not see it.** Botanica's
+ground was `#F4F0E6` and Kettle's `#E7E1D6` — the portfolio's own raised-card and
+page colours. The tiles dissolved into the band behind them. The trap is that
+**WCAG contrast ratio is a luminance measure and says nothing about hue**, so it
+cannot distinguish "this is a different colour" from "this is the same colour":
+
+| Ground | vs page (ratio) | ΔE vs page | Reads as its own? |
+|---|---|---|---|
+| Sunday `#F2C14E` | 1.30:1 | 60.3 | yes |
+| Meridian `#8FA3B0` | 2.02:1 | 27.2 | yes |
+| Botanica, first fix `#C4D0BC` | 1.24:1 | 12.0 | **no** |
+| Botanica `#A8BA9F` | 1.51:1 | 21.4 | yes |
+| Kettle `#2A1F19` | 12.39:1 | 77.2 | yes |
+| Botanica, before `#F4F0E6` | 1.14:1 | 5.4 | no |
+| Kettle, before `#E7E1D6` | **1.00:1** | 3.0 | no |
+
+Sunday is the proof that a *low* ratio is fine — butter is 1.30:1 against the page
+and nobody has ever thought it blended. What separates it is chroma, not value. So
+the working rule is **ΔE ≥ 25 in Lab**, with Meridian at 27.2 as the lowest proven
+point; the first sage attempt passed every contrast check and still looked like the
+page, which is exactly the failure mode ratio is blind to.
+
+**Botanica fought back, because it is green ink on a green ground.** Deepening the
+sage to clear ΔE dropped moss text to 4.98:1 on the page and **4.21:1 on the
+footer**, which is 7% darker again. Moss went `#2F4634` → `#263A2A` (5.92:1 / 5.01:1)
+and clay-ink `#A44F2E` → `#5F2A19`. Ground and ink are one decision here — re-solve
+both or neither. The ceiling is real: at `#98AE8E` (ΔE 27.3) no clay shade clears
+4.5:1 on the footer at all, which is why the ground stopped at 21.4.
+
+**Kettle inverted instead of warming, and that was the whole answer.** A roaster's
+identity is a warm accent on a neutral. Every saturated *light* ground tested killed
+the accent — on a `#C9A882` tan the rust had to fall to `#632F16` to clear 4.5:1, by
+which point it is brown and the page has no accent left. Going to espresso `#2A1F19`
+lets the accent go *up* to copper `#E0A46B` at 7.41:1, which is the same move
+`.on-dark` makes on the portfolio itself. The closing block inverts back to sand so
+the page still breathes. Sand on espresso measures 12.3:1.
+
 **No fabricated testimonials in the six.** The obvious way to make a concept site
 look finished is a customer quote, and all six were candidates. They do not have
 them, for the same reason the marquee came off the home page: the site's own

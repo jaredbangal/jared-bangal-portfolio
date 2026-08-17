@@ -10,31 +10,36 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Archivo:wght@300;400;500&display=swap">
 <style>
   /* Concept: Kettle & Co — coffee roaster.
-     Direction: warm neutral ground, light grotesque body against an
-     oversized serif accent, a lot of air, information sitting on rules
-     rather than in boxes.
+     Direction: warm serif on espresso, a lot of air, information sitting on
+     rules rather than in boxes.
 
-     Colour note: --rust is 4.19:1 on sand — fine at display size (>=24px,
-     where 3:1 applies) and nowhere else. Small text takes --rust-ink,
-     solved against the darker --sand-dk footer at 4.81:1 rather than the
-     page at 5.44:1. Muted ink bottoms out at .72 opacity (5.51:1); .6
-     measured 3.95:1 and was carrying 12px labels. */
+     **The ground was #E7E1D6, a shade off the portfolio's own page colour.**
+     The tile dissolved into the band behind it. Going darker rather than
+     merely warmer is deliberate: this palette's identity is a warm accent on
+     a neutral, and every *saturated light* ground tested killed the accent —
+     rust had to drop to about #632F16 to clear 4.5:1, by which point it read
+     brown, not rust. Inverting keeps it bright, the way .on-dark does on the
+     portfolio itself, and the accent becomes copper.
+
+     Contrast on espresso: sand 12.3:1, copper 7.41:1, muted sand 7.98:1.
+     The closing block inverts back to sand so the page still breathes. */
   :root {
-    --sand:     #E7E1D6;
-    --sand-dk:  #DCD4C6;
-    --ink:      #24211D;
-    --rust:     #A2542F;   /* display only — 4.19:1 */
-    --rust-ink: #8C4423;   /* text — 5.44:1 on sand, 4.81:1 on sand-dk */
-    --rule:     rgba(36, 33, 29, .18);
-    --rule-firm: rgba(36, 33, 29, .32);
+    --espresso:    #2A1F19;   /* the ground */
+    --espresso-dk: #201812;   /* footer */
+    --sand:        #E7E1D6;   /* text, and the closing block's ground */
+    --copper:      #E0A46B;   /* accent — 7.41:1 on espresso */
+    --muted:       rgba(231, 225, 214, .78);   /* 7.98:1 */
+    --rule:        rgba(231, 225, 214, .16);
+    --rule-firm:   rgba(231, 225, 214, .3);
+    --on-sand:     rgba(42, 31, 25, .82);      /* muted, inside .closing */
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
   body {
-    background: var(--sand);
-    color: var(--ink);
+    background: var(--espresso);
+    color: var(--sand);
     font-family: "Archivo", sans-serif;
     font-weight: 300;
     font-size: 16px;
@@ -42,7 +47,7 @@
     -webkit-font-smoothing: antialiased;
   }
   a { color: inherit; }
-  :focus-visible { outline: 2px solid var(--rust-ink); outline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--copper); outline-offset: 3px; }
 
   .serif { font-family: "Instrument Serif", Georgia, serif; }
   .wrap { max-width: 1120px; margin: 0 auto; padding: 0 64px; }
@@ -51,7 +56,7 @@
     font-weight: 500;
     letter-spacing: .2em;
     text-transform: uppercase;
-    color: var(--rust-ink);
+    color: var(--copper);
   }
 
   /* ── Header ────────────────────────────────────────────── */
@@ -71,12 +76,12 @@
     font-weight: 500;
     letter-spacing: .16em;
     text-transform: uppercase;
-    color: rgba(36, 33, 29, .78);
+    color: var(--muted);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: color .2s ease, border-color .2s ease;
   }
-  nav a:hover { color: var(--ink); border-bottom-color: var(--rust); }
+  nav a:hover { color: var(--sand); border-bottom-color: var(--copper); }
 
   /* ── Hero ──────────────────────────────────────────────── */
   .hero { padding: 72px 64px 56px; }
@@ -89,7 +94,7 @@
     letter-spacing: -.02em;
     max-width: 15ch;
   }
-  h1 i { color: var(--rust); }
+  h1 i { color: var(--copper); }
   .row {
     display: flex;
     align-items: flex-end;
@@ -104,17 +109,17 @@
     flex: none;
     display: inline-block;
     padding: 18px 34px;
-    border: 1px solid var(--ink);
+    border: 1px solid var(--sand);
     border-radius: 999px;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: .18em;
     text-transform: uppercase;
     text-decoration: none;
-    color: var(--ink);
+    color: var(--sand);
     transition: background-color .2s ease, color .2s ease;
   }
-  .cta:hover { background: var(--ink); color: var(--sand); }
+  .cta:hover { background: var(--sand); color: var(--espresso); }
 
   .strip {
     display: flex;
@@ -125,7 +130,7 @@
     font-weight: 500;
     letter-spacing: .16em;
     text-transform: uppercase;
-    color: rgba(36, 33, 29, .72);
+    color: var(--muted);
   }
 
   /* ── Sections ──────────────────────────────────────────── */
@@ -138,7 +143,7 @@
     letter-spacing: -.02em;
   }
   .sec-head { margin-bottom: 48px; }
-  .sec-head p { margin-top: 16px; max-width: 54ch; font-size: 17px; color: rgba(36, 33, 29, .8); }
+  .sec-head p { margin-top: 16px; max-width: 54ch; font-size: 17px; color: var(--muted); }
 
   /* The roster */
   .lots { border-top: 1px solid var(--rule-firm); }
@@ -156,7 +161,7 @@
     font-weight: 500;
     letter-spacing: .16em;
     text-transform: uppercase;
-    color: var(--rust-ink);
+    color: var(--copper);
   }
   .lots b {
     display: block;
@@ -165,7 +170,7 @@
     font-size: 27px;
     letter-spacing: -.01em;
   }
-  .lots span { display: block; margin-top: 6px; font-size: 15px; color: rgba(36, 33, 29, .78); }
+  .lots span { display: block; margin-top: 6px; font-size: 15px; color: var(--muted); }
   .lots u { text-decoration: none; font-size: 16px; white-space: nowrap; }
 
   /* Roasting */
@@ -175,14 +180,14 @@
     font-family: "Instrument Serif", Georgia, serif;
     font-style: italic;
     font-size: 21px;
-    color: var(--rust-ink);   /* 21px is below the 24px large-text floor */
+    color: var(--copper);   /* 21px is below the 24px large-text floor */
   }
   .roast b { display: block; margin: 12px 0 8px; font-size: 17px; font-weight: 500; }
-  .roast p { font-size: 15px; color: rgba(36, 33, 29, .8); }
+  .roast p { font-size: 15px; color: var(--muted); }
 
   /* Brew table */
   table { width: 100%; border-collapse: collapse; }
-  caption { text-align: left; font-size: 15px; color: rgba(36, 33, 29, .8); padding-bottom: 22px; }
+  caption { text-align: left; font-size: 15px; color: var(--muted); padding-bottom: 22px; }
   th, td { text-align: left; padding: 16px 20px 16px 0; border-bottom: 1px solid var(--rule); font-size: 15px; }
   thead th {
     border-bottom: 1px solid var(--rule-firm);
@@ -190,7 +195,7 @@
     font-weight: 500;
     letter-spacing: .16em;
     text-transform: uppercase;
-    color: var(--rust-ink);
+    color: var(--copper);
   }
   tbody th {
     font-family: "Instrument Serif", Georgia, serif;
@@ -198,11 +203,11 @@
     font-size: 22px;
     letter-spacing: -.01em;
   }
-  td { font-variant-numeric: tabular-nums; color: rgba(36, 33, 29, .82); }
+  td { font-variant-numeric: tabular-nums; color: var(--muted); }
 
   /* Wholesale */
   .whole { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
-  .whole p { font-size: 17px; color: rgba(36, 33, 29, .82); }
+  .whole p { font-size: 17px; color: var(--muted); }
   .whole p + p { margin-top: 16px; }
   .facts { border-top: 1px solid var(--rule-firm); }
   .facts div {
@@ -213,21 +218,21 @@
     border-bottom: 1px solid var(--rule);
     font-size: 15px;
   }
-  .facts i { font-style: normal; color: rgba(36, 33, 29, .72); }
+  .facts i { font-style: normal; color: var(--muted); }
 
   /* Closing */
-  .closing { background: var(--ink); color: var(--sand); text-align: center; padding: 96px 64px; border-top: 0; }
+  .closing { background: var(--sand); color: var(--espresso); text-align: center; padding: 96px 64px; border-top: 0; }
   .closing h2 { max-width: 18ch; margin: 0 auto; }
-  .closing p { max-width: 50ch; margin: 22px auto 38px; font-size: 17px; color: rgba(231, 225, 214, .84); }
-  .closing .cta { border-color: var(--sand); color: var(--sand); }
-  .closing .cta:hover { background: var(--sand); color: var(--ink); }
+  .closing p { max-width: 50ch; margin: 22px auto 38px; font-size: 17px; color: var(--on-sand); }
+  .closing .cta { border-color: var(--espresso); color: var(--espresso); }
+  .closing .cta:hover { background: var(--espresso); color: var(--sand); }
 
   /* ── Footer ────────────────────────────────────────────── */
-  footer { background: var(--sand-dk); padding: 60px 0 36px; }
+  footer { background: var(--espresso-dk); padding: 60px 0 36px; }
   .foot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px; }
-  .foot-grid i { display: block; font-style: normal; font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--rust-ink); }
+  .foot-grid i { display: block; font-style: normal; font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--copper); }
   .foot-grid b { display: block; margin-top: 12px; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 21px; }
-  .foot-grid span { display: block; margin-top: 4px; font-size: 14px; color: rgba(36, 33, 29, .78); }
+  .foot-grid span { display: block; margin-top: 4px; font-size: 14px; color: var(--muted); }
   .foot-note {
     margin-top: 48px;
     padding-top: 22px;
@@ -240,7 +245,7 @@
     font-weight: 500;
     letter-spacing: .14em;
     text-transform: uppercase;
-    color: rgba(36, 33, 29, .72);
+    color: var(--muted);
   }
 
   /* ── Small screens ─────────────────────────────────────── */

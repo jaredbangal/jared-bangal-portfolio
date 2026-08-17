@@ -29,9 +29,9 @@ CASES = {
         lead="A floral studio whose stock changes every week. The design problem is that the "
              "thing worth showing is also the thing that goes out of date fastest.",
         w=800, h=1816,
-        swatches=["#F4F0E6", "#2F4634", "#B8A06A", "#1A1A17"],
+        swatches=["#A8BA9F", "#263A2A", "#5F2A19", "#1C2A20"],
         type_="Fraunces for display, Archivo for text",
-        palette="Cream ground, deep green, brass",
+        palette="Sage ground, deep green, clay",
         premise="A small floral studio taking weddings, weekly arrangements and walk-in stems. "
                 "The kind of business whose Instagram is excellent and whose website is a form "
                 "from 2016.",
@@ -106,9 +106,9 @@ CASES = {
         lead="A small-batch roaster selling bags and subscriptions. The freshness claim is the "
              "whole product, so the design had to make it visible rather than state it.",
         w=800, h=1708,
-        swatches=["#E7E1D6", "#6B351D", "#A2542F", "#241A14"],
+        swatches=["#2A1F19", "#E7E1D6", "#E0A46B", "#6B351D"],
         type_="Instrument Serif for display, Archivo for text",
-        palette="Sand ground, rust, dark cocoa",
+        palette="Espresso ground, sand, copper",
         premise="A roaster shipping direct to customers, competing with supermarket coffee on "
                 "one axis: how recently it was roasted.",
         problem="Every roaster says 'freshly roasted'. The phrase has been worn smooth. Saying it "
