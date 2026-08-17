@@ -142,7 +142,33 @@ def parse_fragment(text):
     return meta, text[m.end():]
 
 
+def sync_index_origin():
+    """Point index.html's own og:url / og:image / canonical at CANONICAL.
+
+    index.html is the *source* this script reads, not one of its outputs, so
+    it does not get the generated <head> and its three absolute URLs were
+    hand-maintained. That split shipped wrong twice: on both origin moves the
+    eleven generated pages corrected themselves the moment CANONICAL changed
+    and the home page silently did not, leaving the site's most-linked page
+    canonicalised to a dead host. Cheap to just do it here.
+    """
+    path = ROOT / "index.html"
+    html = original = path.read_text()
+    html = re.sub(r'(<meta property="og:url" content=")https?://[^/"]+',
+                  rf"\g<1>{SITE}", html)
+    html = re.sub(r'(<meta property="og:image" content=")https?://[^/"]+',
+                  rf"\g<1>{SITE}", html)
+    html = re.sub(r'(<link rel="canonical" href=")https?://[^/"]+',
+                  rf"\g<1>{SITE}", html)
+    if html != original:
+        path.write_text(html)
+        return True
+    return False
+
+
 def main():
+    if sync_index_origin():
+        print(f"  index.html      -> {SITE} (og:url, og:image, canonical)")
     index = (ROOT / "index.html").read_text()
     nav = slice_block(index, '<header class="nav" data-nav>', "</header>")
     footer = slice_block(index, '<footer class="footer', "</footer>")

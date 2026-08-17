@@ -10,24 +10,25 @@ followed by:
 
     python3 tools/build_pages.py && python3 tools/build_seo.py
 
-**Today it is the vercel.app address, because that is what actually serves
-the site.** jaredbangal.com is registered and is attached to the Vercel
-account, but its DNS still points at GoDaddy's forwarding service, which
-301s to this origin. Change this the day the domain resolves to Vercel
-directly, not before — a canonical tag pointing at something that redirects
-away tells search engines to index the redirect target instead, which is
-worse than having no canonical at all.
+**The domain is live.** jaredbangal.com resolves to Vercel by an A record on
+the apex (76.76.21.21) with www CNAMEd to it, both attached to the
+`jaredbangal` project. GoDaddy remains the registrar; only DNS moved.
 
-    CANONICAL = "https://jaredbangal.com"
+**It moved twice, and this constant is why that was cheap.** First from
+jared-bangal-portfolio.vercel.app, when that project lost its production
+alias and every canonical, og: tag and sitemap entry pointed at a hostname
+returning DEPLOYMENT_NOT_FOUND. Then here. Each move was one line plus:
 
-**It moved once already, and this is why the constant exists.** The origin
-was jared-bangal-portfolio.vercel.app until that project lost its production
-alias and every URL on the site — canonicals, og:image, all 18 sitemap
-entries — pointed at a hostname returning DEPLOYMENT_NOT_FOUND. Repointing
-was this one line plus the two commands above.
+    python3 tools/build_pages.py && python3 tools/build_seo.py
+
+**index.html is not covered by that.** It is the *source* build_pages.py
+reads rather than one of its outputs, so its own og:url, og:image and
+canonical are hand-maintained and do not follow this constant. Grep for the
+old origin after changing it — the eleven generated pages corrected
+themselves last time and the home page silently did not.
 """
 
-CANONICAL = "https://jaredbangal.vercel.app"
+CANONICAL = "https://jaredbangal.com"
 
 # Every indexable page, in the order they should be crawled. 404.html is
 # absent on purpose: it is noindex, and listing a page in a sitemap while
