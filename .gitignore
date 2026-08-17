@@ -3,3 +3,6 @@ Thumbs.db
 *.log
 .vercel
 .env*
+
+# marketing renders, not source
+promo/
