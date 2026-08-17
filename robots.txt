@@ -7,4 +7,4 @@ Allow: /
 Disallow: /motion/
 Disallow: /reference/
 
-Sitemap: https://jared-bangal-portfolio.vercel.app/sitemap.xml
+Sitemap: https://jaredbangal.vercel.app/sitemap.xml

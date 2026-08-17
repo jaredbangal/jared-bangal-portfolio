@@ -11,16 +11,23 @@ followed by:
     python3 tools/build_pages.py && python3 tools/build_seo.py
 
 **Today it is the vercel.app address, because that is what actually serves
-the site.** jaredbangal.com is registered but parked on a lander and has no
-records pointing here. Change this the day the domain is connected in Vercel,
-not before — a canonical tag pointing at a parking page tells search engines
-to index the parking page instead of this one, which is worse than having no
-canonical at all.
+the site.** jaredbangal.com is registered and is attached to the Vercel
+account, but its DNS still points at GoDaddy's forwarding service, which
+301s to this origin. Change this the day the domain resolves to Vercel
+directly, not before — a canonical tag pointing at something that redirects
+away tells search engines to index the redirect target instead, which is
+worse than having no canonical at all.
 
     CANONICAL = "https://jaredbangal.com"
+
+**It moved once already, and this is why the constant exists.** The origin
+was jared-bangal-portfolio.vercel.app until that project lost its production
+alias and every URL on the site — canonicals, og:image, all 18 sitemap
+entries — pointed at a hostname returning DEPLOYMENT_NOT_FOUND. Repointing
+was this one line plus the two commands above.
 """
 
-CANONICAL = "https://jared-bangal-portfolio.vercel.app"
+CANONICAL = "https://jaredbangal.vercel.app"
 
 # Every indexable page, in the order they should be crawled. 404.html is
 # absent on purpose: it is noindex, and listing a page in a sitemap while
