@@ -7,204 +7,425 @@
 <meta name="description" content="Botanica — a concept site design for a floral studio, by Jared Bangal.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Archivo:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Archivo:wght@400;500&display=swap">
 <style>
   /* Concept: Botanica — floral studio.
      Direction: editorial serif on cream, one deep-green accent, generous
-     air. Type-led rather than photo-led. */
+     air. Type-led rather than photo-led.
+
+     Colour note: the clay accent is 3.40:1 on cream, so it is decoration
+     only — rules, dots, the italic in the mark. Anything that has to be
+     *read* uses --clay-ink (4.94:1). That distinction is the whole reason
+     there are two clays. */
   :root {
-    --cream: #F4F0E6;
-    --ink:   #1C2A20;
-    --moss:  #2F4634;
-    --clay:  #C06B4A;
+    --cream:     #F4F0E6;
+    --cream-dk:  #EAE4D6;
+    --ink:       #1C2A20;
+    --moss:      #2F4634;
+    --clay:      #C06B4A;   /* decoration only — 3.40:1 */
+    --clay-ink:  #A44F2E;   /* text — 4.94:1 on cream */
+    --hair:      rgba(28, 42, 32, .15);
+    --hair-firm: rgba(28, 42, 32, .28);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
   body {
     background: var(--cream);
     color: var(--ink);
     font-family: "Archivo", sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
+  a { color: inherit; }
+  :focus-visible {
+    outline: 2px solid var(--moss);
+    outline-offset: 3px;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 56px; }
+
+  .serif { font-family: "Fraunces", Georgia, serif; font-weight: 300; }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--clay-ink);
+  }
+
+  /* ── Header ────────────────────────────────────────────── */
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 24px;
     padding: 32px 56px;
-    border-bottom: 1px solid rgba(28, 42, 32, .15);
+    border-bottom: 1px solid var(--hair);
   }
   .mark {
-    font-family: "Fraunces", serif;
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 400;
     font-size: 22px;
     letter-spacing: .34em;
     text-transform: uppercase;
   }
-  nav { display: flex; gap: 40px; }
+  nav ul { display: flex; gap: 40px; list-style: none; }
   nav a {
+    display: inline-block;
+    padding: 6px 0;
     font-size: 12px;
     letter-spacing: .16em;
     text-transform: uppercase;
     color: var(--moss);
     text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s ease;
   }
+  nav a:hover { border-bottom-color: var(--clay); }
 
-  main {
-    flex: 1;
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero {
+    text-align: center;
+    padding: 104px 56px 96px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 80px 56px;
   }
-  .kicker {
-    font-size: 12px;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-    color: var(--clay);
-    margin-bottom: 40px;
-  }
+  .hero .eyebrow { margin-bottom: 40px; }
   h1 {
-    font-family: "Fraunces", serif;
+    font-family: "Fraunces", Georgia, serif;
     font-weight: 300;
-    font-size: clamp(56px, 9vw, 128px);
-    line-height: .92;
+    font-size: clamp(48px, 9vw, 122px);
+    line-height: .94;
     letter-spacing: -.03em;
     max-width: 14ch;
   }
   h1 em { font-style: italic; color: var(--moss); }
-  p.lede {
-    margin-top: 36px;
-    max-width: 44ch;
+  .lede {
+    margin-top: 34px;
+    max-width: 46ch;
     font-size: 19px;
     line-height: 1.6;
     color: var(--moss);
   }
   .cta {
-    margin-top: 48px;
     display: inline-block;
-    padding: 20px 40px;
+    margin-top: 44px;
+    padding: 19px 40px;
     background: var(--moss);
     color: var(--cream);
     font-size: 12px;
     letter-spacing: .2em;
     text-transform: uppercase;
     text-decoration: none;
+    transition: background-color .2s ease;
   }
+  .cta:hover { background: var(--ink); }
+  .cta--ghost {
+    background: transparent;
+    color: var(--moss);
+    border: 1px solid var(--hair-firm);
+  }
+  .cta--ghost:hover { background: var(--moss); color: var(--cream); }
 
-  footer {
+  /* ── The bar under the hero ────────────────────────────── */
+  .strip {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    padding: 28px 56px;
-    border-top: 1px solid rgba(28, 42, 32, .15);
+    gap: 16px 40px;
+    padding: 22px 56px;
+    border-top: 1px solid var(--hair);
+    border-bottom: 1px solid var(--hair);
     font-size: 12px;
     letter-spacing: .14em;
     text-transform: uppercase;
     color: var(--moss);
   }
 
-  main { min-height: 74vh; }
-  section { padding: 88px 56px; border-top: 1px solid rgba(28, 42, 32, .15); }
-  section h2 {
-    font-family: "Fraunces", serif;
+  /* ── Sections ──────────────────────────────────────────── */
+  section { padding: 92px 0; border-bottom: 1px solid var(--hair); }
+  .sec-head { margin-bottom: 48px; max-width: 30ch; }
+  h2 {
+    font-family: "Fraunces", Georgia, serif;
     font-weight: 300;
-    font-size: 52px;
+    font-size: clamp(34px, 4.6vw, 52px);
+    line-height: 1.05;
     letter-spacing: -.03em;
-    margin-bottom: 40px;
   }
+  .sec-head p { margin-top: 16px; color: var(--moss); max-width: 52ch; }
+
+  /* Stems list */
   .stems div {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 24px;
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(28, 42, 32, .15);
+    padding: 22px 0;
+    border-bottom: 1px solid var(--hair);
   }
-  .stems b { font-family: "Fraunces", serif; font-weight: 400; font-size: 26px; }
-  .stems span { font-size: 15px; color: var(--moss); opacity: .75; }
-  .stems u { text-decoration: none; font-size: 15px; color: var(--clay); }
-  .closing { background: var(--moss); color: var(--cream); text-align: center; }
+  .stems div:first-child { border-top: 1px solid var(--hair-firm); }
+  .stems b { font-family: "Fraunces", Georgia, serif; font-weight: 400; font-size: 26px; }
+  .stems span { flex: 1 1 14ch; font-size: 15px; color: var(--moss); }
+  .stems u { text-decoration: none; font-size: 15px; color: var(--clay-ink); white-space: nowrap; }
+  .note { margin-top: 22px; font-size: 14px; color: var(--moss); }
+
+  /* Ordering steps */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+  .steps > div { border-top: 1px solid var(--hair-firm); padding-top: 20px; }
+  .steps i {
+    font-family: "Fraunces", Georgia, serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--clay-ink);
+  }
+  .steps b {
+    display: block;
+    margin: 10px 0 8px;
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 400;
+    font-size: 24px;
+    letter-spacing: -.01em;
+  }
+  .steps p { font-size: 15px; color: var(--moss); }
+
+  /* Studio story */
+  .studio { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .studio p + p { margin-top: 18px; }
+  .studio p { color: var(--moss); font-size: 17px; }
+  .pull {
+    font-family: "Fraunces", Georgia, serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 27px;
+    line-height: 1.35;
+    letter-spacing: -.02em;
+    color: var(--ink);
+    border-left: 2px solid var(--clay);
+    padding-left: 28px;
+  }
+  .pull cite { display: block; margin-top: 18px; font: 500 12px/1 "Archivo", sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--moss); font-style: normal; }
+
+  /* Closing block */
+  .closing {
+    background: var(--moss);
+    color: var(--cream);
+    text-align: center;
+    padding: 96px 56px;
+    border-bottom: 0;
+  }
   .closing h2 { color: var(--cream); max-width: 18ch; margin-inline: auto; }
-  .closing p { max-width: 46ch; margin: 0 auto 36px; font-size: 17px; line-height: 1.6; opacity: .85; }
+  .closing p { max-width: 48ch; margin: 22px auto 38px; font-size: 17px; color: rgba(244, 240, 230, .88); }
+  .closing .cta { background: var(--cream); color: var(--moss); }
+  .closing .cta:hover { background: #fff; }
 
+  /* Visit */
+  .visit { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+  .visit i { display: block; font-style: normal; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--clay-ink); }
+  .visit b { display: block; margin-top: 12px; font-family: "Fraunces", Georgia, serif; font-weight: 400; font-size: 21px; line-height: 1.35; }
+  .visit span { display: block; margin-top: 6px; font-size: 14px; color: var(--moss); }
 
-
-
-  /* ── Small screens ─────────────────────────────────────
-     These pages are rendered at a 900px viewport for the portfolio
-     tiles and were built to that width only, so every one of them
-     scrolled sideways on a phone. Concept or not, they are linked
-     from the nav and a visitor can open one.
-     Generated from the page's own rules — regenerate rather than
-     hand-edit if the layout changes. */
-  @media (max-width: 760px) {
-  /* Desktop gutters of 44–56px leave a phone nothing to work
-     with — these blocks were pinned wide by padding, not by
-     content, including ones nested inside other padded blocks. */
-  .cta,
-  footer,
-  header,
-  main,
-  section { padding-left: 20px; padding-right: 20px; }
-  /* Every flex row the page declares: a mockup built at one
-     width was never told it could wrap. */
-  .stems div,
-  body,
-  footer,
-  header,
-  main,
-  nav { flex-wrap: wrap; }
-  nav { gap: 18px; }
-  img, svg, canvas { max-width: 100%; height: auto; }
+  /* ── Footer ────────────────────────────────────────────── */
+  footer { background: var(--cream-dk); padding: 64px 0 40px; }
+  .foot-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; }
+  .foot-top nav ul { flex-wrap: wrap; gap: 28px; }
+  .foot-note {
+    margin-top: 52px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hair);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 32px;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--moss);
   }
 
-
-
-  /* Below ~360px the 20px gutter is still more than the content can
-     give back — only 8px of sideways scroll, but it is scroll. */
+  /* ── Small screens ─────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .steps, .studio, .visit { grid-template-columns: 1fr; gap: 36px; }
+    .pull { padding-left: 20px; }
+  }
+  @media (max-width: 760px) {
+    .wrap { padding: 0 20px; }
+    header, .hero, .strip, .closing { padding-left: 20px; padding-right: 20px; }
+    header { flex-wrap: wrap; gap: 18px; }
+    nav ul { gap: 18px; }
+    .hero { padding-top: 64px; padding-bottom: 60px; }
+    section { padding: 60px 0; }
+    .closing { padding-top: 64px; padding-bottom: 64px; }
+    .stems div { flex-wrap: wrap; gap: 4px 18px; }
+    .stems span { flex-basis: 100%; order: 3; }
+    img, svg { max-width: 100%; height: auto; }
+  }
   @media (max-width: 380px) {
-  .cta,
-  footer,
-  header,
-  main,
-  section { padding-left: 12px; padding-right: 12px; }
+    .wrap { padding: 0 14px; }
+    header, .hero, .strip, .closing { padding-left: 14px; padding-right: 14px; }
   }
 </style>
 </head>
 <body>
   <header>
     <div class="mark">Botanica</div>
-    <nav><a href="#">Arrangements</a><a href="#">Weddings</a><a href="#">Studio</a><a href="#">Visit</a></nav>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#stems">Arrangements</a></li>
+        <li><a href="#weddings">Weddings</a></li>
+        <li><a href="#studio">Studio</a></li>
+        <li><a href="#visit">Visit</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main>
-    <p class="kicker">Floral studio · Est. 2019</p>
-    <h1>Flowers that <em>keep</em> the season</h1>
-    <p class="lede">Seasonal arrangements and installations, grown and cut within sixty miles of the studio.</p>
-    <a class="cta" href="#">Book a consultation</a>
+    <div class="hero">
+      <p class="eyebrow">Floral studio · Est. 2019</p>
+      <h1>Flowers that <em>keep</em> the season</h1>
+      <p class="lede">Seasonal arrangements and installations, grown and cut within sixty
+        miles of the studio.</p>
+      <a class="cta" href="#visit">Book a consultation</a>
+    </div>
+
+    <div class="strip">
+      <span>8 Clarkson St, New York</span>
+      <span>Tue–Sat, 10–6</span>
+      <span>Same-day delivery below 14th</span>
+    </div>
+
+    <section id="stems">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>In the studio this week</h2>
+          <p>What is cut and in water right now. The list changes on Tuesdays, because
+            the market does.</p>
+        </div>
+        <div class="stems">
+          <div><b>Garden roses</b><span>Local, three colourways</span><u>from $48</u></div>
+          <div><b>Ranunculus</b><span>Peak season through March</span><u>from $36</u></div>
+          <div><b>Branch &amp; foliage</b><span>Cut to your ceiling height</span><u>from $60</u></div>
+          <div><b>Anemone</b><span>Deep plum, while they last</span><u>from $42</u></div>
+          <div><b>Standing order</b><span>Weekly, for restaurants and offices</span><u>from $120</u></div>
+        </div>
+        <p class="note">Wrapped in paper, no foam, no plastic. Vases are lent and collected
+          on the next delivery.</p>
+      </div>
+    </section>
+
+    <section id="ordering">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>How an order works</h2>
+        </div>
+        <div class="steps">
+          <div>
+            <i>One</i>
+            <b>Tell us the room</b>
+            <p>Where it is going and roughly what it is for. A photograph of the space
+              is more useful than a reference picture of someone else's flowers.</p>
+          </div>
+          <div>
+            <i>Two</i>
+            <b>We cut to season</b>
+            <p>You pick a palette and a size, not a stem list. What is beautiful that
+              week goes in, which is why nothing here is photographed and priced to
+              the stem.</p>
+          </div>
+          <div>
+            <i>Three</i>
+            <b>Delivered in water</b>
+            <p>Hand-delivered below 14th Street, couriered above it, with a card and
+              instructions for keeping it alive past the weekend.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="studio">
+      <div class="wrap">
+        <div class="studio">
+          <div>
+            <div class="sec-head" style="margin-bottom: 28px;">
+              <h2>The studio</h2>
+            </div>
+            <p>Botanica is a two-person studio on Clarkson Street. We buy at the market
+              four mornings a week and grow the rest on a leased half-acre upstate —
+              which is why the list is short in February and unreasonable in June.</p>
+            <p>We do not carry imported stems out of season, and we would rather talk
+              you into something at its peak than sell you a photograph of a peony in
+              November.</p>
+          </div>
+          <blockquote class="pull">
+            Everything on the bench was alive last week and will not be alive next
+            month. That is not a limitation of the work. It is the work.
+            <cite>Elena Vasquez, founder</cite>
+          </blockquote>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    <span>8 Clarkson St, New York</span>
-    <span>Tue–Sat, 10–6</span>
-  </footer>
+  <section class="closing" id="weddings">
+    <h2>Weddings and installations</h2>
+    <p>Larger work is quoted after a walkthrough. We take a limited number of events
+      each season so nothing gets rushed — usually one weekend in three.</p>
+    <a class="cta" href="#visit">Start a conversation</a>
+  </section>
 
-  <section>
-    <h2>In the studio this week</h2>
-    <div class="stems">
-      <div><b>Garden roses</b><span>Local, three colourways</span><u>from $48</u></div>
-      <div><b>Ranunculus</b><span>Peak season through March</span><u>from $36</u></div>
-      <div><b>Branch &amp; foliage</b><span>Cut to your ceiling height</span><u>from $60</u></div>
-      <div><b>Standing order</b><span>Weekly, for restaurants and offices</span><u>from $120</u></div>
+  <section id="visit">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Visit or get in touch</h2>
+      </div>
+      <div class="visit">
+        <div>
+          <i>Studio</i>
+          <b>8 Clarkson St</b>
+          <span>New York, NY 10014</span>
+        </div>
+        <div>
+          <i>Hours</i>
+          <b>Tue–Sat, 10–6</b>
+          <span>Closed Sun &amp; Mon</span>
+        </div>
+        <div>
+          <i>Delivery</i>
+          <b>Same day below 14th</b>
+          <span>Order by 11am</span>
+        </div>
+        <div>
+          <i>Enquiries</i>
+          <b>hello@botanica.studio</b>
+          <span>(212) 555-0148</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="closing">
-    <h2>Weddings and installations</h2>
-    <p>Larger work is quoted after a walkthrough. We take a limited number of events each season so nothing gets rushed.</p>
-    <a class="cta" href="#">Start a conversation</a>
-  </section>
+  <footer>
+    <div class="wrap">
+      <div class="foot-top">
+        <div class="mark">Botanica</div>
+        <nav aria-label="Footer">
+          <ul>
+            <li><a href="#stems">Arrangements</a></li>
+            <li><a href="#weddings">Weddings</a></li>
+            <li><a href="#ordering">Ordering</a></li>
+            <li><a href="#studio">Studio</a></li>
+            <li><a href="#visit">Visit</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="foot-note">
+        <span>© 2026 Botanica Floral Studio</span>
+        <span>Concept design — not a real business</span>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

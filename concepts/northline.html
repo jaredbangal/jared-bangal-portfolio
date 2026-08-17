@@ -4,55 +4,72 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Northline Cycles — concept</title>
-<meta name="description" content="Northline Cycles — a concept site design for a bike shop, by Jared Bangal.">
+<meta name="description" content="Northline Cycles — a concept site design for a bike shop and workshop, by Jared Bangal.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Archivo:wght@400;500;600&display=swap">
 <style>
   /* Concept: Northline Cycles — bike shop and workshop.
      Direction: technical. Mono for anything measurable, one electric accent
-     on cold slate, specs presented as a readout rather than prose. */
+     on cold slate, specs presented as a readout rather than prose.
+
+     Contrast on slate: volt 14.9:1, bone at .72 opacity 7.7:1. Nothing
+     below .7 carries text. */
   :root {
     --slate: #14181B;
     --panel: #1C2226;
+    --panel-2: #232A2F;
     --volt:  #C8F03C;
     --bone:  #E6EAEC;
+    --muted: rgba(230, 234, 236, .72);
     --rule:  rgba(230, 234, 236, .14);
+    --rule-firm: rgba(230, 234, 236, .28);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
   body {
     background: var(--slate);
     color: var(--bone);
     font-family: "Archivo", sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-  .mono { font-family: "IBM Plex Mono", monospace; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--volt); outline-offset: 3px; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
 
+  /* ── Header ────────────────────────────────────────────── */
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 20px;
     padding: 22px 40px;
     border-bottom: 1px solid var(--rule);
   }
   .mark { font-weight: 600; font-size: 18px; letter-spacing: -.01em; }
   .mark b { color: var(--volt); }
-  nav { display: flex; gap: 28px; }
+  nav ul { display: flex; gap: 28px; list-style: none; }
   nav a {
-    font-family: "IBM Plex Mono", monospace;
+    display: inline-block;
+    padding: 6px 0;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 12px;
     letter-spacing: .04em;
-    color: var(--bone);
-    opacity: .7;
+    color: var(--muted);
     text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color .2s ease, border-color .2s ease;
   }
+  nav a:hover { color: var(--bone); border-bottom-color: var(--volt); }
 
-  main { flex: 1; display: flex; flex-direction: column; padding: 48px 40px; }
-
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero { padding: 48px 40px 56px; }
   .tag {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 12px;
     letter-spacing: .1em;
     text-transform: uppercase;
@@ -61,37 +78,30 @@
   }
   h1 {
     font-weight: 600;
-    font-size: clamp(48px, 9vw, 108px);
+    font-size: clamp(42px, 9vw, 108px);
     line-height: .94;
     letter-spacing: -.04em;
     max-width: 13ch;
   }
-  p.lede {
-    margin-top: 26px;
-    max-width: 42ch;
-    font-size: 17px;
-    line-height: 1.6;
-    opacity: .72;
-  }
+  .lede { margin-top: 26px; max-width: 44ch; font-size: 17px; color: var(--muted); }
   .cta {
-    align-self: flex-start;
+    display: inline-block;
     margin-top: 36px;
     background: var(--volt);
     color: var(--slate);
     padding: 17px 30px;
     border-radius: 3px;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-weight: 500;
     font-size: 13px;
     letter-spacing: .06em;
     text-transform: uppercase;
     text-decoration: none;
+    transition: background-color .2s ease;
   }
+  .cta:hover { background: #D6FA55; }
 
-  .lineup {
-    margin-top: 52px;
-    border-top: 1px solid var(--rule);
-  }
+  .lineup { margin-top: 52px; border-top: 1px solid var(--rule-firm); }
   .lineup a {
     display: flex;
     align-items: baseline;
@@ -101,164 +111,303 @@
     border-bottom: 1px solid var(--rule);
     color: var(--bone);
     text-decoration: none;
+    transition: padding-left .2s ease;
   }
-  .lineup b { font-weight: 500; font-size: 19px; letter-spacing: -.01em; }
-  .lineup em {
-    font-family: "IBM Plex Mono", monospace;
-    font-style: normal;
-    font-size: 12px;
-    opacity: .5;
-    letter-spacing: .04em;
-  }
-  .lineup u {
-    font-family: "IBM Plex Mono", monospace;
-    text-decoration: none;
-    font-size: 15px;
-    color: var(--volt);
-  }
+  .lineup a:hover { padding-left: 10px; }
+  @media (prefers-reduced-motion: reduce) { .lineup a:hover { padding-left: 0; } }
+  .lineup b { font-weight: 600; font-size: 19px; letter-spacing: -.02em; }
+  .lineup em { flex: 1 1 20ch; font-style: normal; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; color: var(--muted); }
+  .lineup u { text-decoration: none; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 17px; color: var(--volt); }
 
   .readout {
-    margin-top: auto;
-    background: var(--panel);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    margin-top: 40px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
   }
-  .readout div {
-    padding: 20px 24px;
-    border-right: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-  }
-  .readout div:nth-child(2n) { border-right: 0; }
-  .readout div:nth-last-child(-n+2) { border-bottom: 0; }
+  .readout div { background: var(--slate); padding: 22px 24px; }
   .readout i {
     display: block;
-    font-family: "IBM Plex Mono", monospace;
     font-style: normal;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 11px;
     letter-spacing: .1em;
     text-transform: uppercase;
-    opacity: .5;
-    margin-bottom: 8px;
+    color: var(--muted);
   }
-  .readout b { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 19px; }
-
-  main { min-height: 74vh; }
-  section { padding: 84px 40px; border-top: 1px solid var(--rule); }
-  section h2 {
-    font-weight: 600;
-    font-size: 46px;
-    line-height: 1;
-    letter-spacing: -.035em;
-    margin-bottom: 36px;
-  }
-  .bays { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .bays div {
-    background: var(--panel);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: 26px;
-  }
-  .bays i {
+  .readout b {
     display: block;
-    font-family: "IBM Plex Mono", monospace;
-    font-style: normal;
-    font-size: 11px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
+    margin-top: 10px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: -.02em;
     color: var(--volt);
-    margin-bottom: 14px;
   }
-  .bays b { display: block; font-weight: 600; font-size: 21px; letter-spacing: -.02em; margin-bottom: 10px; }
-  .bays span { font-size: 14px; line-height: 1.6; opacity: .7; }
-  .closing { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 28px; }
-  .closing h2 { margin-bottom: 10px; }
-  .closing p { font-family: "IBM Plex Mono", monospace; font-size: 13px; opacity: .6; }
 
+  /* ── Sections ──────────────────────────────────────────── */
+  section { padding: 72px 40px; border-top: 1px solid var(--rule); }
+  h2 { font-weight: 600; font-size: clamp(30px, 4.6vw, 52px); line-height: .98; letter-spacing: -.04em; }
+  .sec-head { margin-bottom: 40px; }
+  .sec-head p { margin-top: 14px; max-width: 54ch; font-size: 16px; color: var(--muted); }
+  .sec-head .tag { margin-bottom: 14px; }
 
+  /* Bays */
+  .bays { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .bays > div { background: var(--panel); padding: 30px 28px 34px; }
+  .bays i { display: block; font-style: normal; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--volt); }
+  .bays b { display: block; margin: 14px 0 10px; font-weight: 600; font-size: 24px; letter-spacing: -.03em; }
+  .bays span { font-size: 15px; color: var(--muted); }
 
+  /* Price sheet */
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 15px 20px 15px 0; border-bottom: 1px solid var(--rule); }
+  thead th {
+    border-bottom: 1px solid var(--rule-firm);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  tbody th { font-weight: 600; font-size: 17px; letter-spacing: -.02em; }
+  td { font-size: 15px; color: var(--muted); }
+  td.num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--bone); white-space: nowrap; }
+  td.price { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 17px; color: var(--volt); text-align: right; white-space: nowrap; }
 
-  /* ── Small screens ─────────────────────────────────────
-     These pages are rendered at a 900px viewport for the portfolio
-     tiles and were built to that width only, so every one of them
-     scrolled sideways on a phone. Concept or not, they are linked
-     from the nav and a visitor can open one.
-     Generated from the page's own rules — regenerate rather than
-     hand-edit if the layout changes. */
+  /* Included checklist */
+  .included { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .checks { list-style: none; border-top: 1px solid var(--rule-firm); }
+  .checks li {
+    display: flex;
+    gap: 16px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 15px;
+  }
+  .checks i {
+    flex: 0 0 auto;
+    font-style: normal;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--volt);
+  }
+  .included p { font-size: 16px; color: var(--muted); }
+  .included p + p { margin-top: 14px; }
+
+  /* Workshop notes */
+  .notes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 56px; }
+  .notes b { display: block; font-weight: 600; font-size: 18px; letter-spacing: -.02em; }
+  .notes p { margin-top: 8px; font-size: 15px; color: var(--muted); }
+
+  /* Closing */
+  .closing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px 40px;
+    background: var(--panel);
+  }
+  .closing p { margin-top: 12px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; letter-spacing: .06em; color: var(--muted); }
+
+  /* ── Footer ────────────────────────────────────────────── */
+  footer { background: var(--panel-2); padding: 52px 40px 32px; }
+  .foot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .foot-grid i { display: block; font-style: normal; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .foot-grid b { display: block; margin-top: 10px; font-weight: 600; font-size: 17px; letter-spacing: -.02em; }
+  .foot-grid span { display: block; margin-top: 4px; font-size: 14px; color: var(--muted); }
+  .foot-note {
+    margin-top: 42px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px 28px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── Small screens ─────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .readout { grid-template-columns: repeat(2, 1fr); }
+    .bays { grid-template-columns: 1fr; }
+    .included { grid-template-columns: 1fr; gap: 36px; }
+    .foot-grid { grid-template-columns: repeat(2, 1fr); }
+  }
   @media (max-width: 760px) {
-  /* Desktop gutters of 44–56px leave a phone nothing to work
-     with — these blocks were pinned wide by padding, not by
-     content, including ones nested inside other padded blocks. */
-  header,
-  main,
-  section { padding-left: 20px; padding-right: 20px; }
-  /* Every flex row the page declares: a mockup built at one
-     width was never told it could wrap. */
-  .closing,
-  .lineup a,
-  body,
-  header,
-  main,
-  nav { flex-wrap: wrap; }
-  nav { gap: 18px; }
-  .bays,
-  .readout { grid-template-columns: 1fr; }
-  img, svg, canvas { max-width: 100%; height: auto; }
+    header, .hero, section, footer { padding-left: 20px; padding-right: 20px; }
+    header { flex-wrap: wrap; gap: 14px; }
+    nav ul { flex-wrap: wrap; gap: 18px; }
+    section { padding-top: 52px; padding-bottom: 52px; }
+    .lineup a { flex-wrap: wrap; gap: 4px 18px; }
+    .lineup em { flex-basis: 100%; order: 3; }
+    .notes, .foot-grid { grid-template-columns: 1fr; }
+    table { display: block; overflow-x: auto; white-space: nowrap; }
+    img, svg { max-width: 100%; height: auto; }
   }
-
-
-
-  /* Below ~360px the 20px gutter is still more than the content can
-     give back — only 8px of sideways scroll, but it is scroll. */
   @media (max-width: 380px) {
-  header,
-  main,
-  section { padding-left: 12px; padding-right: 12px; }
+    header, .hero, section, footer { padding-left: 14px; padding-right: 14px; }
+    .readout { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
   <header>
     <div class="mark">Northline<b>/</b>Cycles</div>
-    <nav><a href="#">Bikes</a><a href="#">Service</a><a href="#">Fitting</a><a href="#">Book</a></nav>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#rates">Service</a></li>
+        <li><a href="#bays">Workshop</a></li>
+        <li><a href="#included">What's included</a></li>
+        <li><a href="#book">Book</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main>
-    <p class="tag mono">Workshop · Est. 2016</p>
-    <h1>Tuned by people who ride it</h1>
-    <p class="lede">Full service, wheel builds, and bike fitting. Same-week turnaround on everything that rolls through the door.</p>
-    <a class="cta" href="#">Book a service</a>
+    <div class="hero">
+      <p class="tag">Workshop · Est. 2016</p>
+      <h1>Tuned by people who ride it</h1>
+      <p class="lede">Full service, wheel builds, and bike fitting. Same-week turnaround
+        on everything that rolls through the door.</p>
+      <a class="cta" href="#book">Book a service</a>
 
-    <div class="lineup">
-      <a href="#"><b>Full service</b><em>Drivetrain · brakes · true</em><u>$140</u></a>
-      <a href="#"><b>Wheel build</b><em>Hand-laced · per wheel</em><u>$180</u></a>
-      <a href="#"><b>Bike fit</b><em>90 min · with follow-up</em><u>$210</u></a>
+      <div class="lineup">
+        <a href="#rates"><b>Full service</b><em>Drivetrain · brakes · true</em><u>$140</u></a>
+        <a href="#rates"><b>Wheel build</b><em>Hand-laced · per wheel</em><u>$180</u></a>
+        <a href="#rates"><b>Bike fit</b><em>90 min · with follow-up</em><u>$210</u></a>
+      </div>
+
+      <div class="readout">
+        <div><i>Turnaround</i><b>3–5 days</b></div>
+        <div><i>Service from</i><b>$85</b></div>
+        <div><i>Fitting</i><b>90 min</b></div>
+        <div><i>Open</i><b>Tue–Sat</b></div>
+      </div>
     </div>
 
-    <div class="readout">
-      <div><i>Turnaround</i><b>3–5 days</b></div>
-      <div><i>Service from</i><b>$85</b></div>
-      <div><i>Fitting</i><b>90 min</b></div>
-      <div><i>Open</i><b>Tue–Sat</b></div>
-    </div>
+    <section id="bays">
+      <div class="sec-head">
+        <p class="tag">Workshop</p>
+        <h2>Three bays, no queue</h2>
+      </div>
+      <div class="bays">
+        <div><i>Bay 01</i><b>Service</b><span>Everything from a safety check to a full strip, clean, and rebuild.</span></div>
+        <div><i>Bay 02</i><b>Wheels</b><span>Hand-built wheels, truing, and spoke replacement while you wait.</span></div>
+        <div><i>Bay 03</i><b>Fitting</b><span>Ninety minutes on the jig, with a follow-up session included.</span></div>
+      </div>
+    </section>
+
+    <section id="rates">
+      <div class="sec-head">
+        <p class="tag">Rate card</p>
+        <h2>What it costs</h2>
+        <p>Labour only. Parts are quoted before we fit them, and we call you before
+          spending anything over fifty dollars you have not already agreed to.</p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Job</th>
+            <th scope="col">What happens</th>
+            <th scope="col">Bench time</th>
+            <th scope="col" style="text-align:right;">Labour</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Safety check</th><td>Bolt torque, brake and tyre check, gear index</td><td class="num">30 min</td><td class="price">$45</td></tr>
+          <tr><th scope="row">Standard service</th><td>Check, clean, index, brakes bled or adjusted</td><td class="num">1.5 hr</td><td class="price">$85</td></tr>
+          <tr><th scope="row">Full service</th><td>Strip, degrease, rebuild, wheels trued, cables replaced</td><td class="num">3 hr</td><td class="price">$140</td></tr>
+          <tr><th scope="row">Wheel build</th><td>Hand-laced, tensioned and stress-relieved, per wheel</td><td class="num">2 hr</td><td class="price">$180</td></tr>
+          <tr><th scope="row">Wheel true</th><td>Lateral and radial, tension balanced</td><td class="num">40 min</td><td class="price">$40</td></tr>
+          <tr><th scope="row">Bike fit</th><td>Jig session, cleat setup, written position sheet</td><td class="num">90 min</td><td class="price">$210</td></tr>
+          <tr><th scope="row">Tubeless setup</th><td>Tape, valves, sealant, per wheel</td><td class="num">25 min</td><td class="price">$35</td></tr>
+          <tr><th scope="row">Boxing for travel</th><td>Stripped, packed, and torque sheet for the rebuild</td><td class="num">1 hr</td><td class="price">$70</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="included">
+      <div class="sec-head">
+        <p class="tag">Full service</p>
+        <h2>What you actually get</h2>
+      </div>
+      <div class="included">
+        <ul class="checks">
+          <li><i>[✓]</i><span>Frame stripped and degreased, bearings checked</span></li>
+          <li><i>[✓]</i><span>Drivetrain cleaned or replaced, chain wear measured</span></li>
+          <li><i>[✓]</i><span>Gears indexed, cables and outers replaced</span></li>
+          <li><i>[✓]</i><span>Brakes bled or pads replaced, rotors trued</span></li>
+          <li><i>[✓]</i><span>Both wheels trued and tension balanced</span></li>
+          <li><i>[✓]</i><span>Every bolt torqued to spec and recorded</span></li>
+          <li><i>[✓]</i><span>Test ride before you collect it</span></li>
+        </ul>
+        <div>
+          <p>You get the torque sheet with the bike. It lists what was adjusted, what
+            was replaced, and what we think will need doing in the next few months —
+            so the next shop, or you, is not guessing.</p>
+          <p>Anything we find that is not on the job sheet gets a phone call, not a
+            surprise on the invoice. If you would rather we just did it, say so when
+            you drop it off and we will work to a ceiling you set.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="notes">
+      <div class="sec-head">
+        <p class="tag">Before you drop in</p>
+        <h2>Worth knowing</h2>
+      </div>
+      <div class="notes">
+        <div>
+          <b>We work on anything</b>
+          <p>Road, gravel, mountain, cargo, kids' bikes and the twenty-year-old hybrid
+            in your shed. No brand snobbery and no minimum spend.</p>
+        </div>
+        <div>
+          <b>E-bikes, mostly</b>
+          <p>We service Bosch, Shimano and Fazua systems. Proprietary batteries on some
+            direct-to-consumer brands we cannot legally open — call first.</p>
+        </div>
+        <div>
+          <b>Drop-off, not appointment</b>
+          <p>Bring it any time we are open. Booking reserves bench time, which is what
+            makes the three-to-five day turnaround hold.</p>
+        </div>
+        <div>
+          <b>Free adjustment after</b>
+          <p>Cables stretch and gears drift in the first fortnight. Bring it back
+            within thirty days and we will re-index it for nothing.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <section>
-    <h2>Three bays, no queue</h2>
-    <div class="bays">
-      <div><i>Bay 01</i><b>Service</b><span>Everything from a safety check to a full strip, clean, and rebuild.</span></div>
-      <div><i>Bay 02</i><b>Wheels</b><span>Hand-built wheels, truing, and spoke replacement while you wait.</span></div>
-      <div><i>Bay 03</i><b>Fitting</b><span>Ninety minutes on the jig, with a follow-up session included.</span></div>
-    </div>
-  </section>
-
-  <section class="closing">
+  <section class="closing" id="book">
     <div>
       <h2>Drop it off Tuesday.</h2>
       <p>412 NORTH LINE RD · TUE–SAT 09:00–18:00</p>
     </div>
-    <a class="cta" href="#">Book a service</a>
+    <a class="cta" href="#book">Book a service</a>
   </section>
+
+  <footer>
+    <div class="foot-grid">
+      <div><i>Workshop</i><b>412 North Line Rd</b><span>Unit 3, rear yard</span></div>
+      <div><i>Hours</i><b>Tue–Sat 09:00–18:00</b><span>Closed Sun &amp; Mon</span></div>
+      <div><i>Phone</i><b>(206) 555-0139</b><span>Bench line, rings in the shop</span></div>
+      <div><i>Email</i><b>bench@northline.cc</b><span>Quotes within a day</span></div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 Northline Cycles</span>
+      <span>Concept design — not a real business</span>
+    </div>
+  </footer>
 </body>
 </html>

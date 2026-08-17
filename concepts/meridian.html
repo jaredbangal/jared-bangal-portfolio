@@ -20,23 +20,36 @@
      hue the other five concepts do not use, and this sits 2.0:1 from the
      page while staying 6.6:1 away from Northline, which is its neighbour in
      the carousel. Restraint here is carried by the type and the hairlines,
-     not by the absence of colour. */
+     not by the absence of colour.
+
+     Contrast note: muted ink bottoms out at .86 (4.95:1 on paper-dk,
+     which is the tighter of the two grounds). It ran at .55 —
+     2.94:1 — on 11px nav links, which is the lowest reading anywhere in the
+     six concepts and the reason every opacity here is now written down. */
   :root {
-    --paper: #8FA3B0;
-    --ink:   #0F1518;
-    --rule:  rgba(15, 21, 24, .22);
+    --paper:   #8FA3B0;
+    --paper-dk:#8397A4;
+    --ink:     #0F1518;
+    --muted:   rgba(15, 21, 24, .86);   /* 5.6:1 on paper, 4.95:1 on paper-dk */
+    --rule:    rgba(15, 21, 24, .22);
+    --rule-firm: rgba(15, 21, 24, .38);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
   body {
     background: var(--paper);
     color: var(--ink);
     font-family: "Archivo", sans-serif;
     font-weight: 300;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-size: 16px;
+    line-height: 1.6;
     position: relative;
+    -webkit-font-smoothing: antialiased;
   }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
   /* the grid itself is the ornament */
   .grid {
@@ -45,37 +58,48 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     pointer-events: none;
+    z-index: 0;
   }
   .grid span { border-left: 1px solid rgba(15, 21, 24, .06); }
 
-  header, main, footer { position: relative; }
+  header, main, section, footer { position: relative; z-index: 1; }
 
+  .label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Header ────────────────────────────────────────────── */
   header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: 24px;
     padding: 36px 44px 0;
   }
-  .mark {
-    font-weight: 500;
-    font-size: 13px;
-    letter-spacing: .3em;
-    text-transform: uppercase;
-  }
-  nav { display: flex; gap: 34px; }
+  .mark { font-weight: 500; font-size: 13px; letter-spacing: .3em; text-transform: uppercase; }
+  nav ul { display: flex; gap: 34px; list-style: none; }
   nav a {
+    display: inline-block;
+    padding: 4px 0;
     font-size: 11px;
     letter-spacing: .18em;
     text-transform: uppercase;
-    color: var(--ink);
-    opacity: .55;
+    color: var(--muted);
     text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color .2s ease, border-color .2s ease;
   }
+  nav a:hover { color: var(--ink); border-bottom-color: var(--rule-firm); }
 
-  main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 64px 44px; }
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero { padding: 88px 44px 64px; }
   h1 {
     font-weight: 300;
-    font-size: clamp(44px, 7.5vw, 104px);
+    font-size: clamp(40px, 7.5vw, 104px);
     line-height: 1.02;
     letter-spacing: -.045em;
     max-width: 15ch;
@@ -86,111 +110,126 @@
     grid-template-columns: repeat(3, 1fr);
     border-top: 1px solid var(--rule);
   }
-  .meta div { padding: 22px 20px 0 0; }
-  .meta i {
-    display: block;
-    font-style: normal;
-    font-size: 10px;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    opacity: .5;
-    margin-bottom: 10px;
-  }
-  .meta b { font-weight: 400; font-size: 15px; line-height: 1.5; }
+  .meta div { padding: 22px 24px 0 0; }
+  .meta i { display: block; font-style: normal; font-size: 11px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .meta b { display: block; margin-top: 10px; font-weight: 300; font-size: 17px; letter-spacing: -.01em; }
 
-  footer {
+  .strip {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: baseline;
+    gap: 12px 32px;
     padding: 0 44px 40px;
     font-size: 11px;
+    font-weight: 500;
     letter-spacing: .18em;
     text-transform: uppercase;
-    opacity: .55;
+    color: var(--muted);
   }
-  footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
+  .strip a { text-decoration: none; }
+  .strip a:hover { color: var(--ink); }
 
-  main { min-height: 72vh; }
-  section { padding: 96px 44px; position: relative; }
-  section h2 {
-    font-weight: 300;
-    font-size: 15px;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    opacity: .5;
-    margin-bottom: 44px;
-  }
+  /* ── Sections ──────────────────────────────────────────── */
+  section { padding: 80px 44px; border-top: 1px solid var(--rule); }
+  h2 { font-weight: 300; font-size: clamp(28px, 3.6vw, 42px); line-height: 1.08; letter-spacing: -.035em; }
+  .sec-head { margin-bottom: 44px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 16px 40px; }
+
+  /* Selected work */
+  .projects { border-top: 1px solid var(--rule-firm); }
   .projects a {
     display: grid;
-    grid-template-columns: 90px 1fr 200px;
-    gap: 24px;
+    grid-template-columns: 6ch 1fr 1fr auto;
+    gap: 32px;
     align-items: baseline;
-    padding: 26px 0;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    transition: padding-left .25s ease;
+  }
+  .projects a:hover { padding-left: 12px; }
+  @media (prefers-reduced-motion: reduce) { .projects a:hover { padding-left: 0; } }
+  .projects em { font-style: normal; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .projects b { font-weight: 400; font-size: 21px; letter-spacing: -.02em; }
+  .projects span { font-size: 14px; color: var(--muted); }
+  .projects u { text-decoration: none; font-size: 13px; color: var(--muted); }
+
+  /* Practice */
+  .practice { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .practice p { font-size: 17px; color: var(--muted); max-width: 52ch; }
+  .practice p + p { margin-top: 16px; }
+  .facts { border-top: 1px solid var(--rule-firm); }
+  .facts div { display: flex; justify-content: space-between; gap: 24px; padding: 15px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
+  .facts i { font-style: normal; color: var(--muted); }
+
+  /* Process */
+  .phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+  .phases > div { border-top: 1px solid var(--rule-firm); padding-top: 20px; }
+  .phases i { font-style: normal; font-size: 11px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .phases b { display: block; margin: 12px 0 8px; font-weight: 400; font-size: 19px; letter-spacing: -.02em; }
+  .phases p { font-size: 14px; color: var(--muted); }
+
+  /* Recognition */
+  .awards { border-top: 1px solid var(--rule-firm); max-width: 760px; }
+  .awards div { display: grid; grid-template-columns: 6ch 1fr auto; gap: 32px; align-items: baseline; padding: 15px 0; border-bottom: 1px solid var(--rule); }
+  .awards em { font-style: normal; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .awards span { font-size: 15px; }
+  .awards u { text-decoration: none; font-size: 13px; color: var(--muted); }
+
+  /* Closing */
+  .closing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px 40px;
+  }
+  .closing p { font-weight: 300; font-size: clamp(24px, 3.4vw, 38px); letter-spacing: -.035em; max-width: 22ch; }
+  .closing a { font-size: 13px; letter-spacing: .06em; text-decoration: none; border-bottom: 1px solid var(--rule-firm); padding-bottom: 3px; }
+  .closing a:hover { border-bottom-color: var(--ink); }
+
+  /* ── Footer ────────────────────────────────────────────── */
+  footer { background: var(--paper-dk); padding: 56px 44px 34px; border-top: 1px solid var(--rule); }
+  .foot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px; }
+  .foot-grid i { display: block; font-style: normal; font-size: 11px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .foot-grid b { display: block; margin-top: 10px; font-weight: 400; font-size: 16px; }
+  .foot-grid span { display: block; margin-top: 4px; font-size: 14px; color: var(--muted); }
+  .foot-note {
+    margin-top: 44px;
+    padding-top: 20px;
     border-top: 1px solid var(--rule);
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .projects a:last-child { border-bottom: 1px solid var(--rule); }
-  .projects em { font-style: normal; font-size: 13px; opacity: .5; }
-  .projects b { font-weight: 400; font-size: 30px; letter-spacing: -.035em; }
-  .projects span { font-size: 13px; opacity: .55; text-align: right; }
-  .closing { border-top: 1px solid var(--rule); }
-  .closing p {
-    font-weight: 300;
-    font-size: clamp(30px, 4vw, 52px);
-    line-height: 1.1;
-    letter-spacing: -.04em;
-    max-width: 20ch;
-    margin-bottom: 36px;
-  }
-  .closing a {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px 28px;
     font-size: 11px;
-    letter-spacing: .2em;
+    font-weight: 500;
+    letter-spacing: .16em;
     text-transform: uppercase;
-    color: var(--ink);
-    text-decoration: none;
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 6px;
+    color: var(--muted);
   }
 
-
-
-
-  /* ── Small screens ─────────────────────────────────────
-     These pages are rendered at a 900px viewport for the portfolio
-     tiles and were built to that width only, so every one of them
-     scrolled sideways on a phone. Concept or not, they are linked
-     from the nav and a visitor can open one.
-     Generated from the page's own rules — regenerate rather than
-     hand-edit if the layout changes. */
+  /* ── Small screens ─────────────────────────────────────── */
+  @media (max-width: 980px) {
+    .phases { grid-template-columns: repeat(2, 1fr); }
+    .practice { grid-template-columns: 1fr; gap: 40px; }
+    .projects a { grid-template-columns: 6ch 1fr auto; }
+    .projects span { grid-column: 2 / -1; }
+  }
   @media (max-width: 760px) {
-  /* Desktop gutters of 44–56px leave a phone nothing to work
-     with — these blocks were pinned wide by padding, not by
-     content, including ones nested inside other padded blocks. */
-  main,
-  section { padding-left: 20px; padding-right: 20px; }
-  /* Every flex row the page declares: a mockup built at one
-     width was never told it could wrap. */
-  body,
-  footer,
-  header,
-  main,
-  nav { flex-wrap: wrap; }
-  nav { gap: 18px; }
-  .meta,
-  .projects a,
-  /* the grid itself is the ornament */
-  .grid { grid-template-columns: 1fr; }
-  img, svg, canvas { max-width: 100%; height: auto; }
+    header, .hero, .strip, section, footer { padding-left: 20px; padding-right: 20px; }
+    header { flex-wrap: wrap; gap: 14px; }
+    nav ul { flex-wrap: wrap; gap: 18px; }
+    .hero { padding-top: 56px; padding-bottom: 44px; }
+    section { padding-top: 56px; padding-bottom: 56px; }
+    .meta, .phases, .foot-grid { grid-template-columns: 1fr; }
+    .meta div { padding-right: 0; }
+    .projects a, .awards div { grid-template-columns: 5ch 1fr; gap: 6px 20px; }
+    .projects u, .awards u { grid-column: 2; }
+    .grid { grid-template-columns: repeat(3, 1fr); }
+    img, svg { max-width: 100%; height: auto; }
   }
-
-
-
-  /* Below ~360px the 20px gutter is still more than the content can
-     give back — only 8px of sideways scroll, but it is scroll. */
   @media (max-width: 380px) {
-  main,
-  section { padding-left: 12px; padding-right: 12px; }
+    header, .hero, .strip, section, footer { padding-left: 14px; padding-right: 14px; }
   }
 </style>
 </head>
@@ -199,36 +238,132 @@
 
   <header>
     <div class="mark">Meridian</div>
-    <nav><a href="#">Work</a><a href="#">Practice</a><a href="#">Journal</a><a href="#">Contact</a></nav>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#selected">Work</a></li>
+        <li><a href="#practice">Practice</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main>
-    <h1>Buildings that sit quietly in their place</h1>
-    <div class="meta">
-      <div><i>Practice</i><b>Residential and adaptive reuse, Pacific Northwest</b></div>
-      <div><i>Founded</i><b>2014, Portland</b></div>
-      <div><i>Selected</i><b>AIA Northwest Honor, 2023</b></div>
+    <div class="hero">
+      <h1>Buildings that sit quietly in their place</h1>
+      <div class="meta">
+        <div><i>Practice</i><b>Residential and adaptive reuse, Pacific Northwest</b></div>
+        <div><i>Founded</i><b>2014, Portland</b></div>
+        <div><i>Selected</i><b>AIA Northwest Honor, 2023</b></div>
+      </div>
     </div>
+
+    <div class="strip">
+      <span>Portland, OR</span>
+      <a href="#contact">Enquire →</a>
+    </div>
+
+    <section id="selected">
+      <div class="sec-head">
+        <h2>Selected</h2>
+        <span class="label">2021 — 2024</span>
+      </div>
+      <div class="projects">
+        <a href="#selected"><em>2024</em><b>Alder House</b><span>Hood River, OR</span><u>Residential</u></a>
+        <a href="#selected"><em>2023</em><b>Foundry No. 4</b><span>Portland, OR</span><u>Adaptive reuse</u></a>
+        <a href="#selected"><em>2023</em><b>Kestrel Cabin</b><span>Trout Lake, WA</span><u>Residential</u></a>
+        <a href="#selected"><em>2022</em><b>Cove Studio</b><span>Manzanita, OR</span><u>Studio</u></a>
+        <a href="#selected"><em>2022</em><b>Ash Street Library</b><span>Portland, OR</span><u>Civic</u></a>
+        <a href="#selected"><em>2021</em><b>Bell Street Rowhouses</b><span>Seattle, WA</span><u>Multi-family</u></a>
+      </div>
+    </section>
+
+    <section id="practice">
+      <div class="sec-head">
+        <h2>Practice</h2>
+      </div>
+      <div class="practice">
+        <div>
+          <p>Meridian is six people in a former print works on Ash Street. We work
+            almost entirely in timber, on sites where something is already standing, and
+            we would rather repair a building than replace it.</p>
+          <p>We take four projects a year. That is not scarcity marketing — it is the
+            number two principals can be on site for weekly without the work suffering,
+            and we have not found a way to make it five.</p>
+        </div>
+        <div class="facts">
+          <div><i>Studio</i><span>Six, including two principals</span></div>
+          <div><i>Typical project</i><span>14–26 months</span></div>
+          <div><i>Fee basis</i><span>Percentage or fixed stage fee</span></div>
+          <div><i>Works in</i><span>Oregon and Washington</span></div>
+          <div><i>Smallest to date</i><span>340 sq ft</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="process">
+      <div class="sec-head">
+        <h2>How a project runs</h2>
+      </div>
+      <div class="phases">
+        <div>
+          <i>01 / Feasibility</i>
+          <b>Before you commit</b>
+          <p>Two to four weeks. Survey, zoning, and an honest answer about whether the
+            building you want fits the site and the budget you have.</p>
+        </div>
+        <div>
+          <i>02 / Concept</i>
+          <b>Drawing the argument</b>
+          <p>Six to ten weeks. Plans, massing, and material studies, reviewed together
+            fortnightly rather than presented once at the end.</p>
+        </div>
+        <div>
+          <i>03 / Consent</i>
+          <b>Permits and detail</b>
+          <p>Three to six months, most of it waiting. We handle the submission and the
+            back-and-forth with the jurisdiction.</p>
+        </div>
+        <div>
+          <i>04 / On site</i>
+          <b>Through to handover</b>
+          <p>Weekly site visits, one point of contact, and a defects review at six
+            months and again at a year.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="recognition">
+      <div class="sec-head">
+        <h2>Recognition</h2>
+      </div>
+      <div class="awards">
+        <div><em>2023</em><span>AIA Northwest &amp; Pacific Region — Honor Award</span><u>Foundry No. 4</u></div>
+        <div><em>2023</em><span>Wood Design Award, Western Region</span><u>Cove Studio</u></div>
+        <div><em>2022</em><span>Portland Preservation Prize — shortlist</span><u>Foundry No. 4</u></div>
+        <div><em>2021</em><span>AIA Portland — Merit Award, Housing</span><u>Bell Street Rowhouses</u></div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="closing">
+        <p>We take four projects a year.</p>
+        <a href="#contact">Enquire →</a>
+      </div>
+    </section>
   </main>
 
   <footer>
-    <span>Portland, OR</span>
-    <a href="#">Enquire →</a>
-  </footer>
-
-  <section>
-    <h2>Selected</h2>
-    <div class="projects">
-      <a href="#"><em>2024</em><b>Alder House</b><span>Hood River, OR · Residential</span></a>
-      <a href="#"><em>2023</em><b>Foundry No. 4</b><span>Portland, OR · Adaptive reuse</span></a>
-      <a href="#"><em>2022</em><b>Cove Studio</b><span>Manzanita, OR · Studio</span></a>
-      <a href="#"><em>2021</em><b>Bell Street Rowhouses</b><span>Seattle, WA · Multi-family</span></a>
+    <div class="foot-grid">
+      <div><i>Studio</i><b>218 NE Ash St</b><span>Portland, OR 97232</span></div>
+      <div><i>Enquiries</i><b>studio@meridian.archi</b><span>(503) 555-0192</span></div>
+      <div><i>Hours</i><b>Mon–Thu, 9–5</b><span>Fridays on site</span></div>
+      <div><i>Registered</i><b>OR &amp; WA</b><span>AIA member practice</span></div>
     </div>
-  </section>
-
-  <section class="closing">
-    <p>We take four projects a year.</p>
-    <a href="#">Enquire →</a>
-  </section>
+    <div class="foot-note">
+      <span>© 2026 Meridian Architecture</span>
+      <span>Concept design — not a real practice</span>
+    </div>
+  </footer>
 </body>
 </html>

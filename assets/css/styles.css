@@ -2214,7 +2214,11 @@ body  { background-color: var(--bg-page); }
     .slide__frame { container-type: size; }
     .slide__shot {
       transform: translateY(0);
-      transition: transform 2400ms var(--ease-in-out);
+      /* Solved against the tile height, not chosen. The travel is the whole
+         render, so the duration sets a *speed*: 2400ms was right when the
+         tiles were ~1600px. They are capped at 2600 (tools/build_shots.py),
+         and 3800ms keeps the same px/ms. Re-solve if MAX_TILE_H moves. */
+      transition: transform 3800ms var(--ease-in-out);
     }
     .slide__link:hover .slide__shot,
     .slide__link:focus-visible .slide__shot { transform: translateY(calc(100cqh - 100%)); }

@@ -432,11 +432,34 @@ Each card carries its concept's palette via `--slide-bg` / `--slide-ink` inline.
 clears AA on all six. Kettle's rust had to darken to `#6B351D` because `#A2542F`
 only reached 4.87:1 against its own ink. Re-solve if a card colour changes.
 
-**Render spec.** A **full-page** render, 1.4–1.8 screens tall, so hovering travels
-through it. Shoot at **900×1125** with `full_page=True`, resize to **800px** wide,
-WebP q84; write the resulting pixel height into the tile's `height` attribute. The
-first 1125px must stand alone — that is all a touch device sees. Layouts built for
-a landscape viewport leave voids when rendered tall.
+**Render spec, and why it is a script now.** Shoot at **900×1125** with
+`full_page=True`, resize to **800px** wide, WebP q84, and write the resulting pixel
+height into the tile's `height` attribute. That last step is the one that rots: the
+height is what reserves the card's space before the image arrives, so a stale number
+is a layout shift on every load. It lived in this file and in nobody's hands until
+`tools/build_shots.py`, which does the render and the rewrite in one pass.
+
+**The 2600px cap, and the 2400 → 3800ms that came with it.** The concepts were
+originally 1.4–1.8 screens — hero plus two sections, closer to a mockup than a site.
+Filling them out (real price lists, process, practical info, a proper footer) took
+them to **3.4–4.3 screens**: botanica 3445px, borough 4083, kettle 4323, sunday 3848,
+meridian 3747, northline 4153.
+
+That broke the hover scrub, in a way worth stating precisely because it is
+counter-intuitive: **the travel is the full image over a fixed duration, so the
+duration is a speed, not a length.** A 2.5× taller render does not show more on
+hover — it shows the same thing 2.5× faster, and past roughly three screens nothing
+is legible. Two fixes were possible: stretch the duration proportionally (6.5s of
+hover, absurd) or cap the render. Capping won, because the tile is a teaser and the
+whole site is one click away.
+
+`MAX_TILE_H` is **2600px** (~2.6 screens) and `.slide__shot` is **3800ms**. These are
+one decision in two files: 2400ms was solved against ~1600px tiles, and 2600 × (2400
+÷ 1600) ≈ 3800 holds the px/ms. Move either and re-solve the other. File sizes came
+out at 46–108KB, which is where they were before.
+
+The first 1125px must still stand alone — that is all a touch device sees. Layouts
+built for a landscape viewport leave voids when rendered tall.
 
 **Hover travel.** `.work__frame` is `container-type: size`, so the image moves by
 `translateY(calc(100cqh - 100%))` — exactly (image − frame) at any breakpoint, no
@@ -445,13 +468,42 @@ no way to reverse the state and would be stranded mid-scroll. Under
 `prefers-reduced-motion` the travel is **cancelled outright** — the global reduce
 rule only shortens the transition, which would snap the image to its end position.
 
-**The concept pages carry their own responsive patch.** Built as 900px render
-targets with zero media queries, they scrolled sideways on every phone despite
-being linked from the nav and the tiles. Each now has a generated
-`@media (max-width: 760px)` block (multi-column grids to `1fr`, declared flex rows
-wrap, 44–56px gutters down to 20px) plus a 380px tier at 12px. **Generated from
-each page's own rules — regenerate rather than hand-edit.** Nothing fires above
-760px, so the 900px tile renders are untouched.
+**The responsive patch is retired.** The concepts were built as 900px render
+targets with zero media queries and scrolled sideways on every phone, so each
+carried a *generated* `@media (max-width: 760px)` block — a retrofit, regenerated
+rather than hand-edited. When the six were rewritten they were authored responsive
+from the start (a content breakpoint around 860–980, a layout one at 760, a gutter
+tier at 380), so there is nothing left to retrofit. **Edit the pages directly.**
+
+**Six contrast failures found on the rebuilt pages, none visible to a CSSOM
+checker.** Every one was either an `opacity` on inherited ink or an accent measured
+against the wrong ground:
+
+| Page | What | Measured | Fix |
+|---|---|---|---|
+| Meridian | nav links, 11px | **2.94:1** | muted ink .55 → .86 |
+| Sunday | prices and labels | 3.28:1 | added `--crust-ink` |
+| Kettle | roast headings, 21px | 4.20:1 | `--rust` → `--rust-ink` |
+| Kettle | footer labels | 4.32:1 | re-solved on `--sand-dk` |
+| Botanica | kicker and prices | 3.40:1 | added `--clay-ink` |
+| Meridian | footer detail | 4.39:1 | same .86 bump |
+
+Two lessons are worth keeping. **An accent solved on the page ground fails on the
+footer ground** — Kettle's `--rust-ink` passed at 4.88:1 on `--sand` and failed at
+4.32:1 on `--sand-dk`, three shades darker; it is now solved against the tighter of
+the two. And **21px is not large text**: the 3:1 floor starts at 24px (or 18.66px at
+700+), so a decorative accent is only safe in display sizes. Hence the split across
+all three warm concepts — `--clay`/`--clay-ink`, `--rust`/`--rust-ink`,
+`--crust`/`--crust-ink`, the first of each pair failing 4.5:1 *by design* and
+allowed only at 24px and up.
+
+**No fabricated testimonials in the six.** The obvious way to make a concept site
+look finished is a customer quote, and all six were candidates. They do not have
+them, for the same reason the marquee came off the home page: the site's own
+position is that invented reviews are not acceptable, and a fictional business is
+not a loophole a visitor can see. Each got a section that suits its trade instead —
+Kettle's brew ratios, Northline's rate card, Borough's house rules, Sunday's bake
+schedule — which is more informative than a quote would have been anyway.
 
 ## The accent hover
 

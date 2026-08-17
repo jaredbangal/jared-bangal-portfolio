@@ -24,7 +24,8 @@ assets/js/main.js       nav, reveals, hero stage, marquee, carousel, forms
 assets/js/particles.js  the WebGL field
 assets/img/             portrait{,-480}.webp, work-<slug>.webp (concept
                         renders), stage-<slug>.webp (hero crops)
-concepts/<slug>.html    six self-contained concept designs
+tools/build_shots.py    renders both from concepts/ and syncs the heights
+concepts/<slug>.html    six concept sites — full sites, not hero mockups
 motion/index.html       standalone particle study, not linked from the site
 reference/              squarespace.com screens + scraped tokens
 reference/site/         this site's own screens + tokens; regenerate with its
@@ -293,16 +294,31 @@ from all six.
 - **The card shadow is load-bearing**: Meridian's `#E4E2DC` *is* the page colour.
 - Palettes ride inline on `--slide-bg` / `--slide-ink`; softened text uses
   `color-mix` at **88%/92%** — solved, not chosen. Re-solve if a colour changes.
-- **Render spec**: full-page, 1.4–1.8 screens tall, shot at **900×1125** with
-  `full_page=True`, resized to **800px**, WebP q84; write the pixel height into
-  the tile's `height`. The first 1125px must stand alone — that is all a touch
-  device sees.
+- **`tools/build_shots.py` renders both images and rewrites the `height`
+  attributes in `index.html`.** Never shoot these by hand: the height attribute
+  is what reserves the card's space, and a stale one shifts the page as it
+  loads. 900×1125, `full_page=True`, resized to 800 wide, WebP q84.
+- **The tile is capped at `MAX_TILE_H` 2600px and that cap is load-bearing.**
+  The card scrubs the whole render on hover over a *fixed* duration, so an
+  uncapped tile does not show more — it shows the same thing faster. The
+  concepts run 3.4–4.3 screens since they were filled out; uncapped, the scrub
+  was unreadable. **`MAX_TILE_H` and the 3800ms in `.slide__shot` are one
+  number in two files** — move one and re-solve the other (2400ms was correct
+  at the old ~1600px).
+- The first 1125px must still stand alone — that is all a touch device sees.
 - **Hover travel** is `translateY(calc(100cqh - 100%))` on a `container-type:
   size` frame — no per-tile numbers. Gated on fine pointers, and **cancelled
   outright** under `prefers-reduced-motion`.
-- **The concept pages carry a generated `@media (max-width: 760px)` patch** —
-  regenerate from each page's own rules rather than hand-editing. Nothing fires
-  above 760px, so the tile renders are untouched.
+- **The concepts are authored responsive; there is no generated patch any
+  more.** The `@media (max-width: 760px)` block each page used to carry was a
+  retrofit, because the originals were built at one width. They were rewritten
+  at three breakpoints, so the retrofit is gone — edit the pages directly.
+- **Every accent in the six is split into a display value and a text value
+  where it had to be**: `--clay`/`--clay-ink`, `--rust`/`--rust-ink`,
+  `--crust`/`--crust-ink`. The decorative half fails 4.5:1 by design and is
+  allowed only at 24px+. Six readings failed before this split, worst 2.94:1
+  on Meridian's nav. Method: `rendered-contrast` — `opacity` on inherited ink
+  is invisible to a CSSOM checker, and that is what most of these were.
 
 ## The accent hover
 

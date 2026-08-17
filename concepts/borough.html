@@ -11,27 +11,46 @@
 <style>
   /* Concept: Borough Barber — neighbourhood barber shop.
      Direction: condensed uppercase display, near-black ground, one amber
-     accent, hairline rules boxing everything. Utilitarian, not precious. */
+     accent, hairline rules boxing everything. Utilitarian, not precious.
+
+     Contrast on the black ground: amber 7.22:1, bone at .6 opacity 6.18:1.
+     Nothing softer than .6 carries text. */
   :root {
     --black: #121212;
+    --char:  #191919;
     --bone:  #EFEAE1;
     --amber: #D8913A;
     --rule:  rgba(239, 234, 225, .22);
+    --rule-firm: rgba(239, 234, 225, .4);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
   body {
     background: var(--black);
     color: var(--bone);
     font-family: "Archivo", sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+  .cond {
+    font-family: "Oswald", sans-serif;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
   }
 
+  /* ── Header ────────────────────────────────────────────── */
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 20px;
     padding: 24px 48px;
     border-bottom: 1px solid var(--rule);
   }
@@ -43,23 +62,23 @@
     text-transform: uppercase;
   }
   .mark span { color: var(--amber); }
-  nav { display: flex; gap: 36px; }
+  nav ul { display: flex; gap: 36px; list-style: none; }
   nav a {
+    display: inline-block;
+    padding: 6px 0;
     font-size: 11px;
     font-weight: 500;
     letter-spacing: .2em;
     text-transform: uppercase;
-    color: var(--bone);
-    opacity: .75;
+    color: rgba(239, 234, 225, .78);
     text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color .2s ease, border-color .2s ease;
   }
+  nav a:hover { color: var(--bone); border-bottom-color: var(--amber); }
 
-  main {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 320px;
-  }
-
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero { display: grid; grid-template-columns: 1fr 320px; }
   .stage {
     display: flex;
     flex-direction: column;
@@ -70,24 +89,13 @@
   h1 {
     font-family: "Oswald", sans-serif;
     font-weight: 600;
-    font-size: clamp(64px, 10vw, 148px);
+    font-size: clamp(56px, 10vw, 148px);
     line-height: .86;
     letter-spacing: .01em;
     text-transform: uppercase;
   }
-  h1 .rule {
-    display: block;
-    width: 120px;
-    height: 6px;
-    background: var(--amber);
-    margin: 36px 0;
-  }
-  p.lede {
-    max-width: 40ch;
-    font-size: 17px;
-    line-height: 1.6;
-    opacity: .78;
-  }
+  h1 .rule { display: block; width: 120px; height: 6px; background: var(--amber); margin: 36px 0; }
+  .lede { max-width: 42ch; font-size: 17px; opacity: .78; }
   .cta {
     align-self: flex-start;
     margin-top: 44px;
@@ -100,12 +108,11 @@
     letter-spacing: .18em;
     text-transform: uppercase;
     text-decoration: none;
+    transition: background-color .2s ease;
   }
+  .cta:hover { background: #EBA84D; }
 
-  .prices {
-    margin-top: 52px;
-    border-top: 1px solid var(--rule);
-  }
+  .prices { margin-top: 52px; border-top: 1px solid var(--rule); }
   .prices div {
     display: flex;
     align-items: baseline;
@@ -114,72 +121,96 @@
     padding: 15px 0;
     border-bottom: 1px solid var(--rule);
   }
-  .prices b {
-    font-family: "Oswald", sans-serif;
-    font-weight: 500;
-    font-size: 19px;
-    letter-spacing: .05em;
-    text-transform: uppercase;
-  }
-  .prices span { font-size: 14px; opacity: .6; }
+  .prices b { font-family: "Oswald", sans-serif; font-weight: 500; font-size: 19px; letter-spacing: .05em; text-transform: uppercase; }
+  .prices span { font-size: 14px; opacity: .62; }
   .prices u { text-decoration: none; font-size: 16px; color: var(--amber); }
 
   aside { display: flex; flex-direction: column; }
   .slot {
     flex: 1;
     display: flex;
-    align-items: flex-end;
-    padding: 28px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px 24px;
     border-bottom: 1px solid var(--rule);
   }
   .slot:last-child { border-bottom: 0; }
-  .slot b {
+  .slot i { display: block; font-style: normal; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; opacity: .62; }
+  .slot b { display: block; margin-top: 10px; font-family: "Oswald", sans-serif; font-weight: 600; font-size: 30px; letter-spacing: .04em; text-transform: uppercase; }
+
+  /* ── Sections ──────────────────────────────────────────── */
+  section { padding: 80px 48px; border-top: 1px solid var(--rule); }
+  h2 {
     font-family: "Oswald", sans-serif;
     font-weight: 600;
-    font-size: 34px;
+    font-size: clamp(34px, 5vw, 58px);
+    line-height: .96;
     letter-spacing: .02em;
-  }
-  .slot i {
-    display: block;
-    font-style: normal;
-    font-size: 11px;
-    letter-spacing: .2em;
     text-transform: uppercase;
-    opacity: .6;
-    margin-bottom: 6px;
+  }
+  .sec-head { margin-bottom: 44px; }
+  .sec-head p { margin-top: 16px; max-width: 54ch; font-size: 16px; opacity: .72; }
+
+  /* Team */
+  .team { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-left: 1px solid var(--rule); }
+  .team > div { padding: 28px 28px 32px; border: 1px solid var(--rule); border-left: 0; }
+  .team b { display: block; font-family: "Oswald", sans-serif; font-weight: 600; font-size: 26px; letter-spacing: .06em; text-transform: uppercase; }
+  .team span { display: block; margin: 12px 0 18px; font-size: 15px; opacity: .72; }
+  .team u { text-decoration: none; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--amber); }
+
+  /* Full price list */
+  .list { border-top: 1px solid var(--rule-firm); }
+  .list div {
+    display: grid;
+    grid-template-columns: 1fr 2fr auto auto;
+    gap: 24px;
+    align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .list b { font-family: "Oswald", sans-serif; font-weight: 500; font-size: 20px; letter-spacing: .05em; text-transform: uppercase; }
+  .list span { font-size: 15px; opacity: .7; }
+  .list em { font-style: normal; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .62; }
+  .list u { text-decoration: none; font-family: "Oswald", sans-serif; font-size: 20px; color: var(--amber); }
+
+  /* The shop / house rules */
+  .shop { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: start; }
+  .shop p { font-size: 17px; opacity: .8; }
+  .shop p + p { margin-top: 16px; }
+  .rules { list-style: none; border-top: 1px solid var(--rule-firm); }
+  .rules li {
+    display: flex;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 15px;
+    opacity: .82;
+  }
+  .rules i {
+    flex: 0 0 auto;
+    font-style: normal;
+    font-family: "Oswald", sans-serif;
+    font-size: 13px;
+    letter-spacing: .12em;
+    color: var(--amber);
+    opacity: 1;
   }
 
-  main { min-height: 74vh; }
-  section { padding: 80px 48px; border-top: 1px solid var(--rule); }
-  section h2 {
-    font-family: "Oswald", sans-serif;
-    font-weight: 600;
-    font-size: 54px;
-    line-height: .95;
-    text-transform: uppercase;
-    margin-bottom: 36px;
-  }
-  .team { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .team div { border: 1px solid var(--rule); padding: 24px; }
-  .team b {
-    display: block;
-    font-family: "Oswald", sans-serif;
-    font-weight: 500;
-    font-size: 22px;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .team span { font-size: 14px; opacity: .65; }
-  .team u { display: block; margin-top: 18px; text-decoration: none; font-size: 13px; color: var(--amber); }
-  .closing { background: var(--amber); color: var(--black); text-align: center; }
+  /* FAQ */
+  .faq { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px 64px; }
+  .faq b { display: block; font-family: "Oswald", sans-serif; font-weight: 500; font-size: 19px; letter-spacing: .05em; text-transform: uppercase; }
+  .faq p { margin-top: 10px; font-size: 15px; opacity: .74; }
+
+  /* Closing */
+  .closing { background: var(--amber); color: var(--black); text-align: center; border-top: 0; }
   .closing h2 { color: var(--black); }
-  .closing p { max-width: 42ch; margin: 0 auto 32px; font-size: 17px; line-height: 1.55; }
+  .closing p { margin: 18px auto 34px; max-width: 46ch; font-size: 17px; }
   .closing a {
     display: inline-block;
+    padding: 18px 40px;
     background: var(--black);
     color: var(--amber);
-    padding: 18px 36px;
     font-family: "Oswald", sans-serif;
     font-weight: 600;
     font-size: 13px;
@@ -187,92 +218,191 @@
     text-transform: uppercase;
     text-decoration: none;
   }
+  .closing a:hover { background: #000; }
 
-
-
-
-  /* ── Small screens ─────────────────────────────────────
-     These pages are rendered at a 900px viewport for the portfolio
-     tiles and were built to that width only, so every one of them
-     scrolled sideways on a phone. Concept or not, they are linked
-     from the nav and a visitor can open one.
-     Generated from the page's own rules — regenerate rather than
-     hand-edit if the layout changes. */
-  @media (max-width: 760px) {
-  /* Desktop gutters of 44–56px leave a phone nothing to work
-     with — these blocks were pinned wide by padding, not by
-     content, including ones nested inside other padded blocks. */
-  .closing a,
-  .cta,
-  .stage,
-  header,
-  section { padding-left: 20px; padding-right: 20px; }
-  /* Every flex row the page declares: a mockup built at one
-     width was never told it could wrap. */
-  .prices div,
-  .slot,
-  .stage,
-  aside,
-  body,
-  header,
-  nav { flex-wrap: wrap; }
-  nav { gap: 18px; }
-  .team,
-  main { grid-template-columns: 1fr; }
-  img, svg, canvas { max-width: 100%; height: auto; }
+  /* ── Footer ────────────────────────────────────────────── */
+  footer { background: var(--char); padding: 56px 48px 36px; }
+  .foot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px; }
+  .foot-grid i { display: block; font-style: normal; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; opacity: .62; }
+  .foot-grid b { display: block; margin-top: 10px; font-family: "Oswald", sans-serif; font-weight: 500; font-size: 18px; letter-spacing: .05em; text-transform: uppercase; }
+  .foot-grid span { display: block; margin-top: 4px; font-size: 14px; opacity: .7; }
+  .foot-note {
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 32px;
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    opacity: .68;
   }
 
-
-
-  /* Below ~360px the 20px gutter is still more than the content can
-     give back — only 8px of sideways scroll, but it is scroll. */
+  /* ── Small screens ─────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .stage { border-right: 0; }
+    aside { flex-direction: row; border-top: 1px solid var(--rule); }
+    .slot { flex: 1; border-bottom: 0; border-right: 1px solid var(--rule); }
+    .slot:last-child { border-right: 0; }
+    .team, .faq, .foot-grid { grid-template-columns: repeat(2, 1fr); }
+    .shop { grid-template-columns: 1fr; gap: 40px; }
+  }
+  @media (max-width: 760px) {
+    header, section, footer { padding-left: 20px; padding-right: 20px; }
+    header { flex-wrap: wrap; gap: 16px; }
+    nav ul { flex-wrap: wrap; gap: 18px; }
+    .stage { padding: 52px 20px; }
+    section { padding-top: 56px; padding-bottom: 56px; }
+    .team, .faq, .foot-grid { grid-template-columns: 1fr; }
+    .team { border-left: 0; }
+    .team > div { border-left: 1px solid var(--rule); }
+    aside { flex-direction: column; }
+    .slot { border-right: 0; border-bottom: 1px solid var(--rule); }
+    .list div { grid-template-columns: 1fr auto; gap: 6px 18px; }
+    .list span { grid-column: 1 / -1; order: 3; }
+    .list em { grid-column: 1 / -1; order: 4; }
+    img, svg { max-width: 100%; height: auto; }
+  }
   @media (max-width: 380px) {
-  .closing a,
-  .cta,
-  .stage,
-  header,
-  section { padding-left: 12px; padding-right: 12px; }
+    header, section, footer, .stage { padding-left: 14px; padding-right: 14px; }
   }
 </style>
 </head>
 <body>
   <header>
     <div class="mark">Borough <span>/</span> Barber</div>
-    <nav><a href="#">Services</a><a href="#">Team</a><a href="#">Gallery</a><a href="#">Book</a></nav>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#shop">The shop</a></li>
+        <li><a href="#book">Book</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main>
-    <div class="stage">
-      <h1>Precision<br>grooming<span class="rule"></span></h1>
-      <p class="lede">Cuts, shaves, and beard work by appointment. Walk-ins when the chair's open.</p>
-      <a class="cta" href="#">Book a chair</a>
-
-      <div class="prices">
-        <div><b>Cut</b><span>45 min</span><u>$45</u></div>
-        <div><b>Cut &amp; beard</b><span>60 min</span><u>$65</u></div>
-        <div><b>Hot towel shave</b><span>45 min</span><u>$55</u></div>
+    <div class="hero">
+      <div class="stage">
+        <h1>Precision<br>grooming<span class="rule"></span></h1>
+        <p class="lede">Cuts, shaves, and beard work by appointment. Walk-ins when the
+          chair's open.</p>
+        <a class="cta" href="#book">Book a chair</a>
+        <div class="prices">
+          <div><b>Cut</b><span>45 min</span><u>$45</u></div>
+          <div><b>Cut &amp; beard</b><span>60 min</span><u>$65</u></div>
+          <div><b>Hot towel shave</b><span>45 min</span><u>$55</u></div>
+        </div>
       </div>
+      <aside>
+        <div class="slot"><div><i>Est.</i><b>2019</b></div></div>
+        <div class="slot"><div><i>Chairs</i><b>Four</b></div></div>
+        <div class="slot"><div><i>Open</i><b>Tue–Sun</b></div></div>
+      </aside>
     </div>
-    <aside>
-      <div class="slot"><div><i>Est.</i><b>2019</b></div></div>
-      <div class="slot"><div><i>Chairs</i><b>Four</b></div></div>
-      <div class="slot"><div><i>Open</i><b>Tue–Sun</b></div></div>
-    </aside>
+
+    <section id="services">
+      <div class="sec-head">
+        <h2>Everything<br>on the board</h2>
+        <p>One price, whoever's cutting. No junior rate, no surcharge for the chair by
+          the window.</p>
+      </div>
+      <div class="list">
+        <div><b>Cut</b><span>Clipper, scissor, or both. Wash and finish included.</span><em>45 min</em><u>$45</u></div>
+        <div><b>Cut &amp; beard</b><span>Full cut with the beard shaped and lined out.</span><em>60 min</em><u>$65</u></div>
+        <div><b>Hot towel shave</b><span>Straight razor, two towels, balm to finish.</span><em>45 min</em><u>$55</u></div>
+        <div><b>Beard trim</b><span>Shape, line, and a razor finish on the neck.</span><em>25 min</em><u>$30</u></div>
+        <div><b>Skin fade</b><span>Zero up. Takes as long as it takes.</span><em>50 min</em><u>$50</u></div>
+        <div><b>Under 12s</b><span>Any cut, any chair, weekdays before four.</span><em>30 min</em><u>$28</u></div>
+        <div><b>Buzz</b><span>One guard, all over, in and out.</span><em>15 min</em><u>$22</u></div>
+      </div>
+    </section>
+
+    <section id="team">
+      <div class="sec-head">
+        <h2>Four chairs,<br>four regulars</h2>
+        <p>Book a name if you have one. If you don't, take whoever's free — they all
+          trained on the same floor.</p>
+      </div>
+      <div class="team">
+        <div><b>Marcus</b><span>Fades, clipper work, beard shaping. Fifteen years behind the chair.</span><u>Tue–Sat</u></div>
+        <div><b>Dee</b><span>Scissor cuts and textured crops. Trained in Manchester.</span><u>Wed–Sun</u></div>
+        <div><b>Sal</b><span>Hot towel shaves and straight razor. Old school, on purpose.</span><u>Thu–Sun</u></div>
+      </div>
+    </section>
+
+    <section id="shop">
+      <div class="sec-head">
+        <h2>The shop</h2>
+      </div>
+      <div class="shop">
+        <div>
+          <p>Four chairs, a tiled floor, and a radio that stays on one station. Borough
+            opened in 2019 in a unit that had been a launderette for thirty years, and
+            we kept the tiling because it was better than anything we'd have put in.</p>
+          <p>It's a barber shop, not a salon. That means no colour, no treatments, and
+            nobody trying to sell you product on the way out. It also means you can
+            turn up on a Tuesday and be out in forty minutes.</p>
+        </div>
+        <ul class="rules">
+          <li><i>01</i><span>Cash and card both fine. No minimum on card.</span></li>
+          <li><i>02</i><span>Bring a photo if you have one. It helps more than a description.</span></li>
+          <li><i>03</i><span>Kids are welcome. Weekdays before four are quietest.</span></li>
+          <li><i>04</i><span>Running more than fifteen minutes late means we may need to rebook you.</span></li>
+          <li><i>05</i><span>If the cut isn't right, come back within a week and we'll fix it free.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="sec-head">
+        <h2>Before you come in</h2>
+      </div>
+      <div class="faq">
+        <div>
+          <b>Do you take walk-ins?</b>
+          <p>Yes, whenever a chair is open. Same-day slots go live at eight each
+            morning, and that is usually the better bet — weekends fill by Thursday.</p>
+        </div>
+        <div>
+          <b>How do I cancel?</b>
+          <p>Same link as the booking, up to four hours before. After that we'd rather
+            you called the shop than left the chair empty.</p>
+        </div>
+        <div>
+          <b>Can I ask for a specific barber?</b>
+          <p>You can, and there's no extra charge. It may mean waiting a few days
+            longer — Sal in particular books out.</p>
+        </div>
+        <div>
+          <b>Do you do beards only?</b>
+          <p>Yes, twenty-five minutes and thirty dollars. Worth booking rather than
+            walking in, since it's a short slot to find.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <section>
-    <h2>Four chairs,<br>four regulars</h2>
-    <div class="team">
-      <div><b>Marcus</b><span>Fades, clipper work, beard shaping. Fifteen years behind the chair.</span><u>Tue–Sat</u></div>
-      <div><b>Dee</b><span>Scissor cuts and textured crops. Trained in Manchester.</span><u>Wed–Sun</u></div>
-      <div><b>Sal</b><span>Hot towel shaves and straight razor. Old school, on purpose.</span><u>Thu–Sun</u></div>
-    </div>
-  </section>
-
-  <section class="closing">
+  <section class="closing" id="book">
     <h2>Walk in or book ahead</h2>
     <p>Same-day slots go live at eight each morning. Weekends fill by Thursday.</p>
-    <a href="#">Book a chair</a>
+    <a href="#book">Book a chair</a>
   </section>
+
+  <footer>
+    <div class="foot-grid">
+      <div><i>Shop</i><b>44 Borough High St</b><span>London SE1 1XF</span></div>
+      <div><i>Hours</i><b>Tue–Sun</b><span>9–7, Sun 10–4</span></div>
+      <div><i>Phone</i><b>020 7946 0812</b><span>Calls after 9am</span></div>
+      <div><i>Email</i><b>chair@boroughbarber.co</b><span>Replies same day</span></div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 Borough Barber</span>
+      <span>Concept design — not a real business</span>
+    </div>
+  </footer>
 </body>
 </html>

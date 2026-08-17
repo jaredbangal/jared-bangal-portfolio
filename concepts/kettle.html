@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kettle &amp; Co — concept</title>
-<meta name="description" content="Kettle & Co — a concept site design for a coffee roaster, by Jared Bangal.">
+<meta name="description" content="Kettle &amp; Co — a concept site design for a coffee roaster, by Jared Bangal.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Archivo:wght@300;400;500&display=swap">
@@ -12,61 +12,79 @@
   /* Concept: Kettle & Co — coffee roaster.
      Direction: warm neutral ground, light grotesque body against an
      oversized serif accent, a lot of air, information sitting on rules
-     rather than in boxes. */
+     rather than in boxes.
+
+     Colour note: --rust is 4.19:1 on sand — fine at display size (>=24px,
+     where 3:1 applies) and nowhere else. Small text takes --rust-ink,
+     solved against the darker --sand-dk footer at 4.81:1 rather than the
+     page at 5.44:1. Muted ink bottoms out at .72 opacity (5.51:1); .6
+     measured 3.95:1 and was carrying 12px labels. */
   :root {
-    --sand:  #E7E1D6;
-    --ink:   #24211D;
-    --rust:  #A2542F;
-    --rule:  rgba(36, 33, 29, .18);
+    --sand:     #E7E1D6;
+    --sand-dk:  #DCD4C6;
+    --ink:      #24211D;
+    --rust:     #A2542F;   /* display only — 4.19:1 */
+    --rust-ink: #8C4423;   /* text — 5.44:1 on sand, 4.81:1 on sand-dk */
+    --rule:     rgba(36, 33, 29, .18);
+    --rule-firm: rgba(36, 33, 29, .32);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
   body {
     background: var(--sand);
     color: var(--ink);
     font-family: "Archivo", sans-serif;
     font-weight: 300;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--rust-ink); outline-offset: 3px; }
 
-  header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    padding: 36px 64px 0;
-  }
-  .mark { font-family: "Instrument Serif", serif; font-size: 26px; letter-spacing: .01em; }
-  nav { display: flex; gap: 38px; }
-  nav a {
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--ink);
-    opacity: .7;
-    text-decoration: none;
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 64px;
-  }
-  .kicker {
+  .serif { font-family: "Instrument Serif", Georgia, serif; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 64px; }
+  .label {
     font-size: 12px;
     font-weight: 500;
     letter-spacing: .2em;
     text-transform: uppercase;
-    color: var(--rust);
-    margin-bottom: 32px;
+    color: var(--rust-ink);
   }
+
+  /* ── Header ────────────────────────────────────────────── */
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 36px 64px 0;
+  }
+  .mark { font-family: "Instrument Serif", Georgia, serif; font-size: 26px; }
+  nav ul { display: flex; gap: 38px; list-style: none; }
+  nav a {
+    display: inline-block;
+    padding: 4px 0;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: rgba(36, 33, 29, .78);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  nav a:hover { color: var(--ink); border-bottom-color: var(--rust); }
+
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero { padding: 72px 64px 56px; }
+  .hero .label { display: block; margin-bottom: 32px; }
   h1 {
-    font-family: "Instrument Serif", serif;
+    font-family: "Instrument Serif", Georgia, serif;
     font-weight: 400;
-    font-size: clamp(60px, 9.5vw, 140px);
+    font-size: clamp(54px, 9.5vw, 140px);
     line-height: .94;
     letter-spacing: -.02em;
     max-width: 15ch;
@@ -81,9 +99,10 @@
     padding-top: 28px;
     border-top: 1px solid var(--rule);
   }
-  .row p { max-width: 38ch; font-size: 17px; line-height: 1.65; opacity: .8; }
+  .row p { max-width: 40ch; font-size: 17px; }
   .cta {
     flex: none;
+    display: inline-block;
     padding: 18px 34px;
     border: 1px solid var(--ink);
     border-radius: 999px;
@@ -93,138 +112,331 @@
     text-transform: uppercase;
     text-decoration: none;
     color: var(--ink);
+    transition: background-color .2s ease, color .2s ease;
   }
+  .cta:hover { background: var(--ink); color: var(--sand); }
 
-  footer {
+  .strip {
     display: flex;
-    gap: 64px;
-    padding: 0 64px 40px;
+    flex-wrap: wrap;
+    gap: 12px 64px;
+    padding: 0 64px 44px;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: .16em;
     text-transform: uppercase;
-    opacity: .6;
+    color: rgba(36, 33, 29, .72);
   }
 
-  main { min-height: 72vh; }
-  section { padding: 88px 64px; border-top: 1px solid var(--rule); }
-  section h2 {
-    font-family: "Instrument Serif", serif;
+  /* ── Sections ──────────────────────────────────────────── */
+  section { padding: 88px 0; border-top: 1px solid var(--rule); }
+  h2 {
+    font-family: "Instrument Serif", Georgia, serif;
     font-weight: 400;
-    font-size: 56px;
+    font-size: clamp(36px, 5vw, 62px);
+    line-height: 1.02;
     letter-spacing: -.02em;
-    margin-bottom: 40px;
   }
-  .lots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .lots div { border-top: 1px solid var(--ink); padding-top: 20px; }
+  .sec-head { margin-bottom: 48px; }
+  .sec-head p { margin-top: 16px; max-width: 54ch; font-size: 17px; color: rgba(36, 33, 29, .8); }
+
+  /* The roster */
+  .lots { border-top: 1px solid var(--rule-firm); }
+  .lots > div {
+    display: grid;
+    grid-template-columns: 12ch 1fr auto;
+    gap: 32px;
+    align-items: baseline;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--rule);
+  }
   .lots i {
-    display: block;
     font-style: normal;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
-    letter-spacing: .18em;
+    letter-spacing: .16em;
     text-transform: uppercase;
-    color: var(--rust);
-    margin-bottom: 12px;
+    color: var(--rust-ink);
   }
   .lots b {
     display: block;
-    font-family: "Instrument Serif", serif;
+    font-family: "Instrument Serif", Georgia, serif;
     font-weight: 400;
-    font-size: 30px;
+    font-size: 27px;
     letter-spacing: -.01em;
-    margin-bottom: 8px;
   }
-  .lots span { font-size: 15px; line-height: 1.6; opacity: .75; }
-  .lots u { display: block; margin-top: 16px; text-decoration: none; font-weight: 500; font-size: 15px; }
-  .closing { background: var(--ink); color: var(--sand); }
-  .closing h2 { color: var(--sand); max-width: 16ch; }
-  .closing p { max-width: 44ch; font-size: 17px; line-height: 1.65; opacity: .8; margin-bottom: 32px; }
-  .closing a {
-    display: inline-block;
-    border: 1px solid var(--sand);
-    border-radius: 999px;
-    padding: 17px 32px;
-    color: var(--sand);
+  .lots span { display: block; margin-top: 6px; font-size: 15px; color: rgba(36, 33, 29, .78); }
+  .lots u { text-decoration: none; font-size: 16px; white-space: nowrap; }
+
+  /* Roasting */
+  .roast { display: grid; grid-template-columns: repeat(3, 1fr); gap: 52px; }
+  .roast > div { border-top: 1px solid var(--rule-firm); padding-top: 22px; }
+  .roast i {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: italic;
+    font-size: 21px;
+    color: var(--rust-ink);   /* 21px is below the 24px large-text floor */
+  }
+  .roast b { display: block; margin: 12px 0 8px; font-size: 17px; font-weight: 500; }
+  .roast p { font-size: 15px; color: rgba(36, 33, 29, .8); }
+
+  /* Brew table */
+  table { width: 100%; border-collapse: collapse; }
+  caption { text-align: left; font-size: 15px; color: rgba(36, 33, 29, .8); padding-bottom: 22px; }
+  th, td { text-align: left; padding: 16px 20px 16px 0; border-bottom: 1px solid var(--rule); font-size: 15px; }
+  thead th {
+    border-bottom: 1px solid var(--rule-firm);
     font-size: 12px;
     font-weight: 500;
-    letter-spacing: .18em;
+    letter-spacing: .16em;
     text-transform: uppercase;
-    text-decoration: none;
+    color: var(--rust-ink);
+  }
+  tbody th {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -.01em;
+  }
+  td { font-variant-numeric: tabular-nums; color: rgba(36, 33, 29, .82); }
+
+  /* Wholesale */
+  .whole { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .whole p { font-size: 17px; color: rgba(36, 33, 29, .82); }
+  .whole p + p { margin-top: 16px; }
+  .facts { border-top: 1px solid var(--rule-firm); }
+  .facts div {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 15px;
+  }
+  .facts i { font-style: normal; color: rgba(36, 33, 29, .72); }
+
+  /* Closing */
+  .closing { background: var(--ink); color: var(--sand); text-align: center; padding: 96px 64px; border-top: 0; }
+  .closing h2 { max-width: 18ch; margin: 0 auto; }
+  .closing p { max-width: 50ch; margin: 22px auto 38px; font-size: 17px; color: rgba(231, 225, 214, .84); }
+  .closing .cta { border-color: var(--sand); color: var(--sand); }
+  .closing .cta:hover { background: var(--sand); color: var(--ink); }
+
+  /* ── Footer ────────────────────────────────────────────── */
+  footer { background: var(--sand-dk); padding: 60px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px; }
+  .foot-grid i { display: block; font-style: normal; font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--rust-ink); }
+  .foot-grid b { display: block; margin-top: 12px; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 21px; }
+  .foot-grid span { display: block; margin-top: 4px; font-size: 14px; color: rgba(36, 33, 29, .78); }
+  .foot-note {
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 32px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(36, 33, 29, .72);
   }
 
-
-
-
-  /* ── Small screens ─────────────────────────────────────
-     These pages are rendered at a 900px viewport for the portfolio
-     tiles and were built to that width only, so every one of them
-     scrolled sideways on a phone. Concept or not, they are linked
-     from the nav and a visitor can open one.
-     Generated from the page's own rules — regenerate rather than
-     hand-edit if the layout changes. */
+  /* ── Small screens ─────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .roast, .whole, .foot-grid { grid-template-columns: 1fr; gap: 36px; }
+    .lots > div { grid-template-columns: 1fr auto; gap: 6px 24px; }
+    .lots i { grid-column: 1 / -1; }
+  }
   @media (max-width: 760px) {
-  /* Desktop gutters of 44–56px leave a phone nothing to work
-     with — these blocks were pinned wide by padding, not by
-     content, including ones nested inside other padded blocks. */
-  main,
-  section { padding-left: 20px; padding-right: 20px; }
-  /* Every flex row the page declares: a mockup built at one
-     width was never told it could wrap. */
-  .row,
-  body,
-  footer,
-  header,
-  main,
-  nav { flex-wrap: wrap; }
-  nav { gap: 18px; }
-  .lots { grid-template-columns: 1fr; }
-  img, svg, canvas { max-width: 100%; height: auto; }
+    .wrap { padding: 0 20px; }
+    header, .hero, .strip, .closing { padding-left: 20px; padding-right: 20px; }
+    header { flex-wrap: wrap; gap: 16px; }
+    nav ul { flex-wrap: wrap; gap: 18px; }
+    .hero { padding-top: 48px; padding-bottom: 40px; }
+    .row { flex-direction: column; align-items: flex-start; gap: 28px; }
+    section { padding: 60px 0; }
+    .closing { padding-top: 64px; padding-bottom: 64px; }
+    .strip { gap: 8px 32px; }
+    table { display: block; overflow-x: auto; }
+    img, svg { max-width: 100%; height: auto; }
   }
-
-
-
-  /* Below ~360px the 20px gutter is still more than the content can
-     give back — only 8px of sideways scroll, but it is scroll. */
   @media (max-width: 380px) {
-  main,
-  section { padding-left: 12px; padding-right: 12px; }
+    .wrap { padding: 0 14px; }
+    header, .hero, .strip, .closing { padding-left: 14px; padding-right: 14px; }
   }
 </style>
 </head>
 <body>
   <header>
     <div class="mark">Kettle &amp; Co</div>
-    <nav><a href="#">Coffee</a><a href="#">Subscribe</a><a href="#">Wholesale</a><a href="#">Café</a></nav>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#roster">Coffee</a></li>
+        <li><a href="#brewing">Brewing</a></li>
+        <li><a href="#wholesale">Wholesale</a></li>
+        <li><a href="#subscribe">Subscribe</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main>
-    <p class="kicker">Roasted to order · Small batch</p>
-    <h1>Roasted the <i>morning</i> it ships</h1>
-    <div class="row">
-      <p>Single-origin lots from four farms, roasted in twelve-kilo batches and out the door the same day.</p>
-      <a class="cta" href="#">Shop coffee</a>
+    <div class="hero">
+      <span class="label">Roasted to order · Small batch</span>
+      <h1>Roasted the <i>morning</i> it ships</h1>
+      <div class="row">
+        <p>Single-origin lots from four farms, roasted in twelve-kilo batches and out
+          the door the same day.</p>
+        <a class="cta" href="#roster">Shop coffee</a>
+      </div>
     </div>
+
+    <div class="strip">
+      <span>Free shipping over $40</span>
+      <span>Ships Mondays &amp; Thursdays</span>
+      <span>Roasted in Oakland</span>
+    </div>
+
+    <section id="roster">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>On the roster</h2>
+          <p>Four lots at a time, no more. When one runs out it is gone until the next
+            harvest rather than blended into something to keep the shelf full.</p>
+        </div>
+        <div class="lots">
+          <div>
+            <i>Ethiopia</i>
+            <div>
+              <b>Guji, Hambela</b>
+              <span>Peach, jasmine, black tea. Washed, picked at 2,100m.</span>
+            </div>
+            <u>$22 / 250g</u>
+          </div>
+          <div>
+            <i>Colombia</i>
+            <div>
+              <b>Huila, La Esperanza</b>
+              <span>Red apple, cocoa, cane sugar. The one for milk.</span>
+            </div>
+            <u>$19 / 250g</u>
+          </div>
+          <div>
+            <i>Kenya</i>
+            <div>
+              <b>Nyeri, Gatomboya</b>
+              <span>Blackcurrant, grapefruit, syrupy. Limited lot.</span>
+            </div>
+            <u>$26 / 250g</u>
+          </div>
+          <div>
+            <i>Guatemala</i>
+            <div>
+              <b>Huehuetenango, El Injerto</b>
+              <span>Toffee, orange peel, almond. Forgiving on any brewer.</span>
+            </div>
+            <u>$21 / 250g</u>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roasting">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>How we roast</h2>
+        </div>
+        <div class="roast">
+          <div>
+            <i>Small</i>
+            <b>Twelve kilos at a time</b>
+            <p>Small enough to profile each lot on its own terms, and to stop a roast
+              that is not going where we want it.</p>
+          </div>
+          <div>
+            <i>Light</i>
+            <b>Stopped before second crack</b>
+            <p>We roast to taste the farm rather than the roaster. That means brighter
+              cups than a supermarket bag, and it is deliberate.</p>
+          </div>
+          <div>
+            <i>Fresh</i>
+            <b>Bagged the same morning</b>
+            <p>Roasted Monday and Thursday, shipped that afternoon. Rest it three days
+              before you brew — it is better on day five than day one.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="brewing">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>Where to start</h2>
+        </div>
+        <table>
+          <caption>Ratios we use on the bar. Adjust to taste — these get you close on
+            the first try.</caption>
+          <thead>
+            <tr><th scope="col">Method</th><th scope="col">Dose</th><th scope="col">Water</th><th scope="col">Grind</th><th scope="col">Time</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">V60</th><td>18 g</td><td>300 g</td><td>Medium-fine</td><td>2:45</td></tr>
+            <tr><th scope="row">Chemex</th><td>42 g</td><td>700 g</td><td>Medium-coarse</td><td>4:30</td></tr>
+            <tr><th scope="row">AeroPress</th><td>16 g</td><td>240 g</td><td>Fine</td><td>1:30</td></tr>
+            <tr><th scope="row">French press</th><td>60 g</td><td>1000 g</td><td>Coarse</td><td>8:00</td></tr>
+            <tr><th scope="row">Espresso</th><td>18 g</td><td>38 g out</td><td>Fine</td><td>28 s</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="wholesale">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>For cafés and offices</h2>
+        </div>
+        <div class="whole">
+          <div>
+            <p>We supply eleven cafés and a handful of offices around the bay. Wholesale
+              includes dialling-in on your own grinder, staff training, and a standing
+              delivery on the day that suits your week.</p>
+            <p>There is no minimum contract. If it is not working after a month, stop —
+              we would rather you did than serve coffee you are not happy with.</p>
+          </div>
+          <div class="facts">
+            <div><i>Minimum order</i><span>5 kg per delivery</span></div>
+            <div><i>Wholesale price</i><span>From $34 / kg</span></div>
+            <div><i>Delivery</i><span>Weekly, day of your choosing</span></div>
+            <div><i>Training</i><span>Included, on your bar</span></div>
+            <div><i>Equipment</i><span>Loan grinders available</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    <span>Free shipping over $40</span>
-    <span>Ships Mondays &amp; Thursdays</span>
-  </footer>
-
-  <section>
-    <h2>On the roster</h2>
-    <div class="lots">
-      <div><i>Ethiopia</i><b>Guji, Hambela</b><span>Peach, jasmine, black tea. Washed, picked at 2,100m.</span><u>$22 / 250g</u></div>
-      <div><i>Colombia</i><b>Huila, La Esperanza</b><span>Red apple, cocoa, cane sugar. The one for milk.</span><u>$19 / 250g</u></div>
-      <div><i>Kenya</i><b>Nyeri, Gatomboya</b><span>Blackcurrant, grapefruit, syrupy. Limited lot.</span><u>$26 / 250g</u></div>
-    </div>
-  </section>
-
-  <section class="closing">
+  <section class="closing" id="subscribe">
     <h2>Coffee, every other Monday</h2>
-    <p>Pick a size and a rhythm. We roast the morning it ships, skip a delivery whenever you need to, and cancel in one click.</p>
-    <a href="#">Start a subscription</a>
+    <p>Pick a size and a rhythm. We roast the morning it ships, skip a delivery
+      whenever you need to, and cancel in one click.</p>
+    <a class="cta" href="#subscribe">Start a subscription</a>
   </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div><i>Roastery</i><b>1140 8th St</b><span>Oakland, CA 94607</span></div>
+        <div><i>Café hours</i><b>Mon–Sat, 7–3</b><span>Sun 8–2</span></div>
+        <div><i>Orders</i><b>hello@kettleand.co</b><span>(510) 555-0176</span></div>
+        <div><i>Shipping</i><b>Mon &amp; Thu</b><span>Free over $40</span></div>
+      </div>
+      <div class="foot-note">
+        <span>© 2026 Kettle &amp; Co Coffee Roasters</span>
+        <span>Concept design — not a real business</span>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
