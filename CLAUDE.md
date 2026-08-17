@@ -367,6 +367,19 @@ The three points are glass cards on the ink block that lean toward the pointer.
   the *return* still eases.
 - **`main.js` tilts every direct child of `[data-tilt]`**, not a class, so it can
   be pointed at another set without renaming anything. Max lean 5°.
+- **Perspective belongs on the card, never on the row.** `perspective` on
+  `.intro__points` gives three cards one vanishing point, so only the middle one
+  is on axis — at an identical `rotateY(5deg)` they rendered **395.04 / 382.63 /
+  370.21px** wide, the outer two keystoned. It is `--persp` per card now, fed
+  into the transform as `perspective()` **first in the chain**, through a
+  (0,4,0) rule because a card may not set `transform` itself.
+- **The pointer is mapped in document space** — `pageX/pageY` against an
+  `offsetLeft`-walked box. `getBoundingClientRect()` is wrong here twice over: it
+  returns the *transformed* box, so re-entering a leaning card measures 395px
+  instead of 384 and feeds that back in; and a rect cached on `pointerenter`
+  goes stale the moment the page scrolls under a held pointer. Layout offsets
+  ignore transforms and `pageX` already accounts for scroll, so neither needs a
+  handler. Tracks the pointer to within **0.07°** of the 5° range.
 - Gated on `(hover: hover) and (pointer: fine)`: a touch device cannot reverse a
   tilt. Under reduced motion the lean is pinned to 0 and the glare is
   `display: none` — the global reduce rule only shortens durations, which would

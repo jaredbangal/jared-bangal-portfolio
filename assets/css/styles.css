@@ -1698,10 +1698,11 @@ body  { background-color: var(--bg-page); }
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
   text-align: center;
-  /* The tilt is real 3D, so the depth is declared on the parent. Long,
-     because a short perspective on a 300px card reads as a fisheye rather
-     than a considered lean. */
-  perspective: 1100px;
+  /* No `perspective` here, deliberately. It used to be, and one vanishing
+     point for a three-column row means only the middle card is ever on
+     axis: at an identical rotateY(5deg) the three rendered 395.04 / 382.63
+     / 370.21px wide — a 25px spread, the outer two keystoned. The depth is
+     declared per card instead, as --persp. */
 }
 
 /* Glass needs something behind it — backdrop-filter over a flat colour is
@@ -1726,6 +1727,10 @@ body  { background-color: var(--bg-page); }
 }
 
 .intro__point {
+  /* Each card is its own perspective origin — see .intro__points. Long,
+     because a short perspective on a 300px card reads as a fisheye rather
+     than a considered lean. */
+  --persp: 1100px;
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -1753,6 +1758,17 @@ body  { background-color: var(--bg-page); }
    speed feels broken, so the timing is handed over once .is-settled lands.
    Specificity is deliberately (0,4,0) so it clears `.js .reveal.is-in`
    wherever the two sit in the file. */
+/* perspective() has to be *in* the transform, because the tilt is applied
+   by the reveal system and a card cannot set `transform` itself. First in
+   the chain or it projects the rotation that has already happened. Same
+   (0,4,0) trick as below. */
+.js .intro__points .intro__point.is-in {
+  transform: perspective(var(--persp))
+             translateY(var(--lift, 0px))
+             rotateX(var(--rx, 0deg))
+             rotateY(var(--ry, 0deg));
+}
+
 .js .intro__points .intro__point.is-settled {
   transition: transform var(--dur-base) var(--ease-out),
               opacity var(--dur-base) var(--ease-out),

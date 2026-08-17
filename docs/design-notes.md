@@ -600,6 +600,50 @@ shortens the transition, which would snap the card to its end position instead.
 the behaviour can be pointed at a different set without renaming anything. Max
 lean is 5° — restrained on purpose, since a card that swings reads as a gimmick.
 
+**The tilt was keystoned, and the card the user named was the worst of the
+three.** `perspective: 1100px` sat on `.intro__points`, the row — one vanishing
+point at the centre of three columns, so only the middle card was ever viewed on
+axis. Applying an identical `rotateY(5deg)` to all three and measuring the
+rendered boxes:
+
+| Card | Rendered width |
+|---|---|
+| Small businesses and startups | 395.04px |
+| You talk to the person building it | 382.63px |
+| Built to hand over | 370.21px |
+
+A 25px spread from the same rotation: card one balloons toward the viewer, card
+three shrinks away, and only the middle one is honest. Moving the depth onto each
+card as `--persp` and putting `perspective()` **first in the transform chain**
+gives every card its own vanishing point — the spread is **0.00px** at
+`rotateY(±5)` and `rotateX(5)`, and all three now render what the middle card
+always did. It has to go *in* the transform rather than on the element as a
+`perspective` property, because the card carries `.reveal` and may not set
+`transform` itself; the rule is scoped to (0,4,0), the same trick `.is-settled`
+already uses.
+
+**Two things lied during this diagnosis, both worth remembering.**
+`getComputedStyle(card).transform` returns only the card's *own* matrix — an
+ancestor's perspective is applied at composite time and never appears there, so
+the first measurement showed zero skew on all three and looked like a clean bill
+of health. And reading a transform immediately after setting a custom property
+returns the *interpolated* value, which at t=0 is still the old one: with a
+`transform` transition in flight, even a forced inline
+`perspective(1100px) rotateY(15deg)` read back as `matrix(1, 0, 0, 1, 0, 0)` —
+indistinguishable from "this element cannot be transformed at all", which is the
+wrong conclusion it very nearly produced. Wait out the transition, then measure
+rendered boxes.
+
+**The pointer mapping was stale as well.** The rect was measured once on
+`pointerenter`, so scrolling with the pointer held over a card mapped every later
+frame against where the card used to be. `getBoundingClientRect()` is doubly wrong
+here — it also returns the *transformed* box, so re-entering a card mid-lean
+measures 395px instead of 384 and feeds that back in. It now walks
+`offsetLeft`/`offsetTop`, which are layout values and ignore transforms, and reads
+`pageX`/`pageY`, which are already document-space. No scroll handler and no
+re-measure. Probed at five positions across all three cards: worst deviation
+**0.07°** of a 5° range.
+
 **Measuring text on glass: sample the glyph, not a percentile.** A 2nd/98th
 percentile over a mostly-empty box reads *antialiasing*. And check the element is
 actually revealed first: measuring these at 390 reported **1.21:1** for card three

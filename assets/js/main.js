@@ -66,13 +66,32 @@
                    // and a card that swings reads as a gimmick.
 
     [].slice.call(tiltHost.children).forEach(function (card) {
-      var frame = null, rect = null;
+      var frame = null, box = null;
+
+      /* Document-space, not viewport-space, and walked rather than read off
+         getBoundingClientRect(). Two reasons, both of which showed up as the
+         lean not tracking the pointer:
+
+         - the rect was measured once on enter, so scrolling with the pointer
+           still over a card left every later frame mapped against where the
+           card used to be;
+         - getBoundingClientRect() returns the *transformed* box, so
+           re-entering a card mid-transition measured a card that was already
+           leaning — 395px wide instead of 384 — and fed that back in.
+
+         offsetLeft/offsetTop are layout values and ignore transforms, and
+         pageX/pageY are document-space, so scroll needs no handler at all. */
+      function measure() {
+        var x = 0, y = 0, n = card;
+        while (n) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+        return { x: x, y: y, w: card.offsetWidth, h: card.offsetHeight };
+      }
 
       function apply(e) {
         frame = null;
-        if (!rect) return;
-        var px = (e.clientX - rect.left) / rect.width;    // 0…1
-        var py = (e.clientY - rect.top) / rect.height;
+        if (!box) return;
+        var px = (e.pageX - box.x) / box.w;               // 0…1
+        var py = (e.pageY - box.y) / box.h;
         // Away from the pointer on X, toward it on Y — that pairing is what
         // reads as a surface being pushed rather than a box being spun.
         card.style.setProperty("--ry", ((px - 0.5) * 2 * MAX).toFixed(2) + "deg");
@@ -82,9 +101,9 @@
       }
 
       card.addEventListener("pointerenter", function () {
-        // Measured once per entry, not per move: getBoundingClientRect in a
-        // pointermove handler forces layout on every frame.
-        rect = card.getBoundingClientRect();
+        // Once per entry, not per move: measuring in a pointermove handler
+        // forces layout on every frame.
+        box = measure();
         card.setAttribute("data-tracking", "");
       });
 
@@ -95,7 +114,7 @@
 
       card.addEventListener("pointerleave", function () {
         if (frame) { cancelAnimationFrame(frame); frame = null; }
-        rect = null;
+        box = null;
         // Drop the flag first so the transition is back in play and the card
         // eases home instead of snapping.
         card.removeAttribute("data-tracking");
