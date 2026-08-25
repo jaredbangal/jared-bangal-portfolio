@@ -68,6 +68,7 @@ TEMPLATE = """<!DOCTYPE html><html><head><meta charset="utf-8">
     letter-spacing: -.055em; max-width: 18ch;
   }}
   .foot {{ display: flex; align-items: center; gap: 16px; font-size: 22px; }}
+  .foot img {{ display: block; height: 48px; width: auto; }}
   .mark {{
     width: 44px; height: 44px; border-radius: 6px;
     background: {ink}; color: {bg};
@@ -77,8 +78,21 @@ TEMPLATE = """<!DOCTYPE html><html><head><meta charset="utf-8">
 </style></head><body>
   <p class="label">{label}</p>
   <h1>{title}</h1>
-  <div class="foot"><span class="mark">JB</span><span>Jared Bangal</span></div>
+  <div class="foot">{mark}<span>Jared Bangal</span></div>
 </body></html>"""
+
+
+def mark_for(bg):
+    """The real logo on the site's own palette; the lettered tile elsewhere.
+
+    The tile takes each card's {ink} and {bg}, which is the whole reason the
+    six concept cards survive palettes as far apart as sage and lime. A fixed
+    orange mark would fight every one of them, so it goes only on the cards
+    already drawn in cream.
+    """
+    if bg in (CREAM, PAPER):
+        return '<img src="assets/img/logo-jb.webp" alt="">'
+    return '<span class="mark">JB</span>'
 
 
 def main():
@@ -90,7 +104,8 @@ def main():
         pg = b.new_page(viewport={"width": 1200, "height": 630},
                         device_scale_factor=1)
         for name, label, title, bg, ink in CARDS:
-            tmp.write_text(TEMPLATE.format(bg=bg, ink=ink, label=label, title=title))
+            tmp.write_text(TEMPLATE.format(bg=bg, ink=ink, label=label, title=title,
+                                           mark=mark_for(bg)))
             pg.goto(tmp.as_uri())
             pg.wait_for_load_state("networkidle")
             pg.wait_for_timeout(350)          # let the webfont paint

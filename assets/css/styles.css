@@ -785,27 +785,22 @@ body  { background-color: var(--bg-page); }
 .nav__brand {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
   min-height: 44px;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
   text-decoration: none;
-  white-space: nowrap;
 }
-.nav__mark {
-  display: grid;
-  place-items: center;
+
+/* The brush monogram, in place of the old JB tile and the wordmark that sat
+   beside it. It is the link's only content, so the accessible name comes
+   from its alt — the name is gone from the page, not from the tab order.
+
+   `width: auto` has to be explicit. The width/height attributes are a
+   presentational hint and would otherwise pin the intrinsic 169px, which is
+   the same trap `.about__photo` documents at the other end of the scale. */
+.nav__logo {
+  display: block;
   flex: none;
-  width: 26px;
-  height: 26px;
-  border-radius: var(--radius-xs);
-  background: var(--accent);
-  color: var(--text-on-accent);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .02em;
+  height: 34px;
+  width: auto;
 }
 
 
@@ -1919,6 +1914,15 @@ body  { background-color: var(--bg-page); }
 
 .about__copy { position: relative; z-index: var(--z-raised); }
 
+/* Signs off the two paragraphs. Same `width: auto` note as .nav__logo —
+   the attributes would otherwise win. */
+.about__sign {
+  display: block;
+  height: 72px;
+  width: auto;
+  margin-top: var(--space-6);
+}
+
 
 /* ── Accordion ──────────────────────────────────────────────
    Two of them on the page, and each is a *single* disclosure holding a
@@ -2473,6 +2477,16 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 .band--slim { padding-block: var(--space-14); }
 
 .newsletter { text-align: center; }
+
+/* Above the heading, on the ink foot — where the mark measures 6.36:1 and
+   carries the most weight it gets anywhere on the site. */
+.newsletter__logo {
+  display: block;
+  height: 56px;
+  width: auto;
+  margin: 0 auto var(--space-4);
+}
+
 .newsletter__title {
   font-size: var(--text-2xl);
   font-weight: var(--weight-display);
@@ -2958,7 +2972,7 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   .nav__actions { display: none; }
   .nav__links > ul { gap: var(--space-4); }
   .nav__links a { font-size: 11px; letter-spacing: .06em; }
-  .nav__brand { font-size: var(--text-2xs); }
+  .nav__logo { height: 28px; }
 
   .hero__inner { padding-top: calc(var(--nav-h) + var(--space-16)); padding-bottom: var(--space-8); }
   .hero__cta { width: 100%; }

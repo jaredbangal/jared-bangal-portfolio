@@ -169,6 +169,101 @@ that set their own colour were fine, which is what makes the bug look random.
 it has to leave the scope again: light values are re-declared on
 `.nav[data-scrolled]` and the two open states at one notch more specificity.
 
+## The mark
+
+Jared supplied `JB1.png`, a 2000×2000 RGB flat of a brush-lettered `jb`, and
+asked for the background cut and the mark used as the site logo.
+
+### The cut is exact, and that is worth knowing
+
+The source has **228 unique colours** and only two that matter: `#E4E2DD`
+ground, `#F16813` ink. Everything else is anti-aliasing between them. Projecting
+every pixel onto the `bg → fg` axis and measuring how far it sits *off* that
+axis gave a **mean residual of 0.00 and a maximum of 0.68 out of 255** — zero
+pixels more than 6 away. The image is a clean two-colour composite, so coverage
+is not a guess: alpha *is* the projection, and RGB can be set to `#F16813`
+everywhere.
+
+That last part is the bit that matters. Keeping the source RGB and only adding
+alpha leaves every edge pixel carrying some cream, which is invisible on the
+cream page and shows as a pale fringe the moment the mark lands on
+`--shade-950`. Painting the ink flat and letting alpha do all the work is an
+exact unpremultiply here, so the edges are clean on both grounds. **A plain
+chroma-key would have passed every check made on the cream page and failed on
+the ink foot** — which is where the mark is largest.
+
+The ground `#E4E2DD` is one unit off `--cream-200` `#E4E2DC`. Coincidence or
+not, it means a transparency bug would have been invisible on the home page.
+
+The light streaks inside the strokes are the same ground colour, so they cut
+out too. That is correct — they are brush texture, and they read as gaps.
+
+### Contrast, and why the sizes run the way they do
+
+| ground | ratio |
+|---|---|
+| `--cream-200` `#E4E2DC` | **2.41:1** |
+| `--cream-100` `#F4F2EC` | 2.79:1 |
+| `--shade-900` apparent | 5.74:1 |
+| `--shade-950` `#070A0E` | **6.36:1** |
+
+WCAG exempts logotypes from both 1.4.3 and 1.4.11, so 2.41:1 is compliant, and
+a brush stroke 4–6px thick at nav size is not the thin-type case the ratio is
+built to catch — the rendered check confirmed it reads. But the spread is real
+and the sizing follows it: 34px in the nav where the mark is weakest, 56px on
+the ink foot where it is strongest and carries the section, 72px signing off the
+About copy.
+
+Below 620px the nav mark drops to 28px. That rule replaced
+`.nav__brand { font-size: var(--text-2xs) }`, which went dead the moment the
+wordmark left the link.
+
+### The three places it went, and the one it did not
+
+The About mark sits *after* the two paragraphs rather than above the label,
+because a brush monogram at the end of a personal paragraph reads as a
+signature, and the "About" label above already does the labelling.
+
+The newsletter mark sits above the heading, as asked, and it is the placement
+the contrast table most supports.
+
+**The six concept OG cards were left alone.** `build_og.py` draws its `.mark`
+tile from each card's own `{ink}` and `{bg}`, which is why one template survives
+sage, espresso, butter, lime and near-black. Dropping a fixed orange mark on all
+twelve would have wrecked exactly the property that makes the six distinct at
+thumbnail size. `mark_for()` takes the real logo only on `CREAM`/`PAPER` cards —
+the seven drawn in the site's own palette, including the home card, which is the
+one that shows up when the site is shared.
+
+### The favicon had to be tiled
+
+Three candidates were rendered at 16, 32 and 180px: the bare mark, the mark on a
+cream tile, and the mark on an ink tile. At 16px the bare version nearly
+disappears — the strokes are sub-pixel — and the cream tile is not much better,
+since 2.41:1 has nothing left to give at that size. Only the ink tile keeps the
+strokes separated, and it also matches what the old favicon did. Rendered at 8×
+and downsampled so the brush edges survive the reduction.
+
+The hrefs are root-absolute. `retarget()` in `build_pages.py` rewrites `assets/`
+paths in the nav and footer only, and the favicon is neither, so a relative
+`assets/img/favicon.png` would have resolved to `work/assets/...` on all six case
+studies. `build_pages.py` now copies both `<link rel="icon">` and
+`<link rel="apple-touch-icon">` out of `index.html` so the head keeps one source.
+
+### The lazy-image false positive
+
+The first pre-flight sweep reported **27 pages with broken images**, including
+`portrait.webp` — which had just been screenshotted rendering correctly. The
+check was `!img.complete || img.naturalWidth === 0`, and that is true of every
+`loading="lazy"` image that has not entered the viewport yet. It was reporting
+lazy loading working.
+
+The tell was in the same run: the `response` listener recorded **zero HTTP 4xx**
+on every page, which cannot be true at the same time as two dozen broken images.
+The fixed sweep flips every image to `eager`, awaits them all, and then checks
+`naturalWidth` — clean across 13 pages × 3 widths. Same family of error as the
+tilt measurement in `.intro__point`: **the harness lied, not the page.**
+
 ## Texture
 
 Paper tooth on every surface, sitting **behind** the content as a background

@@ -172,9 +172,12 @@ def main():
     index = (ROOT / "index.html").read_text()
     nav = slice_block(index, '<header class="nav" data-nav>', "</header>")
     footer = slice_block(index, '<footer class="footer', "</footer>")
-    # The favicon is an inline SVG data URI, so it is copied rather than
-    # re-typed — one wrong percent-escape and every tab loses its mark.
-    favicon = re.search(r'<link rel="icon"[^>]*>', index).group(0)
+    # Both icon links are copied from index.html rather than re-typed, so the
+    # head has one source like the nav and footer do. Their hrefs are
+    # root-absolute on purpose: retarget() only rewrites the nav and footer,
+    # so a relative path here would 404 from work/*.html.
+    favicon = "\n".join(
+        re.findall(r'<link rel="(?:icon|apple-touch-icon)"[^>]*>', index))
 
     versions = {
         "css_v": token("assets/css/styles.css"),

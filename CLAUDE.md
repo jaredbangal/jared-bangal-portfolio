@@ -22,8 +22,11 @@ tools/fragments/        the body of each generated page — edit these
 assets/css/styles.css   all styles
 assets/js/main.js       nav, reveals, hero stage, marquee, carousel, forms
 assets/js/particles.js  the WebGL field
-assets/img/             portrait{,-480}.webp, work-<slug>.webp (concept
+assets/img/             logo-jb.webp (the mark), favicon + apple-touch-icon,
+                        portrait{,-480}.webp, work-<slug>.webp (concept
                         renders), stage-<slug>.webp (hero crops)
+JB1.png                 the mark as supplied — flat, un-cut. Keep it: the
+                        background removal is reproducible from it
 tools/build_shots.py    renders both from concepts/ and syncs the heights
 concepts/<slug>.html    six concept sites — full sites, not hero mockups
 motion/index.html       standalone particle study, not linked from the site
@@ -90,7 +93,8 @@ Deploy: `git push origin main` — Vercel builds from GitHub.
 squarespace.com's system on Jared's palette; `reference/squarespace-tokens.json`
 holds scraped values — re-scrape rather than guess.
 
-- **Nav** 80px, transparent over the hero, blurred translucent bar after.
+- **Nav** 80px, transparent over the hero, blurred translucent bar after. The
+  brand is the `jb` mark alone — see **The mark**.
 - **Display type** weight 300, `-.055em`, `line-height: 1.04`, fluid `clamp()`.
   This light-and-tight setting is the whole look — **don't bold headings.**
 - **Labels** 12px/500 uppercase, `+.08em`.
@@ -135,6 +139,60 @@ bands, `--cream-100` `#F4F2EC` raised cards, `--ink-dk` `#16171A` ink.
 - `.nav` is in the `.on-dark` selector list rather than carrying the class,
   because it has to leave the scope again on `[data-scrolled]` and the open
   states.
+
+## The mark
+
+A brush-lettered `jb` in **`#F16813`**, `assets/img/logo-jb.webp` (169×240,
+lossless, 13.8KB). It replaced the lettered `JB` tile and the "Jared Bangal"
+wordmark in the nav; `.nav__mark` is gone from the stylesheet.
+
+**The orange is the one saturated colour on the site and it is a logo, not a
+token.** It must never be promoted into the token layer — same rule the blue
+particle palette lives under, and for the same reason: the page would then have
+two accents. `--accent` stays pure black.
+
+- **It is weak on cream and strong on ink**: **2.41:1** on `--cream-200`,
+  **6.36:1** on `--shade-950`. Logotypes are exempt from 1.4.3 and 1.4.11, and
+  the brush strokes are thick enough to carry it, but that is why the mark is
+  largest on the ink foot and smallest in the nav.
+- **Three placements, three sizes**: nav 34px (28px under 620px), About 72px,
+  newsletter 56px. Every one sets `width: auto` **explicitly** — the `width`
+  and `height` attributes are a presentational hint that otherwise pins the
+  intrinsic 169px, the same trap `.about__photo` documents.
+- **The nav `alt` is the accessible name.** The mark is the home link's only
+  content, so `alt="Jared Bangal"` is what a screen reader announces. The other
+  two are `alt=""` — the About copy already names him, and the newsletter mark
+  is decoration above a heading.
+- **The source is flat two-colour, so the cut is exact, not estimated.** Every
+  pixel of `JB1.png` lies on the `#E4E2DD` → `#F16813` axis to within 0.68/255,
+  so alpha is the projection onto that axis and RGB is set to the ink
+  everywhere. Unpremultiplying that way is why the edges carry no cream fringe
+  on the dark blocks. **Re-run that method on any redraw** — a plain chroma-key
+  leaves a halo that only shows on ink.
+- **The light streaks inside the strokes are meant to be transparent.** They are
+  brush texture, so they read as gaps on ink rather than as light marks.
+
+### Where it is not
+
+- **The six concept OG cards keep the lettered tile.** `build_og.py` takes the
+  mark only when the card is on `CREAM` or `PAPER` (`mark_for()`). The tile
+  redraws itself in each card's own `{ink}`/`{bg}`, which is the whole reason
+  the six survive palettes as far apart as sage and lime; a fixed orange mark
+  fights every one of them.
+- **The favicon is the mark on an ink tile**, not the bare mark — at 16px the
+  bare strokes and the cream-tiled version both dissolve, and only the ink
+  ground keeps them separated. Rendered at 8× and downsampled.
+  `/assets/img/favicon.png` and `apple-touch-icon.png` are **root-absolute on
+  purpose**: `retarget()` only rewrites the nav and footer, so a relative path
+  would 404 from `work/*.html`. Both links are copied out of `index.html` by
+  `build_pages.py`, so the head still has one source.
+- **The nav panel's About promo keeps the name** — it captions a photograph of
+  him, where the name is the caption's job.
+
+**`logo-jb.webp` is stamped by `serve.py` and the other images are not.** It is
+the one image likely to be redrawn in place, and under `/assets/*`'s immutable
+year a new mark would otherwise never reach anyone who had already visited. The
+favicon is not stamped; browsers refetch those on their own schedule.
 
 ## Texture
 
