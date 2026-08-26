@@ -2218,6 +2218,17 @@ body  { background-color: var(--bg-page); }
   padding-inline: max(var(--gutter), calc((100% - 1040px) / 2));
   padding-block: var(--space-1);
   scrollbar-width: none;
+  /* The track is the thing that must never be painted *under* the words.
+     .section__head carries .reveal, and `.js .reveal.is-in` leaves a
+     transform on it for good — matrix(1,0,0,1,0,0), identity but not
+     `none`, which is still a stacking context. That lifts the head into
+     the positioned paint layer while this track, being static, stays in
+     the in-flow one below it, so the moment the two touch the heading is
+     drawn over the cards no matter what the source order says. Reported
+     from a phone, where the head runs a line taller than it does here.
+     Positioning the track puts source order back in charge. */
+  position: relative;
+  z-index: 1;
 }
 .showcase__track::-webkit-scrollbar { display: none; }
 .showcase__track:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
@@ -2350,7 +2361,10 @@ body  { background-color: var(--bg-page); }
 @media (max-width: 620px) {
   /* 44px, not the 40px this used to run at. Six pills wrap to three rows
      here, so the gap has to carry the 8px between-target spacing too. */
-  .showcase__tabs { gap: var(--space-2); margin-bottom: var(--space-8); }
+  /* Words first, carousel after. The gap is what makes that read as a
+     sequence rather than a pile on a narrow screen. */
+  .showcase__tabs { gap: var(--space-2); margin-bottom: var(--space-10); }
+  #work .section__head { margin-bottom: var(--space-12); }
   .showcase__tab { min-height: 44px; padding: 0 var(--space-4); font-size: var(--text-xs); }
   /* On the dark page the cards separated by luminance alone. On cream they
    do not — Meridian's #E4E2DC card *is* the page colour, so without an
@@ -2990,6 +3004,15 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 .js .reveal:nth-child(2) { transition-delay: calc(var(--stagger) * 1); }
 .js .reveal:nth-child(3) { transition-delay: calc(var(--stagger) * 2); }
 .js .reveal:nth-child(4) { transition-delay: calc(var(--stagger) * 3); }
+
+/* A settled section head drops its transform outright, which is the only
+   way to stop it being a stacking context. The variable transform above
+   exists so a component can still set --lift after the entrance; a centred
+   block of section copy never lifts, so it has nothing to lose and one
+   thing to gain — back in the in-flow paint layer, where it cannot be
+   drawn over the content that follows it. (0,4,0), so it clears
+   `.js .reveal.is-in` at (0,3,0) wherever the two land in the file. */
+.js .section__head.reveal.is-settled { transform: none; }
 
 /* The stagger belongs to the entrance and must not outlive it. A
    transition-delay is not a one-off — it applies to *every* later

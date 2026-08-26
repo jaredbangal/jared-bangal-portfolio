@@ -321,6 +321,62 @@ and the `aria-label` names that destination. No `aria-pressed`: "pressed" has no
 honest meaning for a control swapping between two equal states, as opposed to
 one that turns something on.
 
+## The reveal that paints over the page
+
+Reported from a phone: in Selected Work, "the heading sits over the cards".
+
+It did not reproduce. Chip boxes never intersect each other or the track at any
+width from 320 to 430, at root font sizes 16/20/24, with the carousel scrolled
+to 0/20/50/80% — and no two elements in the section overlap at all. Everything
+is in normal flow, and flow cannot overlap.
+
+The trigger is time, not geometry. Sampling `.section__head`'s transform through
+its entrance:
+
+| t | transform | state |
+|---|---|---|
+| 500ms | `matrix(1,0,0,1,0,**20.64**)` | visible, **20.6px lower than it lands** |
+| 1500ms | `matrix(1,0,0,1,0,0)` | `.is-settled` added, transitioning |
+| 3000ms | `none` | settled |
+
+Two facts combine. `.js .reveal.is-in` resolves to identity rather than `none`
+— deliberately, so a component can still set `--lift` afterwards, which is
+documented right above it — and **any transform that is not `none` makes a
+stacking context**. `.showcase__track` is `position: static`, so it paints in
+the in-flow layer, underneath. For the ~1.3s the head holds a transform it is
+in the layer above the cards, and for the first 800ms of that it is also
+reaching 20px further down the page than its settled box.
+
+On a phone you scroll into the section slowly and land inside that window
+almost every time. On a desktop the section is usually fully past before the
+entrance finishes, which is why it never showed here.
+
+Confirmed by forcing the collision — `track.style.marginTop = '-260px'` — and
+screenshotting: the sub-line rendered *over* the green Botanica card, cut
+through by nothing. With the fix, the same forced collision puts the card in
+front and the words behind.
+
+Fixed at both ends, because either alone leaves a hole:
+
+- `.showcase__track` takes `position: relative; z-index: 1`. This is the half
+  that covers the entrance window, when the head legitimately still has a
+  transform and nothing can be done about it.
+- `.js .section__head.reveal.is-settled { transform: none }`, at (0,4,0) so it
+  clears `.js .reveal.is-in`. A centred block of section copy never lifts, so
+  dropping the transform costs nothing and removes the stacking context for
+  good rather than merely out-painting it.
+
+Mobile also gained real separation — `--space-12` under the head, `--space-10`
+under the tabs — so the sequence reads as words, then carousel, which is what
+was asked for.
+
+**The measurement lied once more on the way, in the way this file keeps
+recording.** Checking the fix at ~1000ms reported the head still at
+`matrix(1,0,0,1,0,0)` and the rule looking dead; the rule was fine and the
+transition simply had not finished. Reading a transitioning property gives the
+interpolated value — the same trap as the `.intro__point` tilt, and the reason
+the table above samples five times instead of once.
+
 ## The mark
 
 Jared supplied `JB1.png`, a 2000×2000 RGB flat of a brush-lettered `jb`, and

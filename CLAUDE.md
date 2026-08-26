@@ -655,6 +655,16 @@ sections**. It shipped.
 - **Set variables, never `transform`, on anything carrying `.reveal`** —
   `.js .reveal.is-in` is (0,3,0) and out-specifies component transforms. Use
   `--lift`.
+- **A `.reveal` is a stacking context for as long as it holds a transform, and
+  it paints over any unpositioned content below it.** `.js .reveal.is-in`
+  settles to `matrix(1,0,0,1,0,0)` — identity, but not `none` — and during the
+  800ms entrance it is genuinely 24px lower than where it lands. Anything a
+  revealed block can reach on its way in must own a layer
+  (`position: relative; z-index: 1`), or the words get drawn over it.
+  `.section__head` drops the transform outright on `.is-settled` for this
+  reason; a centred block of section copy never lifts, so it loses nothing.
+  **This shipped**: the Selected Work heading painted over the concept cards
+  for the length of its own entrance, on phones only.
 - **Depth is a four-step scale**, `--shadow-1`…`4`, each *two* shadows (contact +
   ambient), offsets vertical only. Cards rest 1 / hover 3, slides 2, panels 4,
   buttons 2 on hover and 1 on press.
