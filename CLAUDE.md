@@ -261,12 +261,28 @@ surface itself — that is why it can be this strong. Method: `surface-texture`.
 
 | | tile | mode | measured |
 |---|---|---|---|
-| Cream surfaces | `--tex`, slope .38 / centre .762 | `luminosity` | stdev 8.2, shift +1.5 |
-| Ink blocks | `--tex-dark`, slope .16, sRGB filters | `lighten` | stdev 3.2, shift +1.6 |
+| Cream page + bands | `--tex`, slope .38 / centre .762 | `luminosity` | stdev 8.2, shift +1.5 |
+| Dark page + bands | `--tex-dark`, slope .16, sRGB filters | `lighten` | stdev 3.25, shift +1.6 |
+| **Ink blocks** | **none** | — | **stdev 0.00, `#000000`** |
 
-The dark tile sits on `--shade-950` `#070A0E` so the result lands on
-`--shade-900`'s apparent value. The tile scrolls with the surface, not the
-viewport; `stitchTiles` keeps the repeat seamless.
+**The ink blocks are flat `#000000` and carry no tooth at all**, in either
+theme — `--bg-ink` is `--shade-1000`. Jared asked for it directly, and the
+blocks now read as the quiet surface the textured page sits against. All three
+measure stdev 0.00 while the page beside them still measures 3.25.
+
+**A `.block--dark` must not declare a background-image, and the two tooth rules
+exclude it with `:not(.block--dark)` rather than the block over-declaring.**
+The block used to paint its own tile, which happened to out-specify `.band`'s;
+the moment it stopped, the band's tile leaked straight through and the
+newsletter came back textured while `#intro` and the footer — which are not
+bands — did not. In dark mode it was worse, because
+`:root[data-theme="dark"] .band` is (0,3,0) and beats `.on-dark.block--dark`
+at (0,2,0) outright.
+
+The dark tile now sits on `--shade-800`, the dark page ground, rather than on
+`--shade-950`; it measures the same stdev 3.25 / +1.6 signature there, so slope
+.16 still holds. The tile scrolls with the surface, not the viewport;
+`stitchTiles` keeps the repeat seamless.
 
 ## The particle field
 
@@ -589,7 +605,11 @@ cream, which needs no transition.
   points at 34ch — **if the copy grows, the measures hold, not the alignment.**
 - **One section is an ink block** — "What I do", `.on-dark block--dark` — plus
   the newsletter and footer as one continuous foot. Testimonials was the second
-  and is parked. Worst contrast on the page: **5.94:1**.
+  and is parked. **All of them are flat `#000000`** (see *Texture*); the foot is
+  one continuous surface, so the footer cannot keep a tooth the newsletter has
+  lost without showing a seam. Worst contrast on an ink block: **4.99:1**
+  (newsletter muted), and the glass card body improved 5.05 → **5.65:1** when
+  the tooth came off.
 - **Services sits by the contact form** with the FAQ under it — the "what can I
   actually buy" moment, after the work and the person.
 

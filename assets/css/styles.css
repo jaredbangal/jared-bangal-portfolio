@@ -14,7 +14,8 @@
 /* ── 1. Primitives ──────────────────────────────────────── */
 :root {
   /* Surface ramp */
-  --shade-950: #070A0E;   /* under the dark tooth; see --tex-dark */
+  --shade-1000: #000000;  /* the ink blocks — flat, no tooth */
+  --shade-950: #070A0E;   /* the dark tooth's own ground; see --tex-dark */
   --shade-900: #0F1216;
   --shade-800: #14171C;
   --shade-700: #1B1F26;
@@ -275,7 +276,9 @@
   --glass-glare:   rgba(255, 255, 255, .16);
   --glass-blur:    blur(16px) saturate(1.1);
 
-  --bg-ink: var(--shade-950);
+  /* Flat black, deliberately untextured. The tooth is still on the dark
+     page ground; the blocks are the quiet surface it sits against. */
+  --bg-ink: var(--shade-1000);
 
   /* The brand is pure black, which on a near-black section is 1.06:1 —
      invisible. A monochrome brand therefore has to invert here rather than
@@ -483,20 +486,19 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
 .on-dark.block--dark {
   position: relative;
   background-color: var(--bg-ink);
-  background-image: var(--tex-dark);
-  background-blend-mode: lighten;
-  background-repeat: repeat;
 }
 
 /* Cinematic edges: the ink does not start at a hard line, it rises out of
    the cream and sinks back into it.
 
-   The fade is the *same surface* under a mask, not a colour gradient to
-   `--bg-ink`. A gradient would have to end on a flat ink value while the
-   block itself is textured — the block's apparent mean is 19.9 against the
-   flat 18.3, and that 1.6-level step shows as a seam right where the eye
-   is already looking. Masking the real surface cannot band, because there
-   is only one surface.
+   The fade is the *same surface* under a mask rather than a colour
+   gradient. That was originally load-bearing: the block used to carry the
+   dark tooth, so a gradient ending on flat `--bg-ink` met a surface whose
+   apparent mean was 19.9 against the flat 18.3, and that 1.6-level step
+   showed as a seam exactly where the eye already was. **The block is flat
+   black now, so the two approaches are equivalent** — the mask is kept
+   because it is the proven one and because it goes on working if the tooth
+   ever comes back.
 
    `--ink-fade` is opt-in per block so a section can still take a hard edge
    where that is the intent. */
@@ -508,9 +510,6 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
   right: 0;
   pointer-events: none;
   background-color: var(--bg-ink);
-  background-image: var(--tex-dark);
-  background-blend-mode: lighten;
-  background-repeat: repeat;
 }
 .on-dark.block--dark::before {
   height: var(--ink-fade-top, var(--ink-fade, 0px));
@@ -570,8 +569,8 @@ a, button, input, label, [role="button"] { touch-action: manipulation; }
 .footer.block--dark { border-top-color: var(--border-subtle); }
 
 body,
-.band,
-.u-textured {
+.band:not(.block--dark),
+.u-textured:not(.block--dark) {
   background-image: var(--tex);
   background-blend-mode: luminosity;
   background-repeat: repeat;
@@ -586,8 +585,8 @@ body  { background-color: var(--bg-page); }
    `lighten` is the only mode with anywhere to go on near-black. Specks of
    light in ink, now across the whole page rather than three sections. */
 :root[data-theme="dark"] body,
-:root[data-theme="dark"] .band,
-:root[data-theme="dark"] .u-textured {
+:root[data-theme="dark"] .band:not(.block--dark),
+:root[data-theme="dark"] .u-textured:not(.block--dark) {
   background-image: var(--tex-dark);
   background-blend-mode: lighten;
 }

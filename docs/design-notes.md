@@ -321,6 +321,77 @@ and the `aria-label` names that destination. No `aria-pressed`: "pressed" has no
 honest meaning for a control swapping between two equal states, as opposed to
 one that turns something on.
 
+## Flattening the ink blocks
+
+Jared asked for the noise gone from "What I do" and "Stay in the loop", both
+themes, "just black". `--bg-ink` is `--shade-1000` `#000000` now and the blocks
+declare no background-image.
+
+**It went to every `.block--dark`, not the two named.** The footer sits directly
+under the newsletter as one continuous foot — flattening one and not the other
+puts a seam across the join, at the exact point the design goes out of its way
+to make invisible. `services.html` and `pricing.html` carry the same band, and
+an ink block that is textured on one page and flat on another is not a system.
+
+### The leak
+
+Removing `background-image` and `background-blend-mode` from
+`.on-dark.block--dark` was not enough, and the measurement caught it:
+
+```
+        What I do   stdev 0.00  rgb(0,0,0)      <- correct
+ Stay in the loop   stdev 3.23  rgb(20,20,20)   <- still textured
+           footer   stdev 0.00  rgb(0,0,0)      <- correct
+```
+
+`#intro` and the footer are flat; the newsletter is not. The difference is that
+the newsletter is a `.band`, and `body, .band, .u-textured` sets the tooth. The
+block used to *out-declare* that rule rather than being excluded from it, so
+the moment it stopped declaring a background-image the band's tile came
+straight back.
+
+Dark mode was worse for a reason worth writing down: the dark tooth rule is
+`:root[data-theme="dark"] .band`, which is **(0,3,0)** — a pseudo-class, an
+attribute and a class — and that beats `.on-dark.block--dark` at (0,2,0)
+outright. The block could not have out-declared it even if it tried. Both tooth
+rules now carry `:not(.block--dark)`, which states the actual intent: the tooth
+goes on textured surfaces, and an ink block is not one.
+
+The first reading of this was itself wrong and worth recording. Sampling a
+fixed viewport rectangle at the element's top-left reported the newsletter as
+cream (mean 226) in light and as mean 19.92 / stdev 3.23 in dark — and 19.92 /
+3.2 is the dark tooth's *documented* signature, which made it look like the
+block was textured when the clip had simply landed on the page beside it.
+Sampling each element's **own** screenshot, in the left full-bleed gutter where
+no content can reach, is what produced the table above.
+
+### What it cost and what it bought
+
+Contrast improved, because the ground got darker while the text did not:
+
+| | before | after |
+|---|---|---|
+| glass card body | 5.05:1 | **5.65:1** |
+| glass block heading | 12.72 | 13.36 |
+| newsletter title | 12.70 | 13.36 |
+| newsletter muted | 5.08 | 4.99 |
+
+The newsletter muted line moves the other way by 0.09, which is inside the
+run-to-run variance of this harness — it freezes the particle field on whatever
+frame it lands on, so the ground under any given glyph is not identical between
+runs. Medians tell the same story and everything clears AA.
+
+The glass cards were the thing at risk. *The "What I do" cards* records that
+`.intro__points::before` exists because "the ink block otherwise offers the
+blur nothing but its own texture" — and that texture is now gone, so the two
+soft blooms are the *only* thing behind the blur. They hold: the cards still
+separate, at a better ratio than before. Had they not, the answer would have
+been to strengthen the blooms, not to put the tooth back.
+
+`--shade-950` stays in the ramp as the ground `--tex-dark` was solved against,
+and is still what the note above that tile refers to. The tile itself now sits
+on `--shade-800` in dark mode, where it measures the same stdev 3.25 / +1.6.
+
 ## The reveal that paints over the page
 
 Reported from a phone: in Selected Work, "the heading sits over the cards".
