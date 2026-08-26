@@ -964,3 +964,59 @@
     });
   });
 })();
+
+
+/* ── Theme toggle ───────────────────────────────────────────
+   theme.js runs blocking in the head and owns the state; it has already
+   painted <html data-theme> long before this file executes. This block only
+   builds the control and calls into that API.
+
+   Built here rather than written into index.html for the same reason the
+   marquee's pause button is: without the script it would be a switch that
+   does nothing. Building it in JS also means it appears on all thirteen
+   pages without the nav markup having to carry it. */
+(function () {
+  var api  = window.JBTheme;
+  var slot = document.querySelector(".nav__actions");
+  if (!api || !slot) return;
+
+  // Static author markup, no interpolation — there is no injection surface
+  // here, and two inline SVGs built through createElementNS would be forty
+  // lines of noise. 1.5 stroke matches the nav chevrons.
+  var MOON = '<svg class="icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+           + ' stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"'
+           + ' aria-hidden="true" focusable="false">'
+           + '<path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.6 8.6 0 1 0 10.8 10.8z"/></svg>';
+  var SUN  = '<svg class="icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+           + ' stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false">'
+           + '<circle cx="12" cy="12" r="4.2"/>'
+           + '<path d="M12 2.6v2.2M12 19.2v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6'
+           + 'M2.6 12h2.2M19.2 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>';
+
+  var btn = document.createElement("button");
+  btn.className = "nav__theme";
+  btn.type = "button";
+  btn.setAttribute("data-theme-toggle", "");
+  btn.innerHTML = MOON + SUN;
+
+  /* The label names the destination, matching the glyph on show. There is
+     no aria-pressed: "pressed" has no honest meaning for a control that
+     swaps between two equal states rather than turning one thing on. */
+  function label() {
+    var next = api.get() === "dark" ? "Switch to the light theme"
+                                    : "Switch to the dark theme";
+    btn.setAttribute("aria-label", next);
+    btn.setAttribute("title", next);
+  }
+  label();
+
+  btn.addEventListener("click", function () {
+    api.set(api.get() === "dark" ? "light" : "dark");
+  });
+
+  // Bound to the event, not to the click: while nothing is stored the OS
+  // can still move the theme underneath us, and the label has to follow.
+  document.documentElement.addEventListener("themechange", label);
+
+  slot.insertBefore(btn, slot.firstChild);
+})();

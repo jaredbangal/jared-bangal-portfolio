@@ -52,6 +52,9 @@ HEAD = """<!DOCTYPE html>
 {robots}
 {favicon}
 
+<!-- Blocking on purpose — see assets/js/theme.js. -->
+<script src="{up}assets/js/theme.js?v={theme_v}"></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
@@ -183,6 +186,7 @@ def main():
         "css_v": token("assets/css/styles.css"),
         "main_v": token("assets/js/main.js"),
         "particles_v": token("assets/js/particles.js"),
+        "theme_v": token("assets/js/theme.js"),
     }
 
     frags = sorted(FRAGS.glob("*.html"))

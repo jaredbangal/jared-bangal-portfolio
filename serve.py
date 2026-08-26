@@ -36,6 +36,7 @@ ASSETS = {
     "assets/css/styles.css": r'href="((?:\.\./)*)assets/css/styles\.css(?:\?v=[a-f0-9]+)?"',
     "assets/js/main.js": r'src="((?:\.\./)*)assets/js/main\.js(?:\?v=[a-f0-9]+)?"',
     "assets/js/particles.js": r'src="((?:\.\./)*)assets/js/particles\.js(?:\?v=[a-f0-9]+)?"',
+    "assets/js/theme.js": r'src="((?:\.\./)*)assets/js/theme\.js(?:\?v=[a-f0-9]+)?"',
     # The logo is stamped and the other images are not, because it is the one
     # image likely to be revised in place. Under /assets/*'s immutable year a
     # redrawn mark would otherwise never reach anyone who had already visited.

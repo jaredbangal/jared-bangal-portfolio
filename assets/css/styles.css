@@ -211,6 +211,13 @@
   --nav-h:  80px;
   --section-y:    var(--space-32);
   --section-y-lg: var(--space-40);
+
+  /* Light values for the bar; the dark scope redefines all five. */
+  --nav-bar:       rgba(244, 242, 236, .72);
+  --nav-bar-solid: rgba(244, 242, 236, .97);
+  --nav-scrim:     rgba(250, 249, 246, .62);
+  --nav-scrim-mid: rgba(250, 249, 246, .50);
+  --nav-scrim-end: rgba(250, 249, 246, 0);
 }
 
 /* ── 2b. The dark scope ─────────────────────────────────────
@@ -230,7 +237,9 @@
    otherwise keep the value body resolved against the cream ramp. Elements
    that set their own colour were never affected, which is exactly what
    makes this bug look random when you hit it. */
-.on-dark {
+.on-dark,
+:root[data-theme="dark"] {
+  color-scheme: dark;
   color: var(--text-primary);
 
   --bg-page:     var(--shade-800);
@@ -287,6 +296,30 @@
 
   --danger:  #F2A08C;
   --success: #9BD3A8;
+
+  /* The nav bar and its scrim were raw cream rgba in the component rules.
+     They are tokens now because at page level this scope has to repaint
+     them, and a hard-coded bar is a cream stripe across a dark page. */
+  --nav-bar:       rgba(15, 18, 22, .72);
+  --nav-bar-solid: rgba(15, 18, 22, .97);
+  --nav-scrim:     rgba(7, 10, 14, .62);
+  --nav-scrim-mid: rgba(7, 10, 14, .50);
+  --nav-scrim-end: rgba(7, 10, 14, 0);
+
+  /* Elevation has to be re-solved, not reused. The light scale is ink at
+     5–17%, which over --shade-800 is a shadow darker than the page by
+     about one level out of 255 — invisible. Depth on a dark ground comes
+     from near-black at roughly four times the alpha, and the contact
+     shadow carries more of it than the ambient one, because a wide soft
+     black halo on near-black is just a dirty smudge. */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .34),
+              0 1px 3px rgba(0, 0, 0, .26);
+  --shadow-2: 0 1px 2px rgba(0, 0, 0, .38),
+              0 6px 16px rgba(0, 0, 0, .34);
+  --shadow-3: 0 2px 4px rgba(0, 0, 0, .42),
+              0 16px 40px rgba(0, 0, 0, .46);
+  --shadow-4: 0 4px 10px rgba(0, 0, 0, .48),
+              0 32px 70px rgba(0, 0, 0, .56);
 }
 
 /* ── Reset ──────────────────────────────────────────────── */
@@ -547,6 +580,18 @@ body,
 body  { background-color: var(--bg-page); }
 .band { background-color: var(--bg-band); }
 
+/* Dark theme: the page takes the ink block's tooth. This is not a token
+   swap — the tile *and* the blend mode both change. `luminosity` on a dark
+   ground washes it to grey (measured in the note above --tex-dark), and
+   `lighten` is the only mode with anywhere to go on near-black. Specks of
+   light in ink, now across the whole page rather than three sections. */
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] .band,
+:root[data-theme="dark"] .u-textured {
+  background-image: var(--tex-dark);
+  background-blend-mode: lighten;
+}
+
 /* ── Type primitives ────────────────────────────────────── */
 
 /* Section labels: small, uppercase, opened-up tracking. */
@@ -746,9 +791,9 @@ body  { background-color: var(--bg-page); }
      to be a dark scrim protecting light text. */
   background: linear-gradient(
     180deg,
-    rgba(250, 249, 246, .62)  0%,
-    rgba(250, 249, 246, .50) 45%,
-    rgba(250, 249, 246, 0)  100%
+    var(--nav-scrim)      0%,
+    var(--nav-scrim-mid) 45%,
+    var(--nav-scrim-end) 100%
   );
   transition: opacity var(--dur-base) var(--ease-in-out-q);
 }
@@ -765,7 +810,7 @@ body  { background-color: var(--bg-page); }
 .nav[data-scrolled],
 .nav[data-menu-open],
 .nav[data-nav-open] {
-  background: rgba(244, 242, 236, .72);
+  background: var(--nav-bar);
   backdrop-filter: blur(18px) saturate(1.4);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   border-bottom-color: var(--border-subtle);
@@ -776,7 +821,7 @@ body  { background-color: var(--bg-page); }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .nav[data-scrolled],
-  .nav[data-menu-open] { background: rgba(244, 242, 236, .97); }
+  .nav[data-menu-open] { background: var(--nav-bar-solid); }
 }
 
 /* The favicon's mark, at nav scale. It is the only place the accent
@@ -869,6 +914,48 @@ body  { background-color: var(--bg-page); }
 .nav__trigger[aria-expanded="true"] .nav__chev { transform: rotate(180deg); }
 
 .nav__actions { display: flex; align-items: center; gap: var(--space-6); }
+
+/* ── Theme toggle ─────────────────────────────────────────
+   Built by main.js rather than written into the markup — the same contract
+   the marquee's pause button follows. A control that cannot do its job
+   without the script should not exist without the script.
+
+   It lives in .nav__actions so it groups with the other bar controls, and
+   it is the one thing in there that survives the 620px cut: Log In and the
+   CTA go, this stays, because a phone in bed is exactly where a night
+   setting gets reached for.
+
+   The negative inline margin is optical, and it also buys back 16px in the
+   902-980px squeeze where the bar has almost no clearance: a 44px box
+   around an 18px glyph already reads as its own gap, so the full
+   --space-6 beside it looks like a hole. */
+.nav__theme {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;          /* 44 is a floor — flex-shrink would trade it away */
+  width: 44px;
+  height: 44px;
+  margin-inline: -8px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transform: scale(var(--press, 1));
+  transition: color var(--dur-fast) var(--ease-in-out),
+              background-color var(--dur-fast) var(--ease-in-out),
+              transform var(--dur-fast) var(--ease-in-out);
+}
+.nav__theme:hover { color: var(--text-primary); background: var(--bg-chip); }
+.nav__theme:active { --press: .98; transition-duration: 90ms; }
+.nav__theme svg { display: block; width: 18px; height: 18px; }
+
+/* One button, two glyphs, and it shows the *destination* rather than the
+   current state — a moon while the page is light. */
+.nav__theme .icon--sun { display: none; }
+:root[data-theme="dark"] .nav__theme .icon--sun  { display: block; }
+:root[data-theme="dark"] .nav__theme .icon--moon { display: none; }
 
 .nav__burger {
   display: none;
@@ -1918,7 +2005,7 @@ body  { background-color: var(--bg-page); }
    the attributes would otherwise win. */
 .about__sign {
   display: block;
-  height: 72px;
+  height: 58px;
   width: auto;
   margin-top: var(--space-6);
 }
@@ -2482,7 +2569,7 @@ input[aria-invalid="true"] { border-color: var(--danger); }
    carries the most weight it gets anywhere on the site. */
 .newsletter__logo {
   display: block;
-  height: 56px;
+  height: 46px;
   width: auto;
   margin: 0 auto var(--space-4);
 }
@@ -2969,7 +3056,9 @@ input[aria-invalid="true"] { border-color: var(--danger); }
   /* Brand + the three section links fill the bar here; the "Get Started"
      pill would force a wrap, and the hero CTA sits right below it. */
   .nav { gap: var(--space-3); }
-  .nav__actions { display: none; }
+  /* The actions row stays for the toggle's sake; its two links go. */
+  .nav__email,
+  .nav__actions .btn { display: none; }
   .nav__links > ul { gap: var(--space-4); }
   .nav__links a { font-size: 11px; letter-spacing: .06em; }
   .nav__logo { height: 28px; }

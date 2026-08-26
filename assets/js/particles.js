@@ -72,16 +72,46 @@
     { c: [ 20,  78, 134], w: 0.14 },   // deep blue
     { c: [ 12,  46,  82], w: 0.08 }    // navy
   ];
+  /* The dark theme's five. Not these blues dimmed — the *opposite* problem.
+     The note above explains that on cream the bottom two stops carry the
+     depth that keeps a point legible against a pale surface. On
+     --shade-800 those same two sit within a few levels of the ground and
+     disappear entirely: the identical failure, mirrored. So every stop is
+     lifted and the floor is lifted hardest, which is what keeps the field
+     reading as depth rather than as flat dots. */
+  var PALETTE_DARK = [
+    { c: [ 96, 186, 236], w: 0.34 },   // bright blue — still the dominant
+    { c: [172, 222, 250], w: 0.22 },   // sky, the highlight
+    { c: [ 60, 148, 210], w: 0.22 },   // true blue
+    { c: [ 42, 110, 168], w: 0.14 },   // deep
+    { c: [ 30,  76, 120], w: 0.08 }    // navy, lifted off the ground
+  ];
+
+  /* Which stop each point drew, kept so a theme change can re-tint the
+     field in place. Re-rolling Math.random() on every toggle would give
+     each point a *different* colour rather than the same colour on the
+     other palette, and 2400 points changing identity at once reads as the
+     field flickering. */
+  var stopIdx = new Uint8Array(COUNT);
   for (var i = 0; i < COUNT; i++) {
-    var r = Math.random(), acc = 0, col = PALETTE[0].c;
-    for (var q = 0; q < PALETTE.length; q++) {
+    var r = Math.random(), acc = 0, q = 0;
+    for (; q < PALETTE.length - 1; q++) {
       acc += PALETTE[q].w;
-      if (r <= acc) { col = PALETTE[q].c; break; }
+      if (r <= acc) break;
     }
-    colors[i * 3]     = col[0] / 255;
-    colors[i * 3 + 1] = col[1] / 255;
-    colors[i * 3 + 2] = col[2] / 255;
+    stopIdx[i] = q;
   }
+
+  function tint(theme) {
+    var P = theme === "dark" ? PALETTE_DARK : PALETTE;
+    for (var k = 0; k < COUNT; k++) {
+      var col = P[stopIdx[k]].c;
+      colors[k * 3]     = col[0] / 255;
+      colors[k * 3 + 1] = col[1] / 255;
+      colors[k * 3 + 2] = col[2] / 255;
+    }
+  }
+  tint(document.documentElement.getAttribute("data-theme"));
 
   /* ── Sprite ─────────────────────────────────────────────────
      A PointsMaterial with no map draws gl_PointCoord's full square, which
@@ -149,6 +179,13 @@
   // a single `needsUpdate` to remember to set.
   var posAttr = new THREE.BufferAttribute(rendered, 3);
   var colAttr = new THREE.BufferAttribute(colors, 3);
+
+  // Re-tint on a theme change. One buffer upload, no geometry rebuild —
+  // the formation, the morph clock and the pointer state all carry on.
+  document.documentElement.addEventListener("themechange", function (e) {
+    tint(e.detail && e.detail.theme);
+    colAttr.needsUpdate = true;
+  });
 
   function system(size, opacity, map) {
     var g = new THREE.BufferGeometry();

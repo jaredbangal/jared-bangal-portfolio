@@ -140,6 +140,66 @@ bands, `--cream-100` `#F4F2EC` raised cards, `--ink-dk` `#16171A` ink.
   because it has to leave the scope again on `[data-scrolled]` and the open
   states.
 
+## Day and night
+
+A theme toggle in the nav. **The dark palette is not a new one** — it is
+`.on-dark`, the block scope, promoted to page level: `:root[data-theme="dark"]`
+was added to that selector list and defines nothing of its own. One block, two
+selectors, no second copy to go stale. That scope had already gone stale twice
+when it was the only consumer; a duplicate would be a third way in.
+
+- **`assets/js/theme.js` is loaded blocking in the `<head>` and is the one
+  script on the site that is not deferred.** It sets `data-theme` before the
+  first paint. Deferring it puts a cream flash in front of every dark-theme
+  visitor. It is external rather than the usual inline snippet because
+  `vercel.json` sends `script-src 'self'` with **no `'unsafe-inline'`** —
+  inlining it would mean weakening the policy site-wide or carrying a sha256
+  that breaks the page on the next one-character edit.
+- **No JavaScript means light**, deliberately. Honouring `prefers-color-scheme`
+  without JS needs the whole dark palette written again inside a media query,
+  and that duplicate is the exact failure above. Light is the canonical design
+  and fully functional, so this degrades to "the site as it shipped".
+- **System preference is the default and the visitor's choice outranks it for
+  good.** `theme.js` follows `prefers-color-scheme` live until someone presses
+  the toggle; after that the stored value wins. Flipping under them at sunset
+  reads as a bug. `localStorage` is wrapped on **read as well as write** — it
+  throws outright in some privacy modes.
+- **The paper tooth is not a token swap. The tile *and* the blend mode both
+  change**: `--tex`/`luminosity` on cream, `--tex-dark`/`lighten` in dark.
+  `luminosity` on a dark ground washes it to grey — the measurement is already
+  in the `--tex-dark` note, it just now applies to the whole page.
+- **The field's palette had to be lifted, not dimmed.** On cream the bottom two
+  stops exist to keep a point legible where it crosses a pale surface; on
+  `--shade-800` those same two sit within a few levels of the ground and
+  vanish. Same failure, mirrored. `PALETTE_DARK` lifts every stop and lifts the
+  floor hardest.
+- **Each point keeps its stop index (`stopIdx`), so a toggle re-tints in
+  place.** Re-rolling `Math.random()` would give every point a *different*
+  colour rather than the same colour on the other palette, and 2400 points
+  changing identity at once reads as a flicker. One buffer upload, no geometry
+  rebuild: the formation, morph clock and pointer state all survive.
+- **Elevation was re-solved, not reused.** The light scale is ink at 5–17%,
+  which over `--shade-800` is about one level out of 255 — invisible. Dark runs
+  near-black at roughly four times the alpha, contact shadow carrying more than
+  ambient, because a wide soft black halo on near-black is just a smudge.
+- **The nav bar and its scrim were raw cream `rgba` in component rules** and
+  are five tokens now (`--nav-bar`, `--nav-bar-solid`, `--nav-scrim`,
+  `--nav-scrim-mid`, `--nav-scrim-end`). Unfixed, the bar stays a cream stripe
+  across a dark page.
+- **The toggle is built by `main.js`, not written into the markup** — the same
+  contract the marquee's pause button follows, and it means all thirteen pages
+  get it without the nav carrying it. It lives in `.nav__actions` and is **the
+  one thing there that survives the 620px cut**: Log In and the CTA go, the
+  toggle stays. It shows the *destination* (a moon while the page is light),
+  the `aria-label` names that destination, and there is no `aria-pressed` —
+  "pressed" has no honest meaning for a swap between two equal states.
+- **Worst rendered text contrast in dark is 4.92:1**, by strict per-pixel
+  minimum, on the Selected Work sub-line; medians run ~5.5:1 and match the
+  figures already recorded for light. Measured against rendered pixels with the
+  field frozen — see the note.
+- The bar keeps **78px of clearance at 902px** with the toggle in it. The 24px
+  figure in *Nav panels* was from the five-trigger era.
+
 ## The mark
 
 A brush-lettered `jb` in **`#F16813`**, `assets/img/logo-jb.webp` (169×240,

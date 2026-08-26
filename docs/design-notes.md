@@ -169,6 +169,158 @@ that set their own colour were fine, which is what makes the bug look random.
 it has to leave the scope again: light values are re-declared on
 `.nav[data-scrolled]` and the two open states at one notch more specificity.
 
+## Day and night
+
+Jared asked for a day/night toggle, placed wherever it belonged, with "the
+necessary adjustments like the colours, and other things you need to consider"
+left to judgement. Most of the work was in that second clause.
+
+### The palette was already written
+
+The token layer is three deep and the semantic layer names roles rather than
+values, which is precisely what makes polarity swappable — the file says so at
+the top. `.on-dark` had been exercising that for the ink blocks all along.
+
+So the dark theme adds **no new palette**. `:root[data-theme="dark"]` was added
+to the `.on-dark` selector list and declares nothing of its own. The surface
+relationships come out right for free, because they were already right one
+level down: page `--shade-800`, bands `--shade-900`, raised cards
+`--shade-700`, and `--bg-ink` at `--shade-950` for the blocks — which keeps the
+light-mode relationship intact, where the ink block is the *darker, quieter*
+section rather than a lighter one. A dark page with lighter section bands would
+have inverted that relationship for no reason.
+
+The alternative was a second palette inside `@media (prefers-color-scheme:
+dark)`. That is the standard pattern and it was rejected on this codebase's own
+history: `.on-dark` went stale twice while it was the *only* copy. A third
+parallel copy is a third way to drift, and the drift is silent — it shows up as
+one section quietly wrong months later.
+
+The cost of that decision is that **no-JS gets light**, since a media query is
+the only way to honour the OS without script. That is an honest trade here:
+light is the canonical design, fully functional, and it is what the site shipped
+as. Nobody gets a broken page; some people get the other good one.
+
+### The one script that cannot be deferred
+
+`theme.js` is loaded blocking in the head. Everything else on this site is
+`defer`, and it should be — but a deferred theme script paints cream first and
+then repaints, which is the flash every dark-mode implementation is judged on.
+
+It is also a *file* rather than the usual inline snippet, and that is a CSP
+consequence rather than a style preference. `vercel.json` sends `script-src
+'self' https://cdnjs.cloudflare.com` with no `'unsafe-inline'` — that directive
+is the one that actually mitigates XSS, and the site earns it by having no
+inline `<script>` on any of the eighteen pages. Inlining the no-flash snippet
+would mean either dropping `'unsafe-inline'` back in for every script on the
+site, or carrying a `sha256-` hash that breaks the entire page the next time
+someone edits that snippet by one character. One extra same-origin request,
+cached for a year, is cheaper than either.
+
+`localStorage` is wrapped on **read** as well as write. In some privacy modes
+`getItem` throws rather than returning null, and an exception thrown from a
+blocking head script takes the theme down before the body exists.
+
+### What did not come free
+
+Three things needed real work, and all three are cases where the *mechanism*
+rather than the value had to change.
+
+**The paper tooth.** `body`, `.band` and `.u-textured` set
+`background-blend-mode: luminosity` in the rule itself, not through a token. On
+a dark ground `luminosity` washes the surface to grey — measured already, in the
+`--tex-dark` note above, across eight centres and three slopes. So the dark
+theme has to swap the tile *and* the blend mode together, which no token
+indirection could have done.
+
+**The field.** Its palette note explains that on cream the bottom two stops
+carry the depth that keeps a point legible where it crosses a pale surface. On
+`--shade-800` those same two stops sit within a few levels of the ground and
+disappear — the identical failure, mirrored, and exactly the trap the note warns
+about for a palette change. `PALETTE_DARK` lifts all five and lifts the floor
+hardest.
+
+Re-tinting had its own trap. The obvious implementation re-runs the weighted
+pick per particle on theme change, but `Math.random()` gives each point a
+*different* stop rather than the same stop on the other palette, so 2400 points
+change identity at once and the swap reads as a flicker. `stopIdx` stores which
+stop each point drew, once, and the toggle maps index to colour. One buffer
+upload; the formation, morph clock and pointer state all carry on.
+
+**Elevation.** `--shadow-1…4` are ink at 5–17%. Over `--shade-800` that is a
+shadow about one level out of 255 darker than the page — nothing. The dark scale
+runs near-black at roughly four times the alpha, with the contact shadow
+carrying proportionally more than the ambient one, because a wide soft black
+halo on near-black is a smudge rather than a height cue.
+
+Plus one piece of ordinary debt: the nav bar and its scrim were raw
+`rgba(244, 242, 236, …)` and `rgba(250, 249, 246, …)` sitting in component
+rules, in a file whose stated rule is that components reference semantic tokens
+only. Left alone they would have painted a cream stripe across the dark page.
+Five tokens now.
+
+### Measuring it
+
+Worst-case rendered contrast, dark theme, 1440, field live:
+
+| element | worst | median |
+|---|---|---|
+| Selected Work sub-line | **4.92:1** | 5.54 |
+| About label | 4.94 | 5.65 |
+| glass card body | 5.05 | 5.47 |
+| newsletter muted | 5.08 | 5.65 |
+| About body | 6.26 | 7.12 |
+| hero note | 8.63 | 9.91 |
+| stat source | 11.64 | 13.52 |
+
+Everything clears AA. The "worst" column is the strict minimum over every
+solid glyph pixel; the median is the comparable statistic to the figures already
+recorded in this file, and it lines up — the glass card body reads 5.47 here
+against the 5.54 recorded for it under *The "What I do" cards*.
+
+The harness freezes the field before measuring. The method is a two-shot
+difference — shoot the element, hide it, shoot the same clip again, and take the
+pixels at ~full glyph coverage — which requires both shots to share a
+background, and the field is animating. Overriding
+`window.requestAnimationFrame` to a no-op halts the loop after the current
+frame.
+
+Two things went wrong building it, both worth keeping:
+
+`element.screenshot()` **refuses an element it considers invisible**, so the
+second pass has to clip off the page instead. The failure is a 30-second
+timeout, not an error that names the cause.
+
+And the result needed validating before it could be trusted, because a harness
+that reports plausible numbers for the wrong reason is this project's most
+frequent bug. Running it against the *light* theme was the check: the elements
+sitting on `.on-dark` blocks — glass card body, newsletter, the block heading —
+came back **byte-identical across both themes**, which is correct, since those
+blocks are dark in both. The elements on the page ground all moved. A harness
+returning identical numbers everywhere would have been measuring nothing.
+
+### The toggle
+
+Built by `main.js` rather than written into the markup, following the marquee
+pause button: a control that cannot work without the script should not exist
+without it. It also means all thirteen pages get it without the nav markup
+carrying it, and `build_pages.py` needed no change.
+
+It sits in `.nav__actions`, and the 620px rule that used to hide that whole
+container now hides only its two links — a phone is where a night setting
+actually gets reached for.
+
+Bar width was the risk worth checking, since *Nav panels* records the bar having
+24px of clearance at 902px when it briefly held five triggers. With four it has
+room: **78px at 902px** with the toggle in place, rising to 340 by 1180. The
+button's `margin-inline: -8px` keeps its net footprint to 28px, and is optical
+anyway — a 44px box around an 18px glyph already reads as its own gap.
+
+It shows the destination rather than the state — a moon while the page is light —
+and the `aria-label` names that destination. No `aria-pressed`: "pressed" has no
+honest meaning for a control swapping between two equal states, as opposed to
+one that turns something on.
+
 ## The mark
 
 Jared supplied `JB1.png`, a 2000×2000 RGB flat of a brush-lettered `jb`, and
