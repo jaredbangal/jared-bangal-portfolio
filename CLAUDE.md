@@ -750,10 +750,23 @@ pages get built.
   `#feedback` vignette are all still in place and no-op without the markup.
   **All three are now unverified — re-measure when it returns**, which is
   exactly how `.on-dark` rotted.
-- **Pricing is Jared's, set 2026-08-14**: from $300 landing page, from $1,200 full
-  site, $120/month care. They live in the nav Pricing panel only, and the contact
-  form's budget placeholder tracks the range ("e.g. New site, $300–1,200") — move
-  it whenever the figures move.
+- **Pricing is Jared's**: from **$600** landing page (was $300 until 2026-08-26),
+  from $1,200 full site, $120/month care, set 2026-08-14. **Each figure is written
+  in four places** — the nav Pricing panel in `index.html`, the `pricing.html`
+  card, that fragment's `desc:` line, and the `services.html` row — plus the
+  contact form's budget placeholder, which tracks the range
+  ("e.g. New site, $600–1,200"). Move all five together or the site quotes two
+  different numbers.
+- **Nobody is called a "small business" or a "startup".** Jared's clients are
+  "businesses", full stop — changed 2026-08-26 across the meta and og
+  descriptions, the About panel pills, the "What I do" statement, its first card,
+  the About paragraph, `services.html` and `privacy.html`. **The one exception is
+  the 27% stat**, whose label has to stay "of small businesses" because Top Design
+  Firms surveyed 1,003 small-business owners and the figure does not describe
+  anyone else. Widening it would misdescribe the source, which is the same rule
+  that keeps the Stanford figure at 46%. The six concept case studies still say
+  "a small floral studio", "a small-batch roaster" and so on — those describe the
+  invented businesses in the work, not Jared's clients.
 - **Nothing is for sale on `products.html`, and the page says so.** No items, no
 prices, no checkout, because none exist — a nav entry promising a shop and
 delivering invented products is the same lie as an invented review. The Products
