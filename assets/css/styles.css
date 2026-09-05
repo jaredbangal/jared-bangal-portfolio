@@ -634,88 +634,90 @@ body  { background-color: var(--bg-page); }
 
 /* ── The four dots ──────────────────────────────────────────
    A small mark above a section head, after the three-dot cluster on
-   squarespace.com's "Getting started" section — same system this site
-   already borrows its type and spacing from.
+   squarespace.com's "Getting started" section.
 
-   **Nothing travels.** Four dots sit at four fixed points and what rotates
-   is the *size*, handed one position clockwise every few seconds. That is
-   the whole trick, and it is what the original does too: its keyframes are
-   scale(0.403), scale(1.56), scale(1.59) against base sizes of
-   13.08/8.375/5.27px, which are exactly the ratios that hand each dot the
-   next one's size. Reading it as three dots orbiting is the illusion
-   working.
+   **Two motions, on two elements, so they never fight for `transform`.**
+   The ring itself rotates — that is the orbit — while each dot runs its own
+   `scale()` cycle. Keeping them on separate elements is what lets each dot
+   be placed with `top`/`left` and a negative half-margin, leaving its
+   transform free for the pulse alone.
 
-   Every dot is the same 15px box and only `scale()` animates, so each one
-   can be centred once with a negative half-margin and the transform stays
-   free for the animation — no translate needed to keep the cluster
-   balanced, which is what the original needs its -20%/-30% nudges for.
+   The original does neither: nothing there travels, and its three dots
+   simply hand each other their sizes (scale .403/1.56/1.59 against base
+   sizes 13.08/8.375/5.27px, which are exactly those ratios). Jared asked
+   for real orbital motion, so this one actually goes round.
 
-   The four scales are one geometric-ish ramp; move them here, not in the
-   keyframes, which reference them by name. */
+   **`--dot-ring` is a no-overlap constraint, not a taste call.** Four dots
+   90° apart sit `R√2` from their neighbours, and the widest adjacent pair
+   is `--dot-a + --dot-b`, so the dots touch at R = 9.1px and clear by
+   4.07px at R = 12. Re-solve it if the ramp or the box changes:
+   R√2 ≥ (box / 2) × (a + b). */
 .dots {
-  --dot-box: 15px;
-  --dot-a: 1;        /* the ramp: each step is roughly .72 of the last, */
-  --dot-b: .72;      /* which is the ratio the original's three sizes */
-  --dot-c: .52;      /* fall on (13.08 : 8.375 : 5.27) */
+  --dot-box:  15px;
+  --dot-ring: 12px;     /* orbit radius — see the note above before moving */
+  --dot-a: 1;           /* the ramp; each step is ~.72 of the last */
+  --dot-b: .72;
+  --dot-c: .52;
   --dot-d: .38;
-  --dot-dur: 14s;
+  --dot-spin:  18s;     /* one revolution */
+  --dot-pulse: 12s;     /* one trip through the ramp — 3:2 against the spin,
+                           so the swell drifts round instead of parking at
+                           one o'clock position forever */
+  /* The mark's orange, and the one place on the site outside the logo that
+     uses it. It is written here rather than as a token *on purpose*: see
+     "The mark" — a token is precisely what would make it a second accent,
+     and --accent stays pure black. */
+  --dot-fill: #F16813;
+
   position: relative;
-  width: 34px;
-  height: 34px;
-  margin: 0 auto var(--space-6);
+  width:  calc(var(--dot-ring) * 2 + var(--dot-box));
+  height: calc(var(--dot-ring) * 2 + var(--dot-box));
+  margin-bottom: var(--space-6);
+  animation: dot-spin var(--dot-spin) linear infinite;
 }
+.dots--center { margin-inline: auto; }
 
 .dots span {
   position: absolute;
+  top: 50%;
+  left: 50%;
   width: var(--dot-box);
   height: var(--dot-box);
   margin: calc(var(--dot-box) / -2) 0 0 calc(var(--dot-box) / -2);
   border-radius: 50%;
-  /* The accent, so it inverts with the scope — pure black on cream, white
-     on an ink block and on the dark theme. A hard-coded black would
-     disappear the moment the page goes dark. */
-  background: var(--accent-ink);
-  animation: dot-cycle-1 var(--dot-dur) linear infinite;
+  background: var(--dot-fill);
+  animation: dot-pulse var(--dot-pulse) linear infinite;
 }
 
-/* Four points on a ring, clockwise from twelve. */
-.dots span:nth-child(1) { left: 50%;   top: 26.5%; }
-.dots span:nth-child(2) { left: 73.5%; top: 50%;   animation-name: dot-cycle-2; }
-.dots span:nth-child(3) { left: 50%;   top: 73.5%; animation-name: dot-cycle-3; }
-.dots span:nth-child(4) { left: 26.5%; top: 50%;   animation-name: dot-cycle-4; }
+/* Four points on the ring, clockwise from twelve. Offsetting through
+   top/left rather than a translate is what keeps `transform` free. */
+.dots span:nth-child(1) { top:  calc(50% - var(--dot-ring)); }
+.dots span:nth-child(2) { left: calc(50% + var(--dot-ring)); }
+.dots span:nth-child(3) { top:  calc(50% + var(--dot-ring)); }
+.dots span:nth-child(4) { left: calc(50% - var(--dot-ring)); }
 
-/* Move, hold, move, hold … then rest for the last 37% of the loop. The
-   holds are what keep it from reading as a spinner; the rest is what keeps
-   it from asking for attention. Four sequences rather than one plus a
-   delay, because the rest has to land on every dot at the same moment. */
-@keyframes dot-cycle-1 {
-  0%,  63%, 100% { transform: scale(var(--dot-a)); }
-  9%,  18%       { transform: scale(var(--dot-d)); }
-  27%, 36%       { transform: scale(var(--dot-c)); }
-  45%, 54%       { transform: scale(var(--dot-b)); }
+/* One keyframe set and four negative delays, not four keyframe sets. The
+   sequences here are pure phase shifts of each other — the earlier version
+   needed four because its long rest had to land on every dot at once, and
+   this one has no rest to synchronise. */
+.dots span:nth-child(2) { animation-delay: calc(var(--dot-pulse) / -4); }
+.dots span:nth-child(3) { animation-delay: calc(var(--dot-pulse) / -2); }
+.dots span:nth-child(4) { animation-delay: calc(var(--dot-pulse) * -.75); }
+
+@keyframes dot-spin {
+  to { transform: rotate(360deg); }
 }
-@keyframes dot-cycle-2 {
-  0%,  63%, 100% { transform: scale(var(--dot-b)); }
-  9%,  18%       { transform: scale(var(--dot-a)); }
-  27%, 36%       { transform: scale(var(--dot-d)); }
-  45%, 54%       { transform: scale(var(--dot-c)); }
-}
-@keyframes dot-cycle-3 {
-  0%,  63%, 100% { transform: scale(var(--dot-c)); }
-  9%,  18%       { transform: scale(var(--dot-b)); }
-  27%, 36%       { transform: scale(var(--dot-a)); }
-  45%, 54%       { transform: scale(var(--dot-d)); }
-}
-@keyframes dot-cycle-4 {
-  0%,  63%, 100% { transform: scale(var(--dot-d)); }
-  9%,  18%       { transform: scale(var(--dot-c)); }
-  27%, 36%       { transform: scale(var(--dot-b)); }
-  45%, 54%       { transform: scale(var(--dot-a)); }
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(var(--dot-a)); }
+  25%      { transform: scale(var(--dot-b)); }
+  50%      { transform: scale(var(--dot-c)); }
+  75%      { transform: scale(var(--dot-d)); }
 }
 
-/* The global reduce rule only shortens durations, which would strand these
-   mid-cycle at whatever size they happened to hold. Stop them at rest. */
+/* The global reduce rule only shortens durations, which would leave this
+   spinning and pulsing on a shorter clock rather than stopping. Park it. */
 @media (prefers-reduced-motion: reduce) {
+  .dots,
   .dots span { animation: none; }
   .dots span:nth-child(1) { transform: scale(var(--dot-a)); }
   .dots span:nth-child(2) { transform: scale(var(--dot-b)); }

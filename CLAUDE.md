@@ -480,35 +480,44 @@ from all six.
 
 ## The four dots
 
-A small mark above the Selected Work head, after the three-dot cluster on
-squarespace.com's "Getting started" section — the same system this site already
-takes its type and spacing from.
+A small orange mark, above the "What I do" label and in the Contact copy. It
+started as squarespace.com's three-dot cluster and has moved away from it.
 
-- **Nothing travels. The *sizes* rotate.** Four dots sit at four fixed points
-  (twelve, three, six, nine o'clock) and the size ramp is handed one position
-  clockwise every few seconds. The original works the same way, and measuring it
-  is what showed that: its keyframes are `scale(0.403)`, `scale(1.56)`,
-  `scale(1.59)` against base sizes of 13.08 / 8.375 / 5.27px — exactly the
-  ratios that hand each dot the next one's size. Reading it as dots orbiting is
-  the illusion doing its job.
-- **Every dot is the same 15px box and only `scale()` animates**, so each is
-  centred once with a negative half-margin and the transform stays free. That is
-  why there are no translate nudges here; the original needs its -20%/-30%
-  offsets because its dots have different intrinsic sizes.
-- **Four keyframe sets, not one plus `animation-delay`.** The sequences *are*
-  phase shifts of each other, but the long rest has to land on all four at the
-  same moment, and a delay would stagger it.
-- **The ramp lives in `--dot-a…d` on `.dots`**, not in the keyframes, which
-  reference it by name. Move the sizes there.
-- **Fill is `--accent-ink`**, so it inverts with the scope — black on cream,
-  white on an ink block and in the dark theme. Hard-coded black disappears the
-  moment the page goes dark.
-- **It sets its own reduced-motion stop.** The global reduce rule only shortens
-  durations, which would strand the dots mid-cycle at whatever size they held;
-  this pins each to its base scale instead.
-- `aria-hidden`, and built in markup rather than by JS — it is pure CSS
-  decoration, so unlike the marquee's pause button it is not a dead control
-  without the script.
+- **Two motions, on two elements, so they never fight for `transform`.** The
+  ring rotates — that is the orbit — while each dot runs its own `scale()`
+  pulse. Because the ring carries the rotation, each dot can be placed with
+  `top`/`left` plus a negative half-margin and keep its transform free.
+- **The original does neither.** Nothing there travels; its three dots hand
+  each other their sizes, `scale(.403)/(1.56)/(1.59)` against base sizes
+  13.08/8.375/5.27px — exactly the ratios that do that swap. Worth knowing if
+  you ever go back to it. Jared asked for real orbital motion, so this one
+  actually goes round.
+- **`--dot-ring` is a no-overlap constraint, not a taste call.** Four dots 90°
+  apart sit `R√2` from their neighbours, and the widest adjacent pair is
+  `--dot-a + --dot-b`. They touch at R = 9.1px; R = 12 clears by **4.07px**,
+  confirmed over 360 samples across the full 36s pattern. Re-solve if the ramp
+  or the box moves: `R√2 ≥ (box / 2) × (a + b)`.
+- **Measure the radius from the computed scale, never from
+  `getBoundingClientRect`.** Inside the rotating ring the rect is the
+  axis-aligned box of the *square* element — it swells to 1.41× at 45° and
+  knows nothing about `border-radius`. Reading radii off it reported 56
+  overlaps that do not exist. The rect's *centre* is still correct.
+- **Fill is the mark's orange `#F16813`**, written in the component rather than
+  as a token — see **The mark**: a token is exactly what would make it a second
+  accent, and `--accent` stays pure black. It is decorative and `aria-hidden`,
+  so no contrast minimum applies; for the record it measures 6.73:1 on the ink
+  block, 5.76:1 on the dark page, 2.41:1 on cream.
+- **One keyframe set and four negative delays.** The sequences are pure phase
+  shifts. An earlier version needed four separate sets because it had a long
+  synchronised rest; this one has no rest to line up.
+- **The spin and pulse periods are deliberately unequal** (18s / 12s). At equal
+  periods the swell parks permanently at twelve o'clock; at 3:2 it drifts round
+  and the pattern takes 36s to repeat.
+- **A permanently rotating element breaks Playwright's `scroll_into_view_if_needed`** —
+  it waits for stability that never arrives and times out at 30s. Pause the
+  animations first, or scroll the parent.
+- Built in markup, not by JS: it is pure CSS decoration, so unlike the
+  marquee's pause button it is not a dead control without the script.
 
 ## The accent hover
 
