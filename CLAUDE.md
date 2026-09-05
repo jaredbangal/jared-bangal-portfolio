@@ -289,10 +289,21 @@ The dark tile now sits on `--shade-800`, the dark page ground, rather than on
 `particles.js` — 2400 points, fixed behind the page, morphing between four
 formations as sections scroll past. Architecture: `particle-field`.
 
-- **Running order `sphere → vortex → polaris → waves → sphere`**, set by
-  `data-formation`. Services, FAQ and Contact all hold the sphere so the field
-  settles instead of morphing under the enquiry. Worst text contrast there:
-  6.62:1 at 1440, 6.93:1 at 390.
+- **Every section holds `sphere`, on every page.** Jared asked for one shape the
+  whole way down (2026-09-04); morphing under a reader was the part of the field
+  that drew attention to itself. The running order used to be
+  `sphere → vortex → polaris → waves → sphere`.
+- **Nothing was deleted to do that, and nothing needs deleting.**
+  `setFormation` returns early when the name matches what is already current, so
+  25 sections all naming `sphere` means no morph and no camera shift ever runs.
+  `vortex()`, `polaris()` and `waves()` are intact and one word away — put a name
+  back in a section's `data-formation`. The frame loop's `current === "waves"`
+  branch is an `else if`, so it simply never fires; the resize handler's
+  `current === "sphere"` re-form now always applies, which is correct.
+- **The case studies' `data-formation` lives in `tools/build_cases.py`**, not in
+  `tools/fragments/work-*.html` — those six are generated, so an edit there is
+  reverted by the next build. Worst text contrast on the sphere: 6.62:1 at 1440,
+  6.93:1 at 390.
 - **Palette is blue**, five stops. It is **not** on `--accent` and must never be
   promoted into the token layer, or the page has two accents.
 - **`CORE_ALPHA` `.34` is a contrast budget, not taste.** Re-solve against

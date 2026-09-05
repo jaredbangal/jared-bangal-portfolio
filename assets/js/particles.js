@@ -422,7 +422,23 @@
     mny = -((e.clientY / window.innerHeight) * 2 - 1);
   }, { passive: true });
 
-  /* ── Sections drive the formation ───────────────────────── */
+  /* ── Sections drive the formation ───────────────────────────
+     **Every section on the site currently declares `sphere`, so this is
+     dormant by design, not by accident.** Jared asked for one shape the
+     whole way down; morphing under a reader turned out to be the part of
+     the field that drew attention to itself rather than sitting behind
+     the page.
+
+     Nothing was deleted to do it. `setFormation` returns early when the
+     name matches what is already current, so 25 sections all naming
+     `sphere` means no morph and no camera shift ever runs — and `vortex`,
+     `polaris` and `waves` are intact below, one word away from coming
+     back. To bring one back, put its name in a section's
+     `data-formation`; the running order used to be
+     sphere → vortex → polaris → waves → sphere.
+
+     The case-study fragments are generated, so their attribute lives in
+     tools/build_cases.py, not in tools/fragments/work-*.html. */
   var t0 = performance.now();
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (entries) {

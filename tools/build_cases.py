@@ -263,7 +263,7 @@ desc: {desc}
     <p class="page-head__lead">{lead}</p>
   </section>
 
-  <section class="section section--tight-top shell" data-formation="polaris">
+  <section class="section section--tight-top shell" data-formation="sphere">
     <div class="prose">
       <dl class="case__meta">
         <div>
@@ -302,7 +302,7 @@ desc: {desc}
     </div>
   </section>
 
-  <section class="section shell" data-formation="waves">
+  <section class="section shell" data-formation="sphere">
     <figure class="case__figure">
       <a href="../concepts/{slug}.html">
         <img class="case__shot" src="../assets/img/work-{slug}.webp" width="{w}" height="{h}"
