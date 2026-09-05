@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/styles.css?v=71118c64">
+<link rel="stylesheet" href="assets/css/styles.css?v=98be9e65">
 </head>
 <body>
 
@@ -345,6 +345,12 @@
   <section class="section" id="work" data-showcase data-formation="sphere">
     <div class="shell">
       <header class="section__head reveal">
+        <!-- Decorative, so aria-hidden: it says nothing a screen reader
+             needs, and four empty spans announced as blanks would be noise
+             in front of the heading they belong to. -->
+        <div class="dots" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
         <p class="label">Selected Work</p>
         <h2 class="h2">Concept work.</h2>
         <p class="section__sub">Six self-directed site designs. Each one has a short write-up of the thinking behind it.</p>

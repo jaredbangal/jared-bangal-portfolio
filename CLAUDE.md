@@ -478,6 +478,38 @@ from all six.
   on Meridian's nav. Method: `rendered-contrast` — `opacity` on inherited ink
   is invisible to a CSSOM checker, and that is what most of these were.
 
+## The four dots
+
+A small mark above the Selected Work head, after the three-dot cluster on
+squarespace.com's "Getting started" section — the same system this site already
+takes its type and spacing from.
+
+- **Nothing travels. The *sizes* rotate.** Four dots sit at four fixed points
+  (twelve, three, six, nine o'clock) and the size ramp is handed one position
+  clockwise every few seconds. The original works the same way, and measuring it
+  is what showed that: its keyframes are `scale(0.403)`, `scale(1.56)`,
+  `scale(1.59)` against base sizes of 13.08 / 8.375 / 5.27px — exactly the
+  ratios that hand each dot the next one's size. Reading it as dots orbiting is
+  the illusion doing its job.
+- **Every dot is the same 15px box and only `scale()` animates**, so each is
+  centred once with a negative half-margin and the transform stays free. That is
+  why there are no translate nudges here; the original needs its -20%/-30%
+  offsets because its dots have different intrinsic sizes.
+- **Four keyframe sets, not one plus `animation-delay`.** The sequences *are*
+  phase shifts of each other, but the long rest has to land on all four at the
+  same moment, and a delay would stagger it.
+- **The ramp lives in `--dot-a…d` on `.dots`**, not in the keyframes, which
+  reference it by name. Move the sizes there.
+- **Fill is `--accent-ink`**, so it inverts with the scope — black on cream,
+  white on an ink block and in the dark theme. Hard-coded black disappears the
+  moment the page goes dark.
+- **It sets its own reduced-motion stop.** The global reduce rule only shortens
+  durations, which would strand the dots mid-cycle at whatever size they held;
+  this pins each to its base scale instead.
+- `aria-hidden`, and built in markup rather than by JS — it is pure CSS
+  decoration, so unlike the marquee's pause button it is not a dead control
+  without the script.
+
 ## The accent hover
 
 One pattern, shared: the heading (and numeral) goes `--accent-ink-hover`, the rule

@@ -632,6 +632,97 @@ body  { background-color: var(--bg-page); }
 }
 .section__foot { margin-top: var(--space-16); text-align: center; }
 
+/* ── The four dots ──────────────────────────────────────────
+   A small mark above a section head, after the three-dot cluster on
+   squarespace.com's "Getting started" section — same system this site
+   already borrows its type and spacing from.
+
+   **Nothing travels.** Four dots sit at four fixed points and what rotates
+   is the *size*, handed one position clockwise every few seconds. That is
+   the whole trick, and it is what the original does too: its keyframes are
+   scale(0.403), scale(1.56), scale(1.59) against base sizes of
+   13.08/8.375/5.27px, which are exactly the ratios that hand each dot the
+   next one's size. Reading it as three dots orbiting is the illusion
+   working.
+
+   Every dot is the same 15px box and only `scale()` animates, so each one
+   can be centred once with a negative half-margin and the transform stays
+   free for the animation — no translate needed to keep the cluster
+   balanced, which is what the original needs its -20%/-30% nudges for.
+
+   The four scales are one geometric-ish ramp; move them here, not in the
+   keyframes, which reference them by name. */
+.dots {
+  --dot-box: 15px;
+  --dot-a: 1;        /* the ramp: each step is roughly .72 of the last, */
+  --dot-b: .72;      /* which is the ratio the original's three sizes */
+  --dot-c: .52;      /* fall on (13.08 : 8.375 : 5.27) */
+  --dot-d: .38;
+  --dot-dur: 14s;
+  position: relative;
+  width: 34px;
+  height: 34px;
+  margin: 0 auto var(--space-6);
+}
+
+.dots span {
+  position: absolute;
+  width: var(--dot-box);
+  height: var(--dot-box);
+  margin: calc(var(--dot-box) / -2) 0 0 calc(var(--dot-box) / -2);
+  border-radius: 50%;
+  /* The accent, so it inverts with the scope — pure black on cream, white
+     on an ink block and on the dark theme. A hard-coded black would
+     disappear the moment the page goes dark. */
+  background: var(--accent-ink);
+  animation: dot-cycle-1 var(--dot-dur) linear infinite;
+}
+
+/* Four points on a ring, clockwise from twelve. */
+.dots span:nth-child(1) { left: 50%;   top: 26.5%; }
+.dots span:nth-child(2) { left: 73.5%; top: 50%;   animation-name: dot-cycle-2; }
+.dots span:nth-child(3) { left: 50%;   top: 73.5%; animation-name: dot-cycle-3; }
+.dots span:nth-child(4) { left: 26.5%; top: 50%;   animation-name: dot-cycle-4; }
+
+/* Move, hold, move, hold … then rest for the last 37% of the loop. The
+   holds are what keep it from reading as a spinner; the rest is what keeps
+   it from asking for attention. Four sequences rather than one plus a
+   delay, because the rest has to land on every dot at the same moment. */
+@keyframes dot-cycle-1 {
+  0%,  63%, 100% { transform: scale(var(--dot-a)); }
+  9%,  18%       { transform: scale(var(--dot-d)); }
+  27%, 36%       { transform: scale(var(--dot-c)); }
+  45%, 54%       { transform: scale(var(--dot-b)); }
+}
+@keyframes dot-cycle-2 {
+  0%,  63%, 100% { transform: scale(var(--dot-b)); }
+  9%,  18%       { transform: scale(var(--dot-a)); }
+  27%, 36%       { transform: scale(var(--dot-d)); }
+  45%, 54%       { transform: scale(var(--dot-c)); }
+}
+@keyframes dot-cycle-3 {
+  0%,  63%, 100% { transform: scale(var(--dot-c)); }
+  9%,  18%       { transform: scale(var(--dot-b)); }
+  27%, 36%       { transform: scale(var(--dot-a)); }
+  45%, 54%       { transform: scale(var(--dot-d)); }
+}
+@keyframes dot-cycle-4 {
+  0%,  63%, 100% { transform: scale(var(--dot-d)); }
+  9%,  18%       { transform: scale(var(--dot-c)); }
+  27%, 36%       { transform: scale(var(--dot-b)); }
+  45%, 54%       { transform: scale(var(--dot-a)); }
+}
+
+/* The global reduce rule only shortens durations, which would strand these
+   mid-cycle at whatever size they happened to hold. Stop them at rest. */
+@media (prefers-reduced-motion: reduce) {
+  .dots span { animation: none; }
+  .dots span:nth-child(1) { transform: scale(var(--dot-a)); }
+  .dots span:nth-child(2) { transform: scale(var(--dot-b)); }
+  .dots span:nth-child(3) { transform: scale(var(--dot-c)); }
+  .dots span:nth-child(4) { transform: scale(var(--dot-d)); }
+}
+
 .body {
   font-size: var(--text-md);
   line-height: var(--leading-loose);
