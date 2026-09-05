@@ -510,9 +510,11 @@ started as squarespace.com's three-dot cluster and has moved away from it.
 - **One keyframe set and four negative delays.** The sequences are pure phase
   shifts. An earlier version needed four separate sets because it had a long
   synchronised rest; this one has no rest to line up.
-- **The spin and pulse periods are deliberately unequal** (18s / 12s). At equal
-  periods the swell parks permanently at twelve o'clock; at 3:2 it drifts round
-  and the pattern takes 36s to repeat.
+- **The spin and pulse periods are deliberately unequal** (14s / 12s). At equal
+  periods the swell parks permanently at twelve o'clock; at 7:6 it drifts one
+  lap of the ring every 84s, which is how long the whole pattern takes to
+  repeat. **Changing the spin cannot affect the overlap** — rotation preserves
+  the distances between centres, and the radii come from the pulse alone.
 - **A permanently rotating element breaks Playwright's `scroll_into_view_if_needed`** —
   it waits for stability that never arrives and times out at 30s. Pause the
   animations first, or scroll the parent.

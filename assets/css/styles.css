@@ -659,10 +659,11 @@ body  { background-color: var(--bg-page); }
   --dot-b: .72;
   --dot-c: .52;
   --dot-d: .38;
-  --dot-spin:  18s;     /* one revolution */
-  --dot-pulse: 12s;     /* one trip through the ramp — 3:2 against the spin,
-                           so the swell drifts round instead of parking at
-                           one o'clock position forever */
+  --dot-spin:  14s;     /* one revolution */
+  --dot-pulse: 12s;     /* one trip through the ramp. Deliberately not equal
+                           to the spin: at 1:1 the swell parks at twelve
+                           o'clock forever. At 7:6 it drifts one lap of the
+                           ring every 84s, which is the whole pattern. */
   /* The mark's orange, and the one place on the site outside the logo that
      uses it. It is written here rather than as a token *on purpose*: see
      "The mark" — a token is precisely what would make it a second accent,
