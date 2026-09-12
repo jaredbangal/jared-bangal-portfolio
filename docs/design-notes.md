@@ -598,6 +598,137 @@ the darkest particle was 1.24:1; the halo took every string to 6.3–14.3:1), it
 `#c2451c` is fills-only at 3.44:1 with `#9E3110` carrying text, and dim copy runs
 `.70` alpha. Porting the blue there means re-measuring that page.
 
+## The scan code
+
+Jared asked for a QR "like those" on tree.icqr.com — a 3D tree that doubles as a
+scannable code — but built from the sphere, with more points arriving "from
+nowhere" to make it, and linking to `services.html`. Their bundle is
+obfuscated and was never read for technique; this is built on the field alone.
+
+### Why the matrix is baked
+
+The destination is fixed, so the rows are fixed. An encoder in the page would
+be a library downloaded by every visitor to produce the same 33 strings, and a
+third script origin for a CSP that allows two. `build_qr.py` uses segno
+(pure Python) offline and writes the rows as `#`/`.` strings, which also means
+the code is legible in the source. It writes the no-WebGL SVG from the same
+matrix, so the two cannot disagree.
+
+**Q, not M.** The URL fits version 3 at M (29 × 29, 453 dark). At Q it is
+version 4, 33 × 33, 547 dark modules. A code drawn from overlapping soft discs
+has fuzzier module edges than a printed one, and 25% recovery rather than 15%
+is the margin for that. H would have been version 5 and 6318 points.
+
+### Where the extra points come from, and where they are the rest of the time
+
+547 × 9 = **4923**, which landed on Jared's "around 5000 or a little less"
+without tuning anything. The sphere stays 2400, deliberately: doubling it would
+have doubled the coverage behind every paragraph on the site and invalidated
+every contrast figure the field has.
+
+The 2523 extras exist in the buffers everywhere but are **outside the draw
+range** — `setDrawRange(0, COUNT)` — until the code starts forming, and go back
+out once they have faded. The per-point alpha would hide them anyway, but
+that relies on a shader patch; the draw range does not. Verified on the hero:
+no clump at the origin, nothing drawn beyond the 2400.
+
+Per-point alpha and size are an `onBeforeCompile` patch on `PointsMaterial`,
+not a `ShaderMaterial`, so with both at 1 the shader computes exactly what the
+stock one does. It matches two r128 strings, `gl_PointSize = size;` and
+`vec4 diffuseColor = vec4( diffuse, opacity );`.
+
+### Pinning a fixed canvas to a scrolling box
+
+The canvas is `position: fixed` and the slot scrolls, so the code cannot be
+placed once. Each frame the swarm moves to the slot's centre, converted with
+`2 · tan(fov/2) · CAM_Z / innerHeight` world units per CSS pixel — exact at
+z = 0 with the camera parked at `(0, 0, 520)`. The camera still looks at the
+origin, not at the code, but the code is a plane parallel to the image plane,
+so it projects square at any offset. That is why the swarm's accumulated
+rotation has to unwind to zero: a code tilted by a leftover 0.3 rad of spin
+is a keystoned code.
+
+The rotation is wrapped to (−π, π] first. An Euler angle and the same angle
+± 2π are one matrix, so that changes nothing on screen, but after ten minutes
+on the page the raw `rotation.y` is ~20 rad and unwinding it literally would
+spin the sphere three times.
+
+`frustumCulled = false` on all three layers: the bounding sphere is computed
+once, from the first frame's globe. On a 390px phone the globe is ~72 world
+units across its radius; the code's half-diagonal is ~150. With the slot's
+centre just below the fold, culling dropped the whole layer while half the
+code was on screen.
+
+### The observer bug the code uncovered
+
+The observer acted on `isIntersecting`, which is true for an element
+*leaving* past a threshold as well as entering. Scrolling down, the slot
+crossed .75 and fired `qr`; a moment later Contact dropped below .4 — still
+intersecting — and fired `sphere`, and the code tore itself back into a globe.
+With every section naming `sphere` this had never been observable. It acts on
+`intersectionRatio ≥ at` now, the rising edge only.
+
+The slot, not the section, carries `data-formation`, at `.75`. Triggered at the
+default .4 of the whole section, the slot's centre was still ~220px below the
+fold at 1440 × 900, and the three-and-a-half-second build happened out of
+sight.
+
+### The transition, first pass and second
+
+Filmed at 1440 × 900 on a software rasteriser:
+
+- **First pass: a second of nothing.** The sphere's points ran ease-in-out
+  cubic, which covers 3% of its distance in the first fifth of its span. At
+  0.7s and 1.2s the frames were indistinguishable from a resting sphere. Quad
+  and earlier delays (.02 + .20·d) put visible motion under a second.
+- **First pass: the extras read as thickening.** Spawned within the code's own
+  footprint and 200–900 units behind it, perspective pulled them into the
+  middle of the code, and they looked like it darkening in place — the
+  opposite of what Jared asked to see. They now scatter up to one and a half
+  codes wide, a third of them *in front* of the plane, so at 1.2s there are
+  points appearing across the whole viewport and streaming in.
+- **Alpha runs ahead of the travel** (`min(1, 2.5 · progress)`), so an extra is
+  fully there by 40% of its flight: seen arriving, not fading up in place.
+
+The build is ordered by each module's distance from the nearest finder
+square, so the three corners resolve first. Sphere points are paired to code
+points by rank — strips by x, then y within each strip — rather than at
+random, which sent 2400 paths across each other and read as noise.
+
+### Scanning it
+
+Measured, not assumed: `qr_decode.py` (scratch) renders the settled code and
+runs **two independent OpenCV detectors** (the standard one and the Aruco-based
+one) on the full frame, the slot crop, and a 2× greyscale upscale.
+
+| | module | median dark/light | worst pair | misread |
+|---|---|---|---|---|
+| 1440 light / dark | 10.1 px | 5.95 / 5.82:1 | 4.44 / 4.51:1 | 0 / 1089 |
+| 860 light / dark | 10.1 px | 5.90 / 5.79:1 | **4.26** / 4.45:1 | 0 / 1089 |
+| 390 @2× light / dark | 15.2 px | 5.84 / 5.88:1 | 4.30 / 4.32:1 | 0 / 1089 |
+| reduced motion 1440 / 390 | | 5.73 / 5.86:1 | 4.42 / 4.36:1 | 0 / 1089 |
+| no-WebGL SVG | 10.1 px | 13.84:1 | 13.84:1 | 0 / 1089 |
+
+Every shot decodes to `https://jaredbangal.com/services.html` on all six
+attempts. What makes it scannable: the core layer goes to full opacity (it is
+`CORE_ALPHA` .34 as a background), the two halo layers go to zero (nine
+overlapping blooms per module bled into the light modules between them), the
+points take the darker `QR_INK` stops, and `QR_FILL` 2.4 sub-steps closes the
+gaps inside a module without swelling it into its neighbours.
+
+**The limits of that evidence.** OpenCV is stricter than most phone cameras in
+some ways and looser in others, and it is not one. zxing-cpp — closer to
+what Android ships — would not build on this machine's Python 3.9. A real
+phone scan, off a real screen, is still the last word.
+
+### Dark mode
+
+Inverted QR codes are a known failure for a fair number of scanners, so the
+code never inverts. In dark mode a cream plate fades in under it, drawn as a
+WebGL plane (`renderOrder -1`, no depth test) because a DOM element would sit
+*above* the canvas. Its colour is read from `--qr-ground`, which with
+`--qr-ink` is the one semantic pair the dark scope deliberately leaves alone.
+
 ## Hero stage
 
 Six concept sites on a self-advancing track under the headline, cut off by the

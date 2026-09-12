@@ -213,6 +213,13 @@
   --section-y:    var(--space-32);
   --section-y-lg: var(--space-40);
 
+  /* The scan code's ground and ink, and the one pair the dark scope below
+     deliberately does *not* redefine. A QR has to stay dark-on-light in
+     both themes — plenty of phone scanners cannot read an inverted code —
+     so in dark mode the code sits on a cream plate rather than flipping. */
+  --qr-ground: var(--cream-200);
+  --qr-ink:    var(--ink-dk);
+
   /* Light values for the bar; the dark scope redefines all five. */
   --nav-bar:       rgba(244, 242, 236, .72);
   --nav-bar-solid: rgba(244, 242, 236, .97);
@@ -2662,6 +2669,43 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 }
 .form__status[data-state="error"]   { color: var(--danger); }
 .form__status[data-state="success"] { color: var(--success); }
+
+/* ── Scan ───────────────────────────────────────────────── */
+/* An empty square the field draws a QR into. The canvas is fixed behind the
+   page, so particles.js reads this box every frame and pins the code to it —
+   the square is what reserves the space and what scrolls, the points only
+   follow. It is sized to include the four-module quiet zone.
+
+   The link is aria-hidden and out of the tab order because the visible
+   "Open the services page" link below says the same thing; the square is a
+   click target for people on the phone the code would open anyway. */
+.scan { text-align: center; }
+.scan .section__head { margin-bottom: var(--space-10); }
+
+.scan__code {
+  display: block;
+  width: min(26rem, 80vw);
+  width: min(26rem, 80vw, 56svh);
+  max-width: 100%;
+  aspect-ratio: 1;
+  margin-inline: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* Only seen without WebGL. Ink on its own cream ground in both themes —
+   the same reason as the plate the field draws in dark mode. */
+.scan__fallback {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  background: var(--qr-ground);
+  fill: var(--qr-ink);
+  transition: opacity var(--dur-base) var(--ease-in-out);
+}
+.field-qr .scan__fallback { opacity: 0; }
+
+.scan__foot { margin-top: var(--space-10); }
 
 /* ── Newsletter ─────────────────────────────────────────── */
 /* A footnote, not a section. It is the last thing before the footer and
