@@ -228,6 +228,26 @@
   --nav-scrim-end: rgba(250, 249, 246, 0);
 }
 
+/* ── TRIAL: white ground (2026-10-07) ──────────────────────
+   Jared is trying a white page in place of the cream, to see which he
+   prefers. **Delete this whole block to go back** — nothing else was
+   touched, and the dark theme, the ink, the accent, the mark's orange and
+   the field's blues are all unchanged. The bands keep a step of separation
+   or the page loses its rhythm; the nav's translucent bar and scrim lose
+   their cream tint, which would otherwise read as a dirty stripe on white. */
+:root {
+  --bg-page:     #FFFFFF;
+  --bg-band:     #F4F4F4;
+  --bg-raised:   #FFFFFF;
+  --bg-raised-h: #FFFFFF;
+
+  --nav-bar:       rgba(255, 255, 255, .72);
+  --nav-bar-solid: rgba(255, 255, 255, .97);
+  --nav-scrim:     rgba(255, 255, 255, .62);
+  --nav-scrim-mid: rgba(255, 255, 255, .50);
+  --nav-scrim-end: rgba(255, 255, 255, 0);
+}
+
 /* ── 2b. The dark scope ─────────────────────────────────────
    The palette the whole page used to run on, now scoped to the two places
    that still need it: the hero, whose photo is dark and carries light
