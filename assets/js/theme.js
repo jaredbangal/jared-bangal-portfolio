@@ -38,7 +38,7 @@
     // The browser chrome (mobile address bar) has to follow, or the page
     // sits in a cream frame in dark mode.
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#14171C" : "#E4E2DC");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#14171C" : "#FFFFFF");
   }
 
   function announce(theme) {
